@@ -1,3 +1,5 @@
+<?php include 'header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,8 +119,6 @@
         }
     </style>
 </head>
-
-<?php include 'header.php'; ?>
 
 <body>
     <section class="advertisement">
