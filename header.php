@@ -16,20 +16,19 @@
             max-height: 98px;
             padding: 15px 0;
             background: #ffffff;
-            position: fixed;
+            position: sticky;
             top: 0;
             width: 100%;
             z-index: 1000;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-white bg-white">
         <div class="container">
-            <a href="homepage.php"><img src="/image/chapalang_logo.png" width="300px"></a>
+            <a href="homepage.php"><img src="image/chapalang_logo.png" width="300px"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
