@@ -18,7 +18,7 @@
             max-height: 98px;
             padding: 15px 0;
             background: #ffffff;
-            position: sticky;
+            position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
