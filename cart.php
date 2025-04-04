@@ -1,4 +1,6 @@
 <?php
+include 'header.php';
+
 session_start();
 $_SESSION['user_id'] = "hdnj";
 if (!isset($_SESSION['user_id'])) {
@@ -21,6 +23,8 @@ $user_id = $_SESSION['user_id'];
             body {
                 background-image: url("image/cartBackground.png"); /* later change, so ugly, still confuse need header and footer or not */
                 /* background-size: cover; */
+                height: 100vh;
+                margin: 0;
             }
 
             .back-home-btn {
@@ -28,8 +32,8 @@ $user_id = $_SESSION['user_id'];
                 width: fit-content;
                 font-size: 16px;
                 font-weight: bold;
-                padding-left: 10px;
-                color: #2D328F;
+                padding-left: 8px;
+                color:rgb(92, 96, 173);
                 display: flex;
                 align-items: center;
                 gap: 5px;
@@ -152,17 +156,30 @@ $user_id = $_SESSION['user_id'];
                 background-color: transparent;
             }
 
+            footer {
+                font-family: 'Poppins', sans-serif;
+                position: absolute;
+                font-size: 14px;
+                color: #666;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                margin-top: 10px;
+                padding: 10px;
+            }
+
         </style>
     </head>
     <body>
-        <div class="container mt-5">
-            <a class="back-home-btn" href="homepage.php">
-                <i class="fa-solid fa-chevron-left"></i> Back To Home
-            </a>
+        <div class="container mt-4">
 
             <div class="card shadow mt-3">
                 <div class="card-body">
-                    <div class="cart-container">
+                    <a class="back-home-btn" href="homepage.php">
+                        <i class="fa-solid fa-home"></i> Home
+                    </a>
+                    
+                    <div class="cart-container mt-3">
                         <!-- Cart Items (Fetched using AJAX) -->
                         <div class="cart-items">
                             <table class="table mb-4">
@@ -180,6 +197,56 @@ $user_id = $_SESSION['user_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="" class="checkout-selection" id="" />
+                                        </td>
+                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
+                                        <td width="25%">name</td>
+                                        <td>RM 50.00</td>
+                                        <td>
+                                            <div class="quantity-container">
+                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
+                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>RM 50.00</td>
+                                        <td style="text-align: center;">
+                                            <button class="remove-item" data-id="">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="" class="checkout-selection" id="" />
+                                        </td>
+                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
+                                        <td width="25%">name</td>
+                                        <td>RM 50.00</td>
+                                        <td>
+                                            <div class="quantity-container">
+                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
+                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>RM 50.00</td>
+                                        <td style="text-align: center;">
+                                            <button class="remove-item" data-id="">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="" class="checkout-selection" id="" />
@@ -248,7 +315,7 @@ $user_id = $_SESSION['user_id'];
                                 </div>
                                 <hr>
                                 <div class="checkout-container">
-                                    <form method="post">
+                                    <form method="post" action="checkout.php">
                                         <button type="submit" name="checkout" class="btn checkoutBtn">
                                             <i class="fa-solid fa-check"></i> Checkout (<span id="total-selected">0 items</span>)
                                         </button>
@@ -351,5 +418,9 @@ $user_id = $_SESSION['user_id'];
                 });
             });
         </script>
+        
+        <footer>
+            &copy; 2025 Chapalang Graduation Gifts | Made with ❤️
+        </footer>
     </body>
 </html>
