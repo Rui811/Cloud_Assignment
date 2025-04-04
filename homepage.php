@@ -209,7 +209,7 @@
 
 
     <div class="cart-icon">
-        <a href="cart.html">
+        <a href="cart.php">
             <img src="image/cart.png" alt="Cart">
         </a>
     </div>
