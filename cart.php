@@ -30,7 +30,7 @@ $user_id = $_SESSION['user_id'];
             .back-home-btn {
                 text-decoration: none;
                 width: fit-content;
-                font-size: 16px;
+                font-size: 18px;
                 font-weight: bold;
                 padding-left: 8px;
                 color:rgb(92, 96, 173);
@@ -175,7 +175,7 @@ $user_id = $_SESSION['user_id'];
 
             <div class="card shadow mt-3">
                 <div class="card-body">
-                    <a class="back-home-btn" href="homepage.php">
+                    <a class="back-home-btn" href="homepage.php" title="back to homepage">
                         <i class="fa-solid fa-home"></i> Home
                     </a>
                     
@@ -309,11 +309,15 @@ $user_id = $_SESSION['user_id'];
                             <div class="card p-3 summary-card">
                                 <h4 class="text-center">SUMMARY</h4>
                                 <hr>
+                                <div class="cart-summary-items">
+                                    
+                                </div>
+                                <hr>
                                 <div id="cart-summary">
                                     <!-- <h5>Total Selected Items: <span id="total-selected">0</span></h5> -->
                                     <h5>Grand Total: RM <span id="grand-total">0.00</span></h5>
                                 </div>
-                                <hr>
+                                
                                 <div class="checkout-container">
                                     <form method="post" action="checkout.php">
                                         <button type="submit" name="checkout" class="btn checkoutBtn">
@@ -408,6 +412,13 @@ $user_id = $_SESSION['user_id'];
                 //checkout selection (checkbox)
                 $(document).on('change', '.checkout-selection', function() {
                     updateCheckoutSelection();
+
+                    if ($('.checkout-selection:checked').length === $('.checkout-selection').length) {
+                        $('.checkout-selection-all').prop('checked', true);
+                    }
+                    else {
+                        $('.checkout-selection-all').prop('checked', false);
+                    }
                 });
 
                 //checkout selection ALL (checkbox)
