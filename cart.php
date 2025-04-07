@@ -275,6 +275,11 @@ $user_id = $_SESSION['user_id'];
                             <div class="card p-3 summary-card">
                                 <h4 class="text-center">SUMMARY</h4>
                                 <hr>
+                                <div id="empty-summary-message" class="empty-summary text-center text-muted py-3" style="display: none;">
+                                    <i class="fa-solid fa-cart-shopping fa-2x mb-2"></i>
+                                    <p class="mb-0">No items selected.</p>
+                                    <small>Select items from your cart to see the summary here.</small>
+                                </div>
                                 <div id="cart-summary-items">
                                     
                                 </div>
@@ -309,6 +314,13 @@ $user_id = $_SESSION['user_id'];
 
                     //clear all prev items first, if not will always append
                     $('#cart-summary-items').empty();
+
+                    if(totalSelected == 0) {
+                        $('#empty-summary-message').show();
+                    }
+                    else {
+                        $('#empty-summary-message').hide();
+                    }
                     
                     $('.checkout-selection:checked').each(function() {
                         let subtotal = $(this).closest('tr').find('td:nth-child(6)').text().replace('RM ', '').trim();
