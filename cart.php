@@ -306,6 +306,9 @@ $user_id = $_SESSION['user_id'];
                     let totalSelected = $('.checkout-selection:checked').length;
                     var selectedItems = $('.checkout-selection:checked');
                     let grandTotal = 0;
+
+                    //clear all prev items first, if not will always append
+                    $('#cart-summary-items').empty();
                     
                     $('.checkout-selection:checked').each(function() {
                         let subtotal = $(this).closest('tr').find('td:nth-child(6)').text().replace('RM ', '').trim();
