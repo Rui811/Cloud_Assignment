@@ -1,11 +1,6 @@
 <?php
-session_start();
-$_SESSION['user_id'] = "hdnj";
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-$user_id = $_SESSION['user_id'];
+include 'header.php';
+include 'function/checkout.php';
 ?>
 
 <!DOCTYPE html>
@@ -19,65 +14,27 @@ $user_id = $_SESSION['user_id'];
 
         <style>
             body {
-                background-image: url("image/cartBackground.png"); /* later change, so ugly, still confuse need header and footer or not */
-                /* background-size: cover; */
+                /* background-image: url("image/cartBackground.png"); */
             }
 
-            .back-home-btn {
+            .back-cart-btn {
                 text-decoration: none;
-                width: fit-content;
-                font-size: 16px;
+                font-size: 26px;
                 font-weight: bold;
-                padding-left: 10px;
-                color: #2D328F;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                cursor: pointer;
-                transition: 0.5s ease-in-out;
+                transition: 0.3s ease-in-out;
 
                 &:hover {
-                    transform: translateX(-4px);
-                    color:rgb(64, 68, 151);
+                    transform: translateX(-3.5px);
                 }
             }
 
-            .cart-container {
-                display: flex;
-                gap: 20px;
-                flex-wrap: wrap;
-            }
-
-            .cart-items {
-                flex: 1;
-                max-height: 500px;
-                overflow-y: auto;
-                padding-right: 10px;
-            }
-
-            .summary-card {
-                width: 100%;
-                position: sticky;
-                top: 10px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
-
-            .checkout-container {
-                background-color: white;
-                padding: 10px;
-                border-top: 1px solid #ddd;
-                margin-top: auto;
-            }
-
-            .checkoutBtn {
+            .proceedBtn {
                 background-color: #28a745;
                 color: rgb(232, 232, 232);
                 font-size: 18px;
-                padding: 12px 20px;
-                width: 100%;
                 border: none;
+                padding: 8px;
+                width: 100%;
                 border-radius: 5px;
                 transition: 0.3s ease;
 
@@ -87,176 +44,132 @@ $user_id = $_SESSION['user_id'];
                 }
             }
 
-            @media (max-width: 768px) {
-                .cart-container {
-                    flex-direction: column;
-                }
-                .cart-items {
-                    max-height: none;
-                    overflow-x: auto;
-                }
-            }
-
-            @media (min-width: 768px) {
-                .summary-card {
-                    min-height: 500px;
-                }
-            }
-
-            .empty-cart {
-                text-align: center;
-                font-size: 20px;
-                color: gray;
-                font-style: italic;
-                padding: 20px;
-            }
-
-            .checkout-selection, .checkout-selection-all {
-                transform: scale(1.5);
-                transition: 0.3s ease;
-            }
-
-            .quantity-container {
+            footer {
+                font-family: 'Poppins', sans-serif;
+                position: absolute;
+                font-size: 14px;
+                color: #666;
                 display: flex;
-                align-items: center;
-                gap: 5px;
+                justify-content: center;
+                width: 100%;
+                margin-top: 10px;
+                padding: 10px;
             }
-
-            .quantity-btn {
-                background-color: #2D328F;
-                width: 35px;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                font-size: 16px;
-                cursor: pointer;
-                transition: 0.3s ease-in-out;
-                border-radius: 5px;
-
-                &:hover {
-                    background-color: #1a1e6b;
-                }
-            }
-
-            .quantity-input {
-                width: 50px;
-                text-align: center;
-                font-size: 16px;
-                padding: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }
-
-            .remove-item {
-                border: none;
-                background-color: transparent;
-            }
-
         </style>
     </head>
     <body>
-        <div class="container mt-5">
-            <a class="back-home-btn" href="homepage.php">
-                <i class="fa-solid fa-chevron-left"></i> Back To Home
-            </a>
+        <div class="container mt-4">
+            <!-- <h2 class="text-center">Confirm Order</h2> -->
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="back-cart-btn ms-2" href="cart.php" title="back to cart">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+
+                <h2 class="text-center mx-auto m-0">Confirm Order</h2>
+
+                <div style="width: 16px;"></div>
+            </div>
 
             <div class="card shadow mt-3">
+                <!-- <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a class="back-cart-btn" href="cart.php">
+                            <i class="fa-solid fa-chevron-left"></i> Back to Cart
+                        </a>
+
+                        <h2 class="text-center mx-auto m-0">Confirm Order</h2>
+
+                        <div style="width: 130px;"></div>
+                    </div>
+                </div> -->
+
                 <div class="card-body">
-                    <div class="cart-container">
-                        <!-- Cart Items (Fetched using AJAX) -->
-                        <div class="cart-items">
+                    <h4 class="">Order Details</h4>
+                    <div class="order-container">
+                        <div class="order-items">
                             <table class="table mb-4">
                                 <thead style="background-color: #2D328F; color: white;">
                                     <tr>
-                                        <th width="2%">
-                                            <input type="checkbox" name="" class="checkout-selection-all" id="" />
-                                        </th>
+                                        <th width="2%">No.</th>
                                         <th width="40%" colspan="2">Item</th>
                                         <th width="9%">Price</th>
                                         <th width="9%">Quantity</th>
                                         <th width="9%">Subtotal</th>
-                                        <th width="9%" style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="cart-body">
-                                    <!-- Items will be loaded here via AJAX -->
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
-                                        </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>RM 50.00</td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
-                                        </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>RM 50.00</td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody id="order-body">
+                                    <?php
+                                    foreach ($selectedItems as $index => $itemId) {
+                                        echo '
+                                        <tr>
+                                            <td>'. ($index + 1) .'</td>
+                                            <td width="15%"><img src="image/flower1.png" width="100"></td>
+                                            <td width="25%">'.$names[$index].'</td>
+                                            <td>RM '.$prices[$index].'</td>
+                                            <td>'.$quantities[$index].'</td>
+                                            <td>RM '.$subtotals[$index].'</td>
+                                        </tr>
+                                        ';
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
-                            <div id="empty-cart-message" class="empty-cart" style="display: none;">
-                                Nothing here.
-                            </div>
-                        </div>
-
-                        <!-- Summary (Sticky) -->
-                        <div class="col-md-4">
-                            <div class="card p-3 summary-card">
-                                <h4 class="text-center">SUMMARY</h4>
-                                <hr>
-                                <div id="cart-summary">
-                                    <!-- <h5>Total Selected Items: <span id="total-selected">0</span></h5> -->
-                                    <h5>Grand Total: RM <span id="grand-total">0.00</span></h5>
-                                </div>
-                                <hr>
-                                <div class="checkout-container">
-                                    <form method="post" action="checkout.php">
-                                        <button type="submit" name="checkout" class="btn checkoutBtn">
-                                            <i class="fa-solid fa-check"></i> Checkout (<span id="total-selected">0 items</span>)
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
                         </div>
                     </div>  
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h4>Payment Method</h4>
+
+                    <div class="payment-container row mt-3">
+                        <div class="col-6 border-end border-2">
+                            <input type="radio" name="paymentMethod" value="card" checked /> Credit/Debit Card
+
+                            <div class="card-field mt-3 px-2">
+                                <label for="cardHolder">Card holder: </label>
+                                <div class="input-group has-validation mt-1 mb-2">
+                                    <span class="input-group-text px-4" style="font-size: 20px;">
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
+                                    <div class="form-floating <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>">
+                                        <input type="text" class="form-control <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>" id="cardHolder" placeholder="Card Holder Name" required>
+                                        <label for="cardHolder">Card Holder Name</label>
+                                    </div>
+                                    <div class="invalid-feedback">...</div>
+                                </div>
+
+                                <label for="cardNum">Card number: </label>
+                                <div class="input-group has-validation mt-1 mb-2">
+                                    <span class="input-group-text px-4" style="font-size: 20px;">
+                                        <i class="fa-solid fa-credit-card"></i>
+                                    </span>
+                                    <div class="form-floating <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>">
+                                        <input type="text" class="form-control <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>" id="cardNum" placeholder="Card Number" required>
+                                        <label for="cardNum">Card Number</label>
+                                    </div>
+                                    <div class="invalid-feedback">...</div>
+                                </div>
+
+                                <label for="expiryDate">Expiry date: </label>
+
+                                <label for="cvc">CVC: </label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" name="paymentMethod" value="TouchNGo" /> TouchNGo
+                            
+                            <div class="TouchNGo-field mt-2">
+                                <label for="phoneNum">Phone Number: </label>
+                                <input type="tel" name="" id="" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="" class="proceedBtn">Proceed</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -264,92 +177,11 @@ $user_id = $_SESSION['user_id'];
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            $(document).ready(function() {
-                function updateCheckoutSelection() {
-                    let totalSelected = $('.checkout-selection:checked').length;
-                    let grandTotal = 0;
-                    
-                    $('.checkout-selection:checked').each(function() {
-                        let subtotal = $(this).closest('tr').find('td:nth-child(6)').text().replace('RM ', '').trim();
-                        grandTotal += parseFloat(subtotal);
-                    });
-
-                    $('#total-selected').text(totalSelected + ' items');
-                    $('#grand-total').text(grandTotal.toFixed(2));
-                }
-
-                //quantity input field
-                $(document).on('click', '.quantity-input', function() {
-                    let inputField = $(this);
-                    let id = $(this).closest('.quantity-container').find('.update-qty').data("id");
-
-                    Swal.fire({
-                        title: "Enter Quantity",
-                        text: "Stock available : ",
-                        icon: "info",
-                        input: "number",
-                        inputAttributes: {
-                            min: 1,
-                            step: 1
-                        },
-                        inputValue: inputField.val(),
-                        showCancelButton: true,
-                        confirmButtonText: "Update",
-                        cancelButtonText: "Cancel",
-                        preConfirm: (value) => {
-                            if (!value || value < 1) {
-                                Swal.showValidationMessage("Please enter a valid quantity (1 or more)");
-                            }
-                            return value;
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            let value = result.value;
-
-                            inputField.val(value);
-                        }
-                    });
-                });
-
-                //update quantity (-) and (+)
-                $(document).on('click', '.update-qty', function() {
-                    let id = $(this).data("id");
-                    let action = $(this).data("action");
-
-                });
-
-                //remove item (trash icon)
-                $(document).on('click', '.remove-item', function() {
-                    let id = $(this).data("id");
-
-                    Swal.fire({
-                        title: "Remove Item?",
-                        text: "Are you sure you want to remove this item from the cart?",
-                        icon: "warning",
-                        confirmButtonText: "Yes",
-                        confirmButtonColor: "Green",
-                        showCancelButton: true,
-                        cancelButtonColor: "Crimson",
-                        cancelButtonText: "No"
-                    }).then((result) => {
-                        if(result.isConfirmed) {
-                            
-                        }
-                    });
-                });
-
-                //checkout selection (checkbox)
-                $(document).on('change', '.checkout-selection', function() {
-                    updateCheckoutSelection();
-                });
-
-                //checkout selection ALL (checkbox)
-                $(document).on('change', '.checkout-selection-all', function() {
-                    let isChecked = $(this).prop('checked'); //check is checked(true) or unchecked(false)
-                    $('.checkout-selection').prop('checked', isChecked);
-                    updateCheckoutSelection();
-                });
-            });
+            
         </script>
+
+        <footer>
+            &copy; 2025 Chapalang Graduation Gifts | Made with ❤️
+        </footer>
     </body>
 </html>
