@@ -197,100 +197,66 @@ $user_id = $_SESSION['user_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
-                                    <tr>
+                                    <tr class="cart-item-row">
                                         <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
+                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
                                         </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
+                                        <td width="15%">
+                                            <img src="image/flower1.png" width="100">
+                                        </td>
+                                        <td width="25%">
+                                            <input type="hidden" name="item_names[]" value="Rosie Red Mini">Rosie Red Mini
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="item_prices[]" value="50.00">RM 50.00
+                                        </td>
                                         <td>
                                             <div class="quantity-container">
                                                 <button class="quantity-btn update-qty" data-id="" data-action="decrease">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
+                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
                                                 <button class="quantity-btn update-qty" data-id="" data-action="increase">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td>RM 50.00</td>
+                                        <td>
+                                            <input type="hidden" name="item_subtotals[]" value="50.00">RM 50.00
+                                        </td>
                                         <td style="text-align: center;">
                                             <button class="remove-item" data-id="">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr class="cart-item-row">
                                         <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
+                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
                                         </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
+                                        <td width="15%">
+                                            <img src="image/flower1.png" width="100">
+                                        </td>
+                                        <td width="25%">
+                                            <input type="hidden" name="item_names[]" value="Rosie">Rosie
+                                        </td>
                                         <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
+                                            <input type="hidden" name="item_prices[]" value="40.00">RM 40.00
                                         </td>
-                                        <td>RM 50.00</td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
-                                        </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
                                         <td>
                                             <div class="quantity-container">
                                                 <button class="quantity-btn update-qty" data-id="" data-action="decrease">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
+                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
                                                 <button class="quantity-btn update-qty" data-id="" data-action="increase">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td>RM 50.00</td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td>
-                                            <input type="checkbox" name="" class="checkout-selection" id="" />
+                                            <input type="hidden" name="item_subtotals[]" value="40.00">RM 40.00
                                         </td>
-                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                        <td width="25%">name</td>
-                                        <td>RM 50.00</td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>RM 50.00</td>
                                         <td style="text-align: center;">
                                             <button class="remove-item" data-id="">
                                                 <i class="fa-solid fa-trash-can"></i>
@@ -309,7 +275,7 @@ $user_id = $_SESSION['user_id'];
                             <div class="card p-3 summary-card">
                                 <h4 class="text-center">SUMMARY</h4>
                                 <hr>
-                                <div class="cart-summary-items">
+                                <div id="cart-summary-items">
                                     
                                 </div>
                                 <hr>
@@ -319,7 +285,7 @@ $user_id = $_SESSION['user_id'];
                                 </div>
                                 
                                 <div class="checkout-container">
-                                    <form method="post" action="checkout.php">
+                                    <form method="post" action="checkout.php" id="checkout-form">
                                         <button type="submit" name="checkout" class="btn checkoutBtn">
                                             <i class="fa-solid fa-check"></i> Checkout (<span id="total-selected">0 items</span>)
                                         </button>
@@ -338,6 +304,7 @@ $user_id = $_SESSION['user_id'];
             $(document).ready(function() {
                 function updateCheckoutSelection() {
                     let totalSelected = $('.checkout-selection:checked').length;
+                    var selectedItems = $('.checkout-selection:checked');
                     let grandTotal = 0;
                     
                     $('.checkout-selection:checked').each(function() {
@@ -345,9 +312,22 @@ $user_id = $_SESSION['user_id'];
                         grandTotal += parseFloat(subtotal);
                     });
 
+                    selectedItems.each(function(index) {
+                        var $row = $(this).closest('.cart-item-row');
+
+                        var name = $row.find("input[name='item_names[]']").val();
+                        var quantity = $row.find("input[name='item_quantities[]']").val();
+
+                        //if quantities updated, the summary quantity not updated
+                        $('#cart-summary-items').append('<div class="d-flex justify-content-between"><span>' + name + '</span><span>x' + quantity + '</span></div>');
+                    });
+
                     $('#total-selected').text(totalSelected + ' items');
                     $('#grand-total').text(grandTotal.toFixed(2));
                 }
+
+                //initial the grand total amount
+                updateCheckoutSelection();
 
                 //quantity input field
                 $(document).on('click', '.quantity-input', function() {
@@ -427,6 +407,45 @@ $user_id = $_SESSION['user_id'];
                     $('.checkout-selection').prop('checked', isChecked);
                     updateCheckoutSelection();
                 });
+            });
+
+            $("#checkout-form").on('submit', function(e) {
+                e.preventDefault();
+
+                var $form = $(this);
+                var selectedItems = $('.checkout-selection:checked');
+
+                if(selectedItems.length === 0) {
+                    Swal.fire({
+                        title: "None Items Selected",
+                        text: "Please select at least one item to checkout.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "Green"
+                    });
+                    
+                    return;
+                }
+
+                // $form.empty();
+
+                selectedItems.each(function(index) {
+                    var $row = $(this).closest('.cart-item-row');
+
+                    var itemId = $(this).val();
+                    var name = $row.find("input[name='item_names[]']").val();
+                    var price = $row.find("input[name='item_prices[]']").val();
+                    var quantity = $row.find("input[name='item_quantities[]']").val();
+                    var subtotal = $row.find("input[name='item_subtotals[]']").val();
+
+                    $form.append('<input type="hidden" name="selected_items[]" value="' + itemId + '"/>');
+                    $form.append('<input type="hidden" name="item_names[]" value="' + name + '"/>');
+                    $form.append('<input type="hidden" name="item_prices[]" value="' + price + '"/>');
+                    $form.append('<input type="hidden" name="item_quantities[]" value="' + quantity + '"/>');
+                    $form.append('<input type="hidden" name="item_subtotals[]" value="' + subtotal + '"/>');
+                });
+
+                $form.off('submit').submit();
             });
         </script>
         
