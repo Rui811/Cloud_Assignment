@@ -49,7 +49,6 @@
             border-bottom: 1px solid #dee2e6;
         }
 
-
         .page-content {
             display: none;
         }
@@ -81,7 +80,7 @@
                     </li>
                 </ul>
                 <div class="mt-auto">
-                    <a href="#" class="nav-link profile" data-bs-toggle="modal" data-bs-target="#accountSettingModal">
+                    <a href="#" class="profile" data-bs-toggle="modal" data-bs-target="#accountSettingModal">
                         <i class="bi bi-gear-fill me-2"></i> Account Setting
                     </a>
                     
@@ -254,13 +253,6 @@
     $(document).ready(function () {
         $('#orderTable').DataTable();
     });
-
-    //open modal
-    //!!!!!!!!!!!!!!boleh show modal, other x boleh function
-    //tetapi delete code show modal, other boleh function ===.==== 
-    // document.getElementById('accountSettingBtn').addEventListener('click', function () {
-    //     modal.show();
-    // });
 
     //save changes at account settings
     document.getElementById('accountSettingsForm').addEventListener('submit', function(e) {
