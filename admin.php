@@ -7,6 +7,7 @@
     <title>Admin | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" >
 
     <style>
         body {
@@ -147,7 +148,43 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="container mt-4">Hi,Order</div>
+                    <div class="container mt-4">
+                    <h4 class="mb-3">Order List</h4>
+                        <div class="table-responsive">
+                            <table id="orderTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer ID</th>
+                                        <th>Order Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Order Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Example rows -->
+                                    <tr>
+                                        <td>ORD001</td>
+                                        <td>CUST123(Ali)</td>
+                                        <td>2025-04-08</td>
+                                        <td>RM 299.99</td>
+                                        <td>Completed</td>
+                                        <td></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>orderID</td>
+                                        <td>customerID(customerName)</td>
+                                        <td>orderDate</td>
+                                        <td>totalAmount</td>
+                                        <td>orderStatus</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="productPage" class="page-content">
@@ -195,8 +232,16 @@
     </div>
 
     <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+
     <script>
+        $(document).ready(function () {
+            $('#orderTable').DataTable();
+        });
 
         // targetParge will be active if onclick
         document.querySelectorAll('.nav-link').forEach(link => {
