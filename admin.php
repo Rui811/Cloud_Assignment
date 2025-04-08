@@ -34,7 +34,7 @@
             color: #fff;
         }
 
-        a.logOutAlert:hover {
+        a.logOutAlert:hover, a.profile:hover {
             background-color: #dc3545;
             color: #fff;
         }
@@ -49,9 +49,6 @@
             border-bottom: 1px solid #dee2e6;
         }
 
-        .dropdown-menu {
-            min-width: 200px;
-        }
 
         .page-content {
             display: none;
@@ -82,10 +79,15 @@
                     <li><a href="#" class="nav-link" data-target="userPage">
                         <i class="bi bi-person-circle me-2"></i>Customers</a>
                     </li>
-                    <li>
-                    </li>
                 </ul>
-                <a href="#" class="logOutAlert mt-auto"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
+                <div class="mt-auto">
+                    <a href="#" class="nav-link profile" data-bs-toggle="modal" data-bs-target="#accountSettingModal">
+                        <i class="bi bi-gear-fill me-2"></i> Account Setting
+                    </a>
+                    
+                    <a href="#" class="logOutAlert mt-auto" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
+                </div>
+                
             </div>
 
             <!-- Main Content -->
@@ -93,18 +95,12 @@
                 <div id="homePage" class="page-content active">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Dashboard</h2>
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
-                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
-                                    style="width: 40px; height: 40px;">
-                                    <i class="bi bi-person-fill text-white"></i>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#">View Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
-                            </ul>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <span class="fw-semibold">AliAbuAkau</span>
+                            <!-- ?= $_SESSION['adminName'];  -->
                         </div>
                     </div>
                     <div class="container mt-4">
@@ -134,18 +130,11 @@
                 <div id="orderPage" class="page-content">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Order</h2>
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
-                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
-                                    style="width: 40px; height: 40px;">
-                                    <i class="bi bi-person-fill text-white"></i>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#">View Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
-                            </ul>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <span class="fw-semibold">AliAbuAkau</span>
                         </div>
                     </div>
                     <div class="container mt-4">
@@ -190,18 +179,11 @@
                 <div id="productPage" class="page-content">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Product</h2>
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
-                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
-                                    style="width: 40px; height: 40px;">
-                                    <i class="bi bi-person-fill text-white"></i>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#">View Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
-                            </ul>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <span class="fw-semibold">AliAbuAkau</span>
                         </div>
                     </div>
                     <div class="container mt-4">Hi,Product</div>
@@ -210,23 +192,52 @@
                 <div id="userPage" class="page-content">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Customer</h2>
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
-                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
-                                    style="width: 40px; height: 40px;">
-                                    <i class="bi bi-person-fill text-white"></i>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#">View Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
-                            </ul>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <span class="fw-semibold">AliAbuAkau</span>
                         </div>
                     </div>
                     <div class="container mt-4">Hi,Customer</div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+    
+    <!-- Account Setting Modal -->
+    <div class="modal fade" id="accountSettingModal" tabindex="-1" aria-labelledby="accountSettingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="accountSettingModalLabel">Account Settings</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <form id="accountSettingsForm">
+                        <div class="mb-3">
+                            <label for="adminName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="adminName" value="AliAbuAkau">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="adminEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="adminEmail" value="admin@example.com">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter new password">
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="accountSettingsForm" class="btn btn-primary">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -236,32 +247,66 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
-
     <script>
-        $(document).ready(function () {
-            $('#orderTable').DataTable();
-        });
+    $(document).ready(function () {
+        $('#orderTable').DataTable();
+    });
 
-        // targetParge will be active if onclick
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
+    //open modal
+    //!!!!!!!!!!!!!!boleh show modal, other x boleh function
+    //tetapi delete code show modal, other boleh function ===.==== 
+    // document.getElementById('accountSettingBtn').addEventListener('click', function () {
+    //     modal.show();
+    // });
 
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                this.classList.add('active');
+    //save changes at account settings
+    document.getElementById('accountSettingsForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        Swal.fire('Saved!', 'Your settings have been updated.', 'success');
+    });
 
-                const targetId = this.getAttribute('data-target');
+    // targetParge will be active if onclick
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
 
-                document.querySelectorAll('.page-content').forEach(page => {
-                    page.classList.remove('active');
-                });
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
 
-                const targetPage = document.getElementById(targetId);
-                if (targetPage) targetPage.classList.add('active');
+            const targetId = this.getAttribute('data-target');
+
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
             });
+
+            const targetPage = document.getElementById(targetId);
+            if (targetPage) targetPage.classList.add('active');
         });
+    });
+
+    //log out button
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Are you sure you want to \n log out?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'admin_login.php';
+            }
+        });
+    });
     </script>
 </body>
 
 </html>
+
