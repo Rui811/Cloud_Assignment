@@ -33,7 +33,6 @@
             color: #fff;
         }
 
-        /* need to fix the bug  --> when hover,the size will change  */
         a.logOutAlert:hover {
             background-color: #dc3545;
             color: #fff;
@@ -67,19 +66,25 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Side Navigation Bar -->
-            <div class="col-md-2 sidebar p-3">
+            <div class="col-md-2 sidebar p-3 d-flex flex-column">
                 <h4 class="fw-bold mb-4">CHAPALANG ADMIN</h4>
                 <ul class="navbar-nav">
-                    <li><a href="#" class="nav-link active" data-target="homePage"><i
-                                class="bi bi-house-door-fill me-2"></i> Dashboard</a></li>
-                    <li><a href="#" class="nav-link" data-target="orderPage"><i class="bi bi-table me-2"></i> Order</a>
+                    <li><a href="#" class="nav-link active" data-target="homePage">
+                        <i class="bi bi-house-door-fill me-2"></i> Dashboard</a>
                     </li>
-                    <li><a href="#" class="nav-link" data-target="productPage"><i class="bi bi-grid me-2"></i>
-                            Product</a></li>
-                    <li><a href="#" class="nav-link" data-target="userPage"><i class="bi bi-person-circle me-2"></i>
-                            Customers</a></li>
-                    <li><a href="#" class="logOutAlert position-absolute bottom-0"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
+                    <li><a href="#" class="nav-link" data-target="orderPage">
+                        <i class="bi bi-table me-2"></i> Order</a>
+                    </li>
+                    <li><a href="#" class="nav-link" data-target="productPage">
+                        <i class="bi bi-grid me-2"></i>Product</a>
+                    </li>
+                    <li><a href="#" class="nav-link" data-target="userPage">
+                        <i class="bi bi-person-circle me-2"></i>Customers</a>
+                    </li>
+                    <li>
+                    </li>
                 </ul>
+                <a href="#" class="logOutAlert mt-auto"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
             </div>
 
             <!-- Main Content -->
