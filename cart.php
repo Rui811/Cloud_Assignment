@@ -189,9 +189,9 @@ $user_id = $_SESSION['user_id'];
                                             <input type="checkbox" name="" class="checkout-selection-all" id="" />
                                         </th>
                                         <th width="40%" colspan="2">Item</th>
-                                        <th width="9%">Price</th>
+                                        <th width="12%">Price</th>
                                         <th width="9%">Quantity</th>
-                                        <th width="9%">Subtotal</th>
+                                        <th width="12%">Subtotal</th>
                                         <th width="9%" style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>

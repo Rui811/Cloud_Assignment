@@ -37,7 +37,7 @@ if ($action == "increase") {
     }
 }
 else if ($action == "decrease") {
-    $sql = "UPDATE Cart SET quantity = quantity - 1 WHERE cart_id = ?";
+    $sql = "UPDATE Cart SET quantity = GREATEST(quantity - 1, 1) WHERE cart_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 
