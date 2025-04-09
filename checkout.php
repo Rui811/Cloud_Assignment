@@ -14,7 +14,7 @@ include 'function/checkout.php';
 
         <style>
             body {
-                /* background-image: url("image/cartBackground.png"); */
+                background-image: url("image/checkout_background.png");
             }
 
             .back-cart-btn {
@@ -28,7 +28,11 @@ include 'function/checkout.php';
                 }
             }
 
-            .proceedBtn {
+            .paymentMethod {
+                font-size: 18px;
+            }
+
+            #proceedBtn {
                 background-color: #28a745;
                 color: rgb(232, 232, 232);
                 font-size: 18px;
@@ -88,7 +92,7 @@ include 'function/checkout.php';
                     <div class="order-container">
                         <div class="order-items">
                             <table class="table mb-4">
-                                <thead style="background-color: #2D328F; color: white;">
+                                <thead class="table-active">
                                     <tr>
                                         <th width="2%">No.</th>
                                         <th width="40%" colspan="2">Item</th>
@@ -113,6 +117,12 @@ include 'function/checkout.php';
                                     }
                                     ?>
                                 </tbody>
+                                <tfoot id="order-footer">
+                                    <tr>
+                                        <td colspan="5" class="text-end fw-bold py-3 pe-5">Grand Total (RM)</td>
+                                        <td><?= $grandTotal ?></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>  
@@ -120,63 +130,163 @@ include 'function/checkout.php';
             </div>
 
             <div class="card shadow mt-4">
-                <div class="card-body">
-                    <h4>Payment Method</h4>
+                <form action="" id="paymentMethod_form">
+                    <div class="card-body">
+                        <h4>Payment Method</h4>
 
-                    <div class="payment-container row mt-3">
-                        <div class="col-6 border-end border-2">
-                            <input type="radio" name="paymentMethod" value="card" checked /> Credit/Debit Card
+                        <div class="payment-container row mt-3 p-3">
+                            <div class="col-6 border-end border-2">
+                                <input type="radio" name="paymentMethod" id="card" value="card" checked /> <label for="card" class="paymentMethod">Credit/Debit Card</label>
 
-                            <div class="card-field mt-3 px-2">
-                                <label for="cardHolder">Card holder: </label>
-                                <div class="input-group has-validation mt-1 mb-2">
-                                    <span class="input-group-text px-4" style="font-size: 20px;">
-                                        <i class="fa-solid fa-user"></i>
-                                    </span>
-                                    <div class="form-floating <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>">
-                                        <input type="text" class="form-control <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>" id="cardHolder" placeholder="Card Holder Name" required>
-                                        <label for="cardHolder">Card Holder Name</label>
+                                <div id="card-field" class="mt-3 px-2 row">
+                                    <label for="cardHolder">Card holder: </label>
+                                    <div class="input-group has-validation mt-1 mb-2">
+                                        <span class="input-group-text px-4" style="font-size: 20px;">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
+                                        <div class="form-floating <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>">
+                                            <input type="text" value="<?= isset($cardHolder) ? $cardHolder : '' ?>" class="form-control <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>" id="cardHolder" placeholder="Card Holder Name" required />
+                                            <label for="cardHolder">Card Holder Name</label>
+                                        </div>
+                                        <div class="invalid-feedback"><?= isset($error['cardHolder']) ? $error['cardHolder'] : '' ?></div>
                                     </div>
-                                    <div class="invalid-feedback">...</div>
-                                </div>
 
-                                <label for="cardNum">Card number: </label>
-                                <div class="input-group has-validation mt-1 mb-2">
-                                    <span class="input-group-text px-4" style="font-size: 20px;">
-                                        <i class="fa-solid fa-credit-card"></i>
-                                    </span>
-                                    <div class="form-floating <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>">
-                                        <input type="text" class="form-control <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>" id="cardNum" placeholder="Card Number" required>
-                                        <label for="cardNum">Card Number</label>
+                                    <label for="cardNum">Card number: </label>
+                                    <div class="input-group has-validation mt-1 mb-2">
+                                        <span class="input-group-text px-4" style="font-size: 20px;">
+                                            <i class="fa-solid fa-credit-card"></i>
+                                        </span>
+                                        <div class="form-floating <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>">
+                                            <input type="text" value="<?= isset($cardNum) ? $cardNum : '' ?>" class="form-control <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>" id="cardNum" placeholder="Card Number" required />
+                                            <label for="cardNum">Card Number</label>
+                                        </div>
+                                        <div class="invalid-feedback"><?= isset($error['cardNum']) ? $error['cardNum'] : '' ?></div>
                                     </div>
-                                    <div class="invalid-feedback">...</div>
+
+                                    <div class="col-6">
+                                        <label for="expiryDate">Expiry date: </label>
+                                        <div class="input-group has-validation mt-1 mb-2">
+                                            <span class="input-group-text px-4" style="font-size: 20px;">
+                                                <i class="fa-solid fa-calendar-days"></i>
+                                            </span>
+                                            <div class="form-floating <?= isset($error['expiryDate']) ? 'is-invalid' : '' ?>">
+                                                <input type="date" value="<?= isset($expiryDate) ? $expiryDate : '' ?>" class="form-control <?= isset($error['expiryDate']) ? 'is-invalid' : '' ?>" id="expiryDate" placeholder="Expiry Date" required />
+                                                <label for="expiryDate">Expiry Date</label>
+                                            </div>
+                                            <div class="invalid-feedback"><?= isset($error['expiryDate']) ? $error['expiryDate'] : '' ?></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="cvc">CVC: </label>
+                                        <div class="input-group has-validation mt-1 mb-2">
+                                            <span class="input-group-text px-4" style="font-size: 20px;">
+                                                <i class="fa-solid fa-lock"></i>
+                                            </span>
+                                            <div class="form-floating <?= isset($error['cvc']) ? 'is-invalid' : '' ?>">
+                                                <input type="text" value="<?= isset($cvc) ? $cvc : '' ?>" class="form-control <?= isset($error['cvc']) ? 'is-invalid' : '' ?>" id="cvc" placeholder="CVC" required />
+                                                <label for="cvc">000</label>
+                                            </div>
+                                            <div class="invalid-feedback"><?= isset($error['cvc']) ? $error['cvc'] : '' ?></div>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <label for="expiryDate">Expiry date: </label>
-
-                                <label for="cvc">CVC: </label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" name="paymentMethod" id="TouchNGo" value="TouchNGo" /> <label for="TouchNGo" class="paymentMethod">TouchNGo</label>
+                                
+                                <div id="TouchNGo-field" class="mt-3 px-2">
+                                    <label for="phoneNum">Phone Number: </label>
+                                    <div class="input-group has-validation mt-1 mb-2">
+                                        <span class="input-group-text px-4" style="font-size: 20px;">
+                                            <i class="fa-solid fa-phone"></i>
+                                        </span>
+                                        <div class="form-floating <?= isset($error['phoneNum']) ? 'is-invalid' : '' ?>">
+                                            <input type="text" value="<?= isset($phoneNum) ? $phoneNum : '' ?>" class="form-control <?= isset($error['phoneNum']) ? 'is-invalid' : '' ?>" id="phoneNum" placeholder="Phone Number" required />
+                                            <label for="phoneNum">012-3456789</label>
+                                        </div>
+                                        <div class="invalid-feedback"><?= isset($error['phoneNum']) ? $error['phoneNum'] : '' ?></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <input type="radio" name="paymentMethod" value="TouchNGo" /> TouchNGo
-                            
-                            <div class="TouchNGo-field mt-2">
-                                <label for="phoneNum">Phone Number: </label>
-                                <input type="tel" name="" id="" />
-                            </div>
+
+                        <div class="mt-5">
+                            <button type="button" id="proceedBtn">Proceed</button>
                         </div>
                     </div>
-
-                    <div class="mt-3">
-                        <button type="" class="proceedBtn">Proceed</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            $(document).ready(function() {
+                function updatePaymentMethod() {
+                    let paymentMethod = $('input[name="paymentMethod"]:checked').val();
+
+                    if(paymentMethod === 'card') {
+                        $('#card-field input').prop('disabled', false);
+                        $('#TouchNGo-field input').prop('disabled', true);
+                    }
+                    else {
+                        $('#card-field input').prop('disabled', true);
+                        $('#TouchNGo-field input').prop('disabled', false);
+                    }
+                }
+
+                function validateForm() {
+                    let isValid = true;
+                    $('.form-control').removeClass('is-invalid');
+
+                    let paymentMethod = $('input[name="paymentMethod"]:checked').val();
+
+                    if(paymentMethod === 'card') {
+                        let cardHolder = $('#cardHolder').val().trim();
+                        let cardNum = $('#cardNum').val().trim();
+                        let expiryDate = $('#expiryDate').val().trim();
+                        let cvc = $('#cvc').val().trim();
+
+                        if (!cardHolder) {
+                            $('#cardHolder').addClass('is-invalid');
+                            <?php $error['cardHolder'] = "Invalid card holder name"; ?>
+                            isValid = false;
+                        }
+
+                        if (!cardNum.match(/^\d{16}$/)) {
+                            $('#cardNum').addClass('is-invalid');
+                            isValid = false;
+                        }
+                    }
+
+                    return isValid;
+                }
+
+                //initiate the payment method
+                updatePaymentMethod();
+
+                $('input[name="paymentMethod"]').on('change', function() {
+                    updatePaymentMethod();
+                });
+
+                $('#proceedBtn').on('click', function() {
+                    if (!validateForm()) {
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: "Order Confirmation",
+                        text: "Are you sure to make payment and proceed the order?",
+                        icon: "info",
+                        confirmButtonColor: "Green",
+                        confirmButtonText: "Confirm",
+                        showCancelButton: true,
+                        cancelButtonColor: "Crimson",
+                        cancelButtonText: "Cancel"
+                    });
+                });
+            });
             
         </script>
 

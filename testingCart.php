@@ -1,6 +1,4 @@
 <?php
-include 'header.php';
-
 session_start();
 $_SESSION['user_id'] = "hdnj";
 if (!isset($_SESSION['user_id'])) {
@@ -21,19 +19,17 @@ $user_id = $_SESSION['user_id'];
 
         <style>
             body {
-                background-image: url("image/checkout_background.png"); /* later change, so ugly, still confuse need header and footer or not */
+                background-image: url("image/cartBackground.png"); /* later change, so ugly, still confuse need header and footer or not */
                 /* background-size: cover; */
-                height: 100vh;
-                margin: 0;
             }
 
             .back-home-btn {
                 text-decoration: none;
                 width: fit-content;
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: bold;
-                padding-left: 8px;
-                color:rgb(92, 96, 173);
+                padding-left: 10px;
+                color: #2D328F;
                 display: flex;
                 align-items: center;
                 gap: 5px;
@@ -156,30 +152,17 @@ $user_id = $_SESSION['user_id'];
                 background-color: transparent;
             }
 
-            footer {
-                font-family: 'Poppins', sans-serif;
-                position: absolute;
-                font-size: 14px;
-                color: #666;
-                display: flex;
-                justify-content: center;
-                width: 100%;
-                margin-top: 10px;
-                padding: 10px;
-            }
-
         </style>
     </head>
     <body>
-        <div class="container mt-4">
+        <div class="container mt-5">
+            <a class="back-home-btn" href="homepage.php">
+                <i class="fa-solid fa-chevron-left"></i> Back To Home
+            </a>
 
             <div class="card shadow mt-3">
                 <div class="card-body">
-                    <a class="back-home-btn" href="homepage.php" title="back to homepage">
-                        <i class="fa-solid fa-home"></i> Home
-                    </a>
-                    
-                    <div class="cart-container mt-3">
+                    <div class="cart-container">
                         <!-- Cart Items (Fetched using AJAX) -->
                         <div class="cart-items">
                             <table class="table mb-4">
@@ -197,66 +180,50 @@ $user_id = $_SESSION['user_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
-                                    <tr class="cart-item-row">
+                                    <tr>
                                         <td>
-                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
+                                            <input type="checkbox" name="" class="checkout-selection" id="" />
                                         </td>
-                                        <td width="15%">
-                                            <img src="image/flower1.png" width="100">
-                                        </td>
-                                        <td width="25%">
-                                            <input type="hidden" name="item_names[]" value="Rosie Red Mini">Rosie Red Mini
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_prices[]" value="50.00">RM 50.00
-                                        </td>
+                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
+                                        <td width="25%">name</td>
+                                        <td>RM 50.00</td>
                                         <td>
                                             <div class="quantity-container">
                                                 <button class="quantity-btn update-qty" data-id="" data-action="decrease">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
-                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
+                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
                                                 <button class="quantity-btn update-qty" data-id="" data-action="increase">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td>
-                                            <input type="hidden" name="item_subtotals[]" value="50.00">RM 50.00
-                                        </td>
+                                        <td>RM 50.00</td>
                                         <td style="text-align: center;">
                                             <button class="remove-item" data-id="">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr class="cart-item-row">
+                                    <tr>
                                         <td>
-                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
+                                            <input type="checkbox" name="" class="checkout-selection" id="" />
                                         </td>
-                                        <td width="15%">
-                                            <img src="image/flower1.png" width="100">
-                                        </td>
-                                        <td width="25%">
-                                            <input type="hidden" name="item_names[]" value="Rosie">Rosie
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_prices[]" value="40.00">RM 40.00
-                                        </td>
+                                        <td width="15%"><img src="image/flower1.png" width="100"></td>
+                                        <td width="25%">name</td>
+                                        <td>RM 50.00</td>
                                         <td>
                                             <div class="quantity-container">
                                                 <button class="quantity-btn update-qty" data-id="" data-action="decrease">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
-                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
+                                                <input type="text" class="quantity-input" value="1" min="1" readonly>
                                                 <button class="quantity-btn update-qty" data-id="" data-action="increase">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td>
-                                            <input type="hidden" name="item_subtotals[]" value="40.00">RM 40.00
-                                        </td>
+                                        <td>RM 50.00</td>
                                         <td style="text-align: center;">
                                             <button class="remove-item" data-id="">
                                                 <i class="fa-solid fa-trash-can"></i>
@@ -275,22 +242,13 @@ $user_id = $_SESSION['user_id'];
                             <div class="card p-3 summary-card">
                                 <h4 class="text-center">SUMMARY</h4>
                                 <hr>
-                                <div id="empty-summary-message" class="empty-summary text-center text-muted py-3" style="display: none;">
-                                    <i class="fa-solid fa-cart-shopping fa-2x mb-2"></i>
-                                    <p class="mb-0">No items selected.</p>
-                                    <small>Select items from your cart to see the summary here.</small>
-                                </div>
-                                <div id="cart-summary-items">
-                                    
-                                </div>
-                                <hr>
                                 <div id="cart-summary">
                                     <!-- <h5>Total Selected Items: <span id="total-selected">0</span></h5> -->
                                     <h5>Grand Total: RM <span id="grand-total">0.00</span></h5>
                                 </div>
-                                
+                                <hr>
                                 <div class="checkout-container">
-                                    <form method="post" action="checkout.php" id="checkout-form">
+                                    <form method="post">
                                         <button type="submit" name="checkout" class="btn checkoutBtn">
                                             <i class="fa-solid fa-check"></i> Checkout (<span id="total-selected">0 items</span>)
                                         </button>
@@ -307,42 +265,74 @@ $user_id = $_SESSION['user_id'];
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             $(document).ready(function() {
+                loadCart();
+
+                function loadCart() {
+                    $.ajax({
+                        url: 'fetch_cart.php',
+                        type: 'GET',
+                        success: function(data) {
+                            let cartData = JSON.parse(data);
+                            let items = "";
+                            let total = 0;
+
+                            if (cartData.length === 0) {
+                                $("#cart-body").html("");
+                                $("#empty-cart-message").show();
+                            } else {
+                                $("#empty-cart-message").hide();
+                                cartData.forEach(item => {
+                                    let subtotal = item.price * item.quantity;
+                                    // total += subtotal;
+
+                                    items += `
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="" class="checkout-selection" id="" />
+                                            </td>
+                                            <td width="15%"><img src="${item.image}" width="100"></td>
+                                            <td width="25%">${item.name}</td>
+                                            <td>RM ${item.price.toFixed(2)}</td>
+                                            <td>
+                                                <div class="quantity-container">
+                                                    <button class="quantity-btn update-qty" data-id="${item.id}" data-action="decrease">
+                                                        <i class="fa-solid fa-minus"></i>
+                                                    </button>
+                                                    <input type="text" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                                                    <button class="quantity-btn update-qty" data-id="${item.id}" data-action="increase">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>RM ${subtotal.toFixed(2)}</td>
+                                            <td style="text-align: center;">
+                                                <button class="remove-item" data-id="${item.id}">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </td>
+                                        </tr>`;
+                                });
+
+                                $("#cart-body").html(items);
+                            }
+
+                            // $("#grand-total").text(total.toFixed(2));
+                        }
+                    });
+                }
+
                 function updateCheckoutSelection() {
                     let totalSelected = $('.checkout-selection:checked').length;
-                    var selectedItems = $('.checkout-selection:checked');
                     let grandTotal = 0;
-
-                    //clear all prev items first, if not will always append
-                    $('#cart-summary-items').empty();
-
-                    if(totalSelected == 0) {
-                        $('#empty-summary-message').show();
-                    }
-                    else {
-                        $('#empty-summary-message').hide();
-                    }
                     
                     $('.checkout-selection:checked').each(function() {
                         let subtotal = $(this).closest('tr').find('td:nth-child(6)').text().replace('RM ', '').trim();
                         grandTotal += parseFloat(subtotal);
                     });
 
-                    selectedItems.each(function(index) {
-                        var $row = $(this).closest('.cart-item-row');
-
-                        var name = $row.find("input[name='item_names[]']").val();
-                        var quantity = $row.find("input[name='item_quantities[]']").val();
-
-                        //if quantities updated, the summary quantity not updated
-                        $('#cart-summary-items').append('<div class="d-flex justify-content-between"><span>' + name + '</span><span>x' + quantity + '</span></div>');
-                    });
-
                     $('#total-selected').text(totalSelected + ' items');
                     $('#grand-total').text(grandTotal.toFixed(2));
                 }
-
-                //initial the grand total amount
-                updateCheckoutSelection();
 
                 //quantity input field
                 $(document).on('click', '.quantity-input', function() {
@@ -373,6 +363,10 @@ $user_id = $_SESSION['user_id'];
                             let value = result.value;
 
                             inputField.val(value);
+
+                            $.post('update_cart.php', { id, value }, function() {
+                                loadCart();
+                            });
                         }
                     });
                 });
@@ -382,6 +376,10 @@ $user_id = $_SESSION['user_id'];
                     let id = $(this).data("id");
                     let action = $(this).data("action");
 
+                    //not finished, validation...
+                    $.post('update_cart.php', { id, action }, function() {
+                        loadCart();
+                    });
                 });
 
                 //remove item (trash icon)
@@ -399,7 +397,9 @@ $user_id = $_SESSION['user_id'];
                         cancelButtonText: "No"
                     }).then((result) => {
                         if(result.isConfirmed) {
-                            
+                            $.post('remove_cart.php', { id }, function() {
+                                loadCart();
+                            });
                         }
                     });
                 });
@@ -407,13 +407,6 @@ $user_id = $_SESSION['user_id'];
                 //checkout selection (checkbox)
                 $(document).on('change', '.checkout-selection', function() {
                     updateCheckoutSelection();
-
-                    if ($('.checkout-selection:checked').length === $('.checkout-selection').length) {
-                        $('.checkout-selection-all').prop('checked', true);
-                    }
-                    else {
-                        $('.checkout-selection-all').prop('checked', false);
-                    }
                 });
 
                 //checkout selection ALL (checkbox)
@@ -423,51 +416,6 @@ $user_id = $_SESSION['user_id'];
                     updateCheckoutSelection();
                 });
             });
-
-            $("#checkout-form").on('submit', function(e) {
-                e.preventDefault();
-
-                var $form = $(this);
-                var selectedItems = $('.checkout-selection:checked');
-
-                if(selectedItems.length === 0) {
-                    Swal.fire({
-                        title: "None Items Selected",
-                        text: "Please select at least one item to checkout.",
-                        icon: "error",
-                        confirmButtonText: "OK",
-                        confirmButtonColor: "Green"
-                    });
-                    
-                    return;
-                }
-
-                // $form.empty();
-
-                selectedItems.each(function(index) {
-                    var $row = $(this).closest('.cart-item-row');
-
-                    var itemId = $(this).val();
-                    var name = $row.find("input[name='item_names[]']").val();
-                    var price = $row.find("input[name='item_prices[]']").val();
-                    var quantity = $row.find("input[name='item_quantities[]']").val();
-                    var subtotal = $row.find("input[name='item_subtotals[]']").val();
-                    var grandTotal = $('#grand-total').text();
-
-                    $form.append('<input type="hidden" name="selected_items[]" value="' + itemId + '"/>');
-                    $form.append('<input type="hidden" name="item_names[]" value="' + name + '"/>');
-                    $form.append('<input type="hidden" name="item_prices[]" value="' + price + '"/>');
-                    $form.append('<input type="hidden" name="item_quantities[]" value="' + quantity + '"/>');
-                    $form.append('<input type="hidden" name="item_subtotals[]" value="' + subtotal + '"/>');
-                    $form.append('<input type="hidden" name="grand_total" value="' + grandTotal + '"/>');
-                });
-
-                $form.off('submit').submit();
-            });
         </script>
-        
-        <footer>
-            &copy; 2025 Chapalang Graduation Gifts | Made with ❤️
-        </footer>
     </body>
 </html>
