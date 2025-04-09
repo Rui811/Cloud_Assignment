@@ -197,7 +197,7 @@ $user_id = $_SESSION['user_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
-                                    <tr class="cart-item-row">
+                                    <!-- <tr class="cart-item-row">
                                         <td>
                                             <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
                                         </td>
@@ -262,7 +262,7 @@ $user_id = $_SESSION['user_id'];
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                             <div id="empty-cart-message" class="empty-cart" style="display: none;">
@@ -307,6 +307,71 @@ $user_id = $_SESSION['user_id'];
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             $(document).ready(function() {
+                loadCart();
+
+                function loadCart() {
+                    $.ajax({
+                        url: 'ajax/fetch_cart.php',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(cartData) {
+                            let items = "";
+
+                            if (cartData.length === 0) {
+                                $("#cart-body").html("");
+                                $("#empty-cart-message").show();
+                            }
+                            else {
+                                $("#empty-cart-message").hide();
+
+                                cartData.forEach(item => {
+                                    let subtotal = item.price * item.quantity;
+
+                                    items += `
+                                        <tr class="cart-item-row">
+                                            <td>
+                                                <input type="checkbox" name="selected_items[]" class="checkout-selection" value="${item.cart_id}" />
+                                            </td>
+                                            <td width="15%">
+                                                <img src="${item.image}" width="100">
+                                            </td>
+                                            <td width="25%">
+                                                <input type="hidden" name="item_names[]" value="${item.product_name}">${item.product_name}
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="item_prices[]" value="${item.price}">RM ${item.price.toFixed(2)}
+                                            </td>
+                                            <td>
+                                                <div class="quantity-container">
+                                                    <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="decrease">
+                                                        <i class="fa-solid fa-minus"></i>
+                                                    </button>
+                                                    <input type="text" name="item_quantities[]" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                                                    <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="increase">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="item_subtotals[]" value="${subtotal}">RM ${subtotal.toFixed(2)}
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <button class="remove-item" data-id="${item.cart_id}">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </td>
+                                        </tr>`;
+                                });
+
+                                $("#cart-body").html(items);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading cart:", error);
+                        }
+                    });
+                }
+                
                 function updateCheckoutSelection() {
                     let totalSelected = $('.checkout-selection:checked').length;
                     var selectedItems = $('.checkout-selection:checked');
@@ -373,6 +438,29 @@ $user_id = $_SESSION['user_id'];
                             let value = result.value;
 
                             inputField.val(value);
+
+                            $.ajax({
+                                url: "ajax/update_cart.php",
+                                type: "POST",
+                                data: {
+                                    "id" : id,
+                                    "value" : value
+                                },
+                                success: function(response) {
+                                    if(response == "success") {
+                                        loadCart();
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            title: "ERROR",
+                                            text: "Something wrong! Please try again later.",
+                                            icon: "error",
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: "Green"
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 });
@@ -382,6 +470,28 @@ $user_id = $_SESSION['user_id'];
                     let id = $(this).data("id");
                     let action = $(this).data("action");
 
+                    $.ajax({
+                        url: "ajax/update_cart.php",
+                        type: "POST",
+                        data: {
+                            "id" : id,
+                            "action" : action
+                        },
+                        success: function(response) {
+                            if(response == "success") {
+                                loadCart();
+                            }
+                            else{
+                                Swal.fire({
+                                    title: "ERROR",
+                                    text: "Something wrong! Please try again later.",
+                                    icon: "error",
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "Green"
+                                });
+                            }
+                        }
+                    });
                 });
 
                 //remove item (trash icon)
@@ -399,7 +509,27 @@ $user_id = $_SESSION['user_id'];
                         cancelButtonText: "No"
                     }).then((result) => {
                         if(result.isConfirmed) {
-                            
+                            $.ajax({
+                                url: "ajax/remove_cart.php",
+                                type: "POST",
+                                data: {
+                                    "id" : id
+                                },
+                                success: function(response) {
+                                    if(response == "success") {
+                                        loadCart();
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            title: "ERROR",
+                                            text: "Something wrong! Please try again later.",
+                                            icon: "error",
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: "Green"
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 });
