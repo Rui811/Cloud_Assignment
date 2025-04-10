@@ -1,33 +1,55 @@
 <?php include 'header.php'; ?>
 <?php
-$categories = ["All", "Roses", "Sunflowers", "Lilies", "Mixed Bouquets"];
-$products = [
-    ["id" => 1, "name" => "Rosie Red Mini", "price" => 49.90, "image" => "image/flower1.png", "category" => "Roses"],
-    ["id" => 2, "name" => "Sunflower 1 Stalk", "price" => 48.90, "image" => "sunflower_1_stalk.jpg", "category" => "Sunflowers"],
-    ["id" => 3, "name" => "Blushing Bride", "price" => 99.00, "image" => "blushing_bride.jpg", "category" => "Mixed Bouquets"],
-    ["id" => 4, "name" => "Iris Mini", "price" => 79.90, "image" => "iris_mini.jpg", "category" => "Lilies"],
-    ["id" => 5, "name" => "Rosie Red Mini", "price" => 49.90, "image" => "image/flower1.png", "category" => "Roses"],
-    ["id" => 6, "name" => "Sunflower 1 Stalk", "price" => 48.90, "image" => "sunflower_1_stalk.jpg", "category" => "Sunflowers"],
-    ["id" => 7, "name" => "Blushing Bride", "price" => 99.00, "image" => "blushing_bride.jpg", "category" => "Mixed Bouquets"],
-    ["id" => 8, "name" => "Iris Mini", "price" => 79.90, "image" => "iris_mini.jpg", "category" => "Lilies"]
-];
+
+$host = "192.168.192.73";
+$username = "nbuser";
+$password = "abc12345";
+$database = "cloud";
+
+$conn = new mysqli($host, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 $selectedCategory = $_GET['category'] ?? "All";
 $searchQuery = $_GET['search'] ?? "";
-$filteredProducts = array_filter($products, function($product) use ($selectedCategory, $searchQuery) {
-    return ($selectedCategory === "All" || $product['category'] === $selectedCategory) &&
-           (empty($searchQuery) || stripos($product['name'], $searchQuery) !== false);
-});
 
-$perPage = 12; // 12 products per page
-$totalProducts = count($filteredProducts);
+$category_sql = "SELECT * FROM category";
+$category_result = $conn->query($category_sql);
+$categories = ["All"];
+while ($row = $category_result->fetch_assoc()) {
+    $categories[] = $row['catName'];
+}
+
+$product_sql = "SELECT p.*, c.catName 
+                FROM product p 
+                JOIN category c ON p.catID = c.catID 
+                WHERE (c.catName = ? OR ? = 'All') 
+                AND (p.productName LIKE ?)";
+
+$stmt = $conn->prepare($product_sql);
+$likeSearch = '%' . $searchQuery . '%';
+$stmt->bind_param("sss", $selectedCategory, $selectedCategory, $likeSearch);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$products = [];
+while ($row = $result->fetch_assoc()) {
+    $products[] = $row;
+}
+
+// Pagination
+$perPage = 12;
+$totalProducts = count($products);
 $totalPages = ceil($totalProducts / $perPage);
 $page = isset($_GET['page']) ? max(1, min($_GET['page'], $totalPages)) : 1;
 $startIndex = ($page - 1) * $perPage;
-$displayProducts = array_slice($filteredProducts, $startIndex, $perPage);
-
+$displayProducts = array_slice($products, $startIndex, $perPage);
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -119,18 +141,6 @@ $displayProducts = array_slice($filteredProducts, $startIndex, $perPage);
                 font-size: 16px; 
                 font-weight: bold; 
             }
-    
-            .add-to-cart { 
-                background-color: #28a745;
-                color: white; 
-                padding: 10px; 
-                border: none; 
-                cursor: pointer; 
-            }
-    
-            .add-to-cart:hover { 
-                background-color: #218838; 
-            }
 
             .pagination { 
                 margin-bottom: 0px; 
@@ -178,6 +188,51 @@ $displayProducts = array_slice($filteredProducts, $startIndex, $perPage);
             .search-container button:hover {
                 background-color: #218838;
             }
+
+            .product-link {
+            text-decoration: none;
+            color: inherit;
+            }
+
+            .image-container {
+                position: relative;
+                overflow: hidden;
+                border-radius: 5px;
+            }
+
+            .image-container img {
+                width: 100%;
+                height: auto;
+                display: block;
+                transition: opacity 0.3s ease;
+            }
+
+            .image-container .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                opacity: 0;
+                background: rgba(0, 0, 0, 0.4);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                font-weight: bold;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+
+            .image-container:hover img {
+                opacity: 0.6;
+            }
+
+            .image-container:hover .overlay {
+                opacity: 1;
+            }
+
         </style>
     </head>
     <body>
@@ -197,10 +252,14 @@ $displayProducts = array_slice($filteredProducts, $startIndex, $perPage);
             <div class="product-container">
                 <?php foreach ($displayProducts as $product) : ?>
                     <div class="product">
-                        <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                        <h2><?php echo htmlspecialchars($product['name']); ?></h2>
-                        <p>RM<?php echo number_format($product['price'], 2); ?> MYR</p>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <a href="product_view.php?id=<?php echo $product['productID']; ?>" class="product-link">
+                        <div class="image-container">
+                            <img src="image/<?php echo htmlspecialchars($product['pic']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>">
+                            <div class="overlay">View Product</div>
+                        </div>
+                        </a>
+                        <h2><?php echo htmlspecialchars($product['productName']); ?></h2>
+                        <p>RM<?php echo number_format($product['price'], 2); ?></p>
                     </div>
                 <?php endforeach; ?>
             </div>
