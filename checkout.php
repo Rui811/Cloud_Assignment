@@ -8,7 +8,7 @@ include 'function/checkout.php';
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Cart | ChapaLang Graduation Gifts</title>
+        <title>Checkout | ChapaLang Graduation Gifts</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -144,11 +144,11 @@ include 'function/checkout.php';
                                         <span class="input-group-text px-4" style="font-size: 20px;">
                                             <i class="fa-solid fa-user"></i>
                                         </span>
-                                        <div class="form-floating <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>">
-                                            <input type="text" value="<?= isset($cardHolder) ? $cardHolder : '' ?>" class="form-control <?= isset($error['cardHolder']) ? 'is-invalid' : '' ?>" id="cardHolder" placeholder="Card Holder Name" required />
+                                        <div id="cardHolderError" class="form-floating">
+                                            <input type="text" value="" class="form-control" id="cardHolder" placeholder="Card Holder Name" required />
                                             <label for="cardHolder">Card Holder Name</label>
                                         </div>
-                                        <div class="invalid-feedback"><?= isset($error['cardHolder']) ? $error['cardHolder'] : '' ?></div>
+                                        <div class="invalid-feedback">Please enter a valid card holder name.</div>
                                     </div>
 
                                     <label for="cardNum">Card number: </label>
@@ -156,11 +156,11 @@ include 'function/checkout.php';
                                         <span class="input-group-text px-4" style="font-size: 20px;">
                                             <i class="fa-solid fa-credit-card"></i>
                                         </span>
-                                        <div class="form-floating <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>">
-                                            <input type="text" value="<?= isset($cardNum) ? $cardNum : '' ?>" class="form-control <?= isset($error['cardNum']) ? 'is-invalid' : '' ?>" id="cardNum" placeholder="Card Number" required />
+                                        <div id="cardNumError" class="form-floating">
+                                            <input type="text" value="" class="form-control" id="cardNum" placeholder="Card Number" required />
                                             <label for="cardNum">Card Number</label>
                                         </div>
-                                        <div class="invalid-feedback"><?= isset($error['cardNum']) ? $error['cardNum'] : '' ?></div>
+                                        <div class="invalid-feedback">Please enter a valid card number with 16 digits.</div>
                                     </div>
 
                                     <div class="col-6">
@@ -169,11 +169,11 @@ include 'function/checkout.php';
                                             <span class="input-group-text px-4" style="font-size: 20px;">
                                                 <i class="fa-solid fa-calendar-days"></i>
                                             </span>
-                                            <div class="form-floating <?= isset($error['expiryDate']) ? 'is-invalid' : '' ?>">
-                                                <input type="date" value="<?= isset($expiryDate) ? $expiryDate : '' ?>" class="form-control <?= isset($error['expiryDate']) ? 'is-invalid' : '' ?>" id="expiryDate" placeholder="Expiry Date" required />
+                                            <div id="expiryDateError" class="form-floating">
+                                                <input type="date" value="" class="form-control" id="expiryDate" placeholder="Expiry Date" required />
                                                 <label for="expiryDate">Expiry Date</label>
                                             </div>
-                                            <div class="invalid-feedback"><?= isset($error['expiryDate']) ? $error['expiryDate'] : '' ?></div>
+                                            <div class="invalid-feedback">Please enter a valid expiry date.</div>
                                         </div>
                                     </div>
 
@@ -183,11 +183,11 @@ include 'function/checkout.php';
                                             <span class="input-group-text px-4" style="font-size: 20px;">
                                                 <i class="fa-solid fa-lock"></i>
                                             </span>
-                                            <div class="form-floating <?= isset($error['cvc']) ? 'is-invalid' : '' ?>">
-                                                <input type="text" value="<?= isset($cvc) ? $cvc : '' ?>" class="form-control <?= isset($error['cvc']) ? 'is-invalid' : '' ?>" id="cvc" placeholder="CVC" required />
+                                            <div id="cvcError" class="form-floating">
+                                                <input type="text" value="" class="form-control" id="cvc" placeholder="CVC" required />
                                                 <label for="cvc">000</label>
                                             </div>
-                                            <div class="invalid-feedback"><?= isset($error['cvc']) ? $error['cvc'] : '' ?></div>
+                                            <div class="invalid-feedback">Please enter a valid CVC (3 digits).</div>
                                         </div>
                                     </div>
                                 </div>
@@ -201,11 +201,11 @@ include 'function/checkout.php';
                                         <span class="input-group-text px-4" style="font-size: 20px;">
                                             <i class="fa-solid fa-phone"></i>
                                         </span>
-                                        <div class="form-floating <?= isset($error['phoneNum']) ? 'is-invalid' : '' ?>">
-                                            <input type="text" value="<?= isset($phoneNum) ? $phoneNum : '' ?>" class="form-control <?= isset($error['phoneNum']) ? 'is-invalid' : '' ?>" id="phoneNum" placeholder="Phone Number" required />
+                                        <div id="phoneNumError" class="form-floating">
+                                            <input type="text" value="" class="form-control" id="phoneNum" placeholder="Phone Number" required />
                                             <label for="phoneNum">012-3456789</label>
                                         </div>
-                                        <div class="invalid-feedback"><?= isset($error['phoneNum']) ? $error['phoneNum'] : '' ?></div>
+                                        <div class="invalid-feedback">Please enter a valid phone number (e.g. 012-1234567 or 011-12345678).</div>
                                     </div>
                                 </div>
                             </div>
@@ -229,16 +229,25 @@ include 'function/checkout.php';
                     if(paymentMethod === 'card') {
                         $('#card-field input').prop('disabled', false);
                         $('#TouchNGo-field input').prop('disabled', true);
+
+                        //clear TouchNGo fields error and value
+                        $('#phoneNum').removeClass('is-invalid').val('');
+                        $('#phoneNumError').removeClass('is-invalid');
                     }
                     else {
                         $('#card-field input').prop('disabled', true);
                         $('#TouchNGo-field input').prop('disabled', false);
+
+                        //clear card fields error and values
+                        $('#cardHolder, #cardNum, #expiryDate, #cvc').removeClass('is-invalid').val('');
+                        $('#cardHolderError, #cardNumError, #expiryDateError, #cvcError').removeClass('is-invalid');
                     }
                 }
 
                 function validateForm() {
                     let isValid = true;
                     $('.form-control').removeClass('is-invalid');
+                    $('.form-floating').removeClass('is-invalid');
 
                     let paymentMethod = $('input[name="paymentMethod"]:checked').val();
 
@@ -250,12 +259,34 @@ include 'function/checkout.php';
 
                         if (!cardHolder) {
                             $('#cardHolder').addClass('is-invalid');
-                            <?php $error['cardHolder'] = "Invalid card holder name"; ?>
+                            $('#cardHolderError').addClass('is-invalid');
                             isValid = false;
                         }
 
                         if (!cardNum.match(/^\d{16}$/)) {
                             $('#cardNum').addClass('is-invalid');
+                            $('#cardNumError').addClass('is-invalid');
+                            isValid = false;
+                        }
+
+                        if (!expiryDate || new Date(expiryDate) <= new Date()) {
+                            $('#expiryDate').addClass('is-invalid');
+                            $('#expiryDateError').addClass('is-invalid');
+                            isValid = false;
+                        }
+
+                        if (!cvc.match(/^\d{3}$/)) {
+                            $('#cvc').addClass('is-invalid');
+                            $('#cvcError').addClass('is-invalid');
+                            isValid = false;
+                        }
+                    }
+                    else if(paymentMethod === 'TouchNGo') {
+                        let phoneNum = $('#phoneNum').val().trim();
+
+                        if (!phoneNum.match(/^01[0-9]-\d{7,8}$/)) {
+                            $('#phoneNum').addClass('is-invalid');
+                            $('#phoneNumError').addClass('is-invalid');
                             isValid = false;
                         }
                     }
@@ -284,6 +315,31 @@ include 'function/checkout.php';
                         showCancelButton: true,
                         cancelButtonColor: "Crimson",
                         cancelButtonText: "Cancel"
+                    }).then((result) => {
+                        if(result.isConfirmed) {
+                            $.ajax({
+                                url: "ajax/create_order.php",
+                                type: "POST",
+                                data: {
+                                    "cart_id" : "",
+                                    "total_amount" : "" 
+                                },
+                                success: function(response) {
+
+                                },
+                                error: function(){
+                                    Swal.fire({
+                                        title: "ERROR!",
+                                        text: 'An error occurred! Please try again later.',
+                                        icon: "error",
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: "Crimson"
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                }
+                            });
+                        }
                     });
                 });
             });

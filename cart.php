@@ -2,12 +2,12 @@
 include 'header.php';
 
 session_start();
-$_SESSION['user_id'] = "hdnj";
-if (!isset($_SESSION['user_id'])) {
+$_SESSION['customer_id'] = "hdnj";
+if (!isset($_SESSION['customer_id'])) {
     header("Location: login.php");
     exit();
 }
-$user_id = $_SESSION['user_id'];
+$customer_id = $_SESSION['customer_id'];
 ?>
 
 <!DOCTYPE html>
@@ -198,39 +198,6 @@ $user_id = $_SESSION['user_id'];
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
                                     <!-- <tr class="cart-item-row">
-                                        <td>
-                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
-                                        </td>
-                                        <td width="15%">
-                                            <img src="image/flower1.png" width="100">
-                                        </td>
-                                        <td width="25%">
-                                            <input type="hidden" name="item_names[]" value="Rosie Red Mini">Rosie Red Mini
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_prices[]" value="50.00">RM 50.00
-                                        </td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_subtotals[]" value="50.00">RM 50.00
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr class="cart-item-row">
                                         <td>
                                             <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
                                         </td>
