@@ -35,10 +35,11 @@ if (!$product) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
     body {
-      background-image: url("image/viewPage.png");
+      background-image: url("image/wallpaper2.png");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            height: 100vh;
     }
 
     header {

@@ -1,3 +1,45 @@
+<?php
+$host = "192.168.192.73";
+$username = "nbuser";
+$password = "abc12345";
+$database = "cloud";
+
+$conn = new mysqli($host, $username, $password, $database);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get filters
+$selectedCategory = $_GET['category'] ?? "All";
+$searchQuery = $_GET['search'] ?? "";
+
+// Get categories
+$category_sql = "SELECT * FROM category";
+$category_result = $conn->query($category_sql);
+$categories = ["All"];
+while ($row = $category_result->fetch_assoc()) {
+    $categories[] = $row['catName'];
+}
+
+// Get products
+$product_sql = "SELECT p.*, c.catName 
+                FROM product p 
+                JOIN category c ON p.category = c.catName 
+                WHERE (c.catName = ? OR ? = 'All') 
+                AND (p.productName LIKE ?)";
+
+$stmt = $conn->prepare($product_sql);
+$likeSearch = '%' . $searchQuery . '%';
+$stmt->bind_param("sss", $selectedCategory, $selectedCategory, $likeSearch);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$products = [];
+while ($row = $result->fetch_assoc()) {
+    $products[] = $row;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -185,7 +227,38 @@
                             <span class="fw-semibold">AliAbuAkau</span>
                         </div>
                     </div>
-                    <div class="container mt-4">Hi,Product</div>
+                    <div class="container mt-4">
+                    <h4 class="mb-3">Product List</h4>
+                        <div class="table-responsive">
+                            <table id="productTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price (RM)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($products as $product): ?>
+                                        <tr>
+                                            <td><?php echo 'P' . str_pad($product['productID'], 4, '0', STR_PAD_LEFT); ?></td>
+                                            <td><?php echo htmlspecialchars($product['productName']); ?></td>
+                                            <td><?php echo htmlspecialchars($product['catName']); ?></td>
+                                            <td><?php echo number_format($product['price'], 2); ?></td>
+                                            <td><a href="update_product.php?id=<?php echo $product['productID']; ?>" class="btn btn-success btn-sm me-1">
+                                                <i class="bi bi-pencil-square"></i> Update
+                                            </a>
+                                            <a href="delete_product.php?id=<?php echo $product['productID']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?');">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="userPage" class="page-content">
@@ -297,6 +370,11 @@
             }
         });
     });
+
+    $(document).ready(function () {
+        $('#productTable').DataTable();  // 这里的 ID 要跟 table 一致
+    });
+
     </script>
 </body>
 
