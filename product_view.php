@@ -35,7 +35,10 @@ if (!$product) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
     body {
-      background-color: #f9f9f9;
+      background-image: url("image/viewPage.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
     }
 
     header {
@@ -63,6 +66,7 @@ if (!$product) {
       font-size: 1.8rem;
       font-weight: bold;
       margin-bottom: 10px;
+      
     }
 
     .product-description {
@@ -100,7 +104,7 @@ if (!$product) {
             <div class="row align-items-center">
                 <!-- Image on the right -->
                 <div class="col-md-5 text-center mt-4 mt-md-0">
-                <img src="image/<?php echo htmlspecialchars($product['pic']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>" class="product-img">
+                <img src="image/<?php echo htmlspecialchars($product['image']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>" class="product-img">
 
                 </div>
                 
@@ -108,7 +112,8 @@ if (!$product) {
                 <div class="col-md-7">
                 <h2 class="product-title"><?php echo htmlspecialchars($product['productName']); ?></h2>
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
-                <td>RM <?php echo number_format($product['price'], 2); ?></td>
+                <p>RM <?php echo number_format($product['price'], 2); ?></p>
+                
 
                     
 

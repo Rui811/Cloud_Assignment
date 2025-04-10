@@ -1,12 +1,11 @@
 <?php include 'header.php'; ?>
 <?php
+    $host = "192.168.192.73";
+    $username = "nbuser";
+    $password = "abc12345";
+    $database = "cloud";
 
-$host = "192.168.192.73";
-$username = "nbuser";
-$password = "abc12345";
-$database = "cloud";
-
-$conn = new mysqli($host, $username, $password, $database);
+    $conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -24,7 +23,7 @@ while ($row = $category_result->fetch_assoc()) {
 
 $product_sql = "SELECT p.*, c.catName 
                 FROM product p 
-                JOIN category c ON p.catID = c.catID 
+                JOIN category c ON p.category = c.catName 
                 WHERE (c.catName = ? OR ? = 'All') 
                 AND (p.productName LIKE ?)";
 
@@ -254,7 +253,7 @@ $displayProducts = array_slice($products, $startIndex, $perPage);
                     <div class="product">
                         <a href="product_view.php?id=<?php echo $product['productID']; ?>" class="product-link">
                         <div class="image-container">
-                            <img src="image/<?php echo htmlspecialchars($product['pic']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>">
+                            <img src="image/<?php echo htmlspecialchars($product['image']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>">
                             <div class="overlay">View Product</div>
                         </div>
                         </a>
