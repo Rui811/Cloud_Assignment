@@ -229,6 +229,9 @@ while ($row = $result->fetch_assoc()) {
                     </div>
                     <div class="container mt-4">
                     <h4 class="mb-3">Product List</h4>
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="add_product.php" class="btn btn-primary"> Add Product</a>
+                    </div>
                         <div class="table-responsive">
                             <table id="productTable" class="table table-striped">
                                 <thead>

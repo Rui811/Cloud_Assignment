@@ -108,17 +108,11 @@ if (!$product) {
                 <img src="image/<?php echo htmlspecialchars($product['image']) . '.png'; ?>" alt="<?php echo htmlspecialchars($product['productName']); ?>" class="product-img">
 
                 </div>
-                
-                <!-- Text on the left -->
                 <div class="col-md-7">
                 <h2 class="product-title"><?php echo htmlspecialchars($product['productName']); ?></h2>
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p>RM <?php echo number_format($product['price'], 2); ?></p>
-                
 
-                    
-
-                    <!-- Add to Cart Section -->
       <div class="mt-4 d-flex align-items-center">
             <label for="quantity" class="me-2 fw-bold">Quantity:</label>
             <input type="number" id="quantity" class="form-control w-25 me-3" min="1" value="1">
@@ -130,17 +124,7 @@ if (!$product) {
                 </div>
 
     <script>
-        function addToCart() {
-        const quantity = document.getElementById("quantity").value;
-        const message = document.getElementById("cartMessage");
-        if (quantity && quantity > 0) {
-            message.textContent = `✅ ${quantity} bouquet(s) added to your cart!`;
-        } else {
-            message.textContent = "Please enter a valid quantity.";
-            message.classList.remove("text-success");
-            message.classList.add("text-danger");
-        }
-        }
+        
     </script>
                 
             </div>
