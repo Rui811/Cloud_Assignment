@@ -1,9 +1,10 @@
 <?php
-// login.php
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'header.php'; ?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -152,12 +153,17 @@
             <p>Login to continue shopping for cute gifts!</p>
             <form action="login_process.php" method="POST">
                 <div class="mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    <input type="text" name="identifier" class="form-control" placeholder="Username or Email" required>
                 </div>
                 <div class="mb-3">
                     <input type="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
+                <div class="text-center mt-2">
+                    <a href="forgot_password.php" class="text-decoration-none"
+                        style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
+                </div>
+
             </form>
             <p class="signup-link">Don't have an account? <a href="signup.php">Sign Up Now!</a></p>
         </div>

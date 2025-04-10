@@ -1,21 +1,20 @@
 <?php
 
 ?>
-<?php include 'header.php'; ?>
-
 <!DOCTYPE html>
 <html lang="en">
+<?php include 'header.php'; ?>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - ChapaLang Graduation Gifts</title>
+    <title>Login - ChapaLang Graduation Gifts</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-image: url("image/wallpaper2.png");
+            background-image: url("image/wallpaper.png");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -38,10 +37,6 @@
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            width: 250px;
-        }
-
         .wrapper {
             display: flex;
             width: 75%;
@@ -51,24 +46,22 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-            margin-left: -30%;
+            margin-left: 28%;
             margin-top: 5%;
-            animation: fadeIn 0.8s ease-in-out;
         }
 
-        .image-container {
-            width: 60%;
-            background-image: url("image/signupSitePic.png");
-            background-size: cover;
-            background-position: center;
-        }
-
-        .signup-container {
+        .login-container {
             width: 50%;
             padding: 40px;
             text-align: center;
         }
 
+        .image-container {
+            width: 55%;
+            background-image: url("image/loginSitePic.png");
+            background-size: cover;
+            background-position: center;
+        }
 
         @keyframes fadeIn {
             from {
@@ -88,47 +81,40 @@
 
         h2 {
             font-weight: 600;
-            color: #90ccfd;
+            color: #ff6b81;
         }
 
         .form-control {
             border-radius: 10px;
-            border: 2px solid #90ccfd;
-            transition: transform 0.2s ease-in-out;
+            border: 2px solid #ff6b81;
         }
 
-        .form-control:focus {
-            transform: scale(1.05);
-            border-color: #90ccfd;
-            box-shadow: 0 0 8px rgba(145, 196, 255, 0.4);
-        }
-
-        .btn-success {
-            background: #86c0f0;
+        .btn-primary {
+            background: #ff6b81;
             border: none;
             border-radius: 10px;
             padding: 10px;
             transition: 0.3s;
         }
 
-        .btn-success:hover {
-            background: #d1eaff;
+        .btn-primary:hover {
+            background: #ff3b5c;
             transform: scale(1.05);
         }
 
-        .login-link {
+        .signup-link {
             margin-top: 15px;
             font-size: 14px;
             color: #555;
         }
 
-        .login-link a {
-            color: #90ccfd;
+        .signup-link a {
+            color: #ff3b5c;
             text-decoration: none;
             font-weight: 600;
         }
 
-        .login-link a:hover {
+        .signup-link a:hover {
             text-decoration: underline;
         }
 
@@ -139,45 +125,28 @@
             color: #666;
         }
 
-
         @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .navbar img {
-                width: 200px;
+            .wrapper {
+                flex-direction: column;
+                width: 90%;
             }
 
+            .login-container,
+            .image-container {
+                width: 100%;
+            }
+
+            .image-container {
+                height: 300px;
+            }
         }
     </style>
 </head>
 
+
+
 <body>
 
-    <div class="wrapper">
-        <div class="image-container"></div>
-
-        <div class="signup-container">
-            <h2>Join the Fun! 🎉</h2>
-            <p>Create your account and start shopping for the cutest graduation gifts!</p>
-            <form action="signup_process.php" method="POST">
-                <div class="mb-3">
-                    <input type="text" name="username" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required>
-                </div>
-                <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Sign Up</button>
-            </form>
-            <p class="login-link">Already have an account? <a href="login.php">Login Here!</a></p>
-        </div>
-    </div>
 
     <footer>
         &copy; 2025 Chapalang Graduation Gifts | Made with ❤️
