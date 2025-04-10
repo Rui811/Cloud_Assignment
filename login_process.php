@@ -27,7 +27,7 @@ if ($result->num_rows === 1) {
     if (password_verify($password, $user['cust_psw'])) {
         $_SESSION['user_id'] = $user['customer_id'];
         $_SESSION['username'] = $user['cust_username'];
-
+        $_SESSION['email'] = $user['cust_email'];
         header("Location: homepage.php"); 
         exit();
     } else {
