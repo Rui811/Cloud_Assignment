@@ -1,4 +1,5 @@
 <?php
+session_start();
 $host = "192.168.192.73";
 $username = "nbuser";
 $password = "abc12345";
@@ -7,6 +8,36 @@ $database = "cloud";
 $conn = new mysqli($host, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
+}
+
+//check is admin or not
+$adminName = $_SESSION['admin'] ?? null;
+$sql = "SELECT * FROM admin WHERE admin_username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $adminName);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    echo "<!DOCTYPE html><html><head>
+            <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head><body>
+        <script>
+            setTimeout(function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'You do not have admin privileges.',
+                    confirmButtonText: 'Go to Login'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'admin_login.php';
+                    }
+                });
+            }, 100);
+        </script>
+        </body></html>";
+    exit;
 }
 
 $productID = $_GET['id'] ?? 0;
@@ -158,8 +189,7 @@ while ($row = $result->fetch_assoc()) {
                             <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
-                            <span class="fw-semibold">AliAbuAkau</span>
-                            <!-- ?= $_SESSION['adminName'];  -->
+                            <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">
@@ -193,7 +223,7 @@ while ($row = $result->fetch_assoc()) {
                             <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
-                            <span class="fw-semibold">AliAbuAkau</span>
+                            <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">
@@ -242,7 +272,7 @@ while ($row = $result->fetch_assoc()) {
                             <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
-                            <span class="fw-semibold">AliAbuAkau</span>
+                            <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">
@@ -302,7 +332,7 @@ while ($row = $result->fetch_assoc()) {
                             <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
-                            <span class="fw-semibold">AliAbuAkau</span>
+                            <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">Hi,Customer</div>
