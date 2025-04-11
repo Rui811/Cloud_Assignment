@@ -367,7 +367,7 @@ while ($row = $result->fetch_assoc()) {
         Swal.fire('Saved!', 'Your settings have been updated.', 'success');
     });
 
-    // targetParge will be active if onclick
+    // targetPage will be active if onclick
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
