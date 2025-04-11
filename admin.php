@@ -9,6 +9,20 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$productID = $_GET['id'] ?? 0;
+    $currentStatus = $_GET['status'] ?? null;
+    
+    if ($productID && $currentStatus !== null) {
+        $newStatus = ($currentStatus == 1) ? 0 : 1;
+    
+        $sql = "UPDATE product SET status = ? WHERE productID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $newStatus, $productID);
+        $stmt->execute();
+    
+        $stmt->close();
+    }
+
 // Get filters
 $selectedCategory = $_GET['category'] ?? "All";
 $searchQuery = $_GET['search'] ?? "";
@@ -35,6 +49,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $products = [];
+
 while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
@@ -98,6 +113,9 @@ while ($row = $result->fetch_assoc()) {
         .page-content.active {
             display: block;
         }
+
+        .buttonAddProduct
+        {background-color: #673de6;}
     </style>
 </head>
 
@@ -228,18 +246,20 @@ while ($row = $result->fetch_assoc()) {
                         </div>
                     </div>
                     <div class="container mt-4">
-                    <h4 class="mb-3">Product List</h4>
-                    <div class="d-flex justify-content-end mb-3">
-                        <a href="add_product.php" class="btn btn-primary"> Add Product</a>
-                    </div>
+                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 50px;">
+                            <h4 class="mb-0" >Product List</h4>
+                            <a href="add_product.php" class="btn btn-primary" style="background-color: #673de6;">Add Product</a>
+                        </div>
                         <div class="table-responsive">
                             <table id="productTable" class="table table-striped">
                                 <thead>
+                                    
                                     <tr>
                                         <th>Product ID</th>
                                         <th>Name</th>
                                         <th>Category</th>
                                         <th>Price (RM)</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -250,12 +270,23 @@ while ($row = $result->fetch_assoc()) {
                                             <td><?php echo htmlspecialchars($product['productName']); ?></td>
                                             <td><?php echo htmlspecialchars($product['catName']); ?></td>
                                             <td><?php echo number_format($product['price'], 2); ?></td>
+                                            <td>
+                                                <?php if ($product['status'] == 1): ?>
+                                                <span class="text-success fw-bold">Active</span>
+                                                <?php else: ?>
+                                                <span class="text-danger fw-bold">Inactive</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><a href="update_product.php?id=<?php echo $product['productID']; ?>" class="btn btn-success btn-sm me-1">
                                                 <i class="bi bi-pencil-square"></i> Update
                                             </a>
-                                            <a href="delete_product.php?id=<?php echo $product['productID']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?');">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </a></td>
+                                            
+                                            <a href="admin.php?id=<?php echo $product['productID']; ?>&status=<?php echo $product['status']; ?>"
+   onclick="return confirm('Are you sure you want to <?php echo $product['status'] == 1 ? 'inactivate' : 'activate'; ?> this product?')"
+   class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
+   <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
+</a>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
