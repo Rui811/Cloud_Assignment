@@ -20,11 +20,13 @@ include 'function/checkout.php';
             .back-cart-btn {
                 text-decoration: none;
                 font-size: 26px;
+                color:rgb(115, 121, 227);
                 font-weight: bold;
                 transition: 0.3s ease-in-out;
 
                 &:hover {
                     transform: translateX(-3.5px);
+                    color:rgb(138, 143, 238);
                 }
             }
 
@@ -75,18 +77,6 @@ include 'function/checkout.php';
             </div>
 
             <div class="card shadow mt-3">
-                <!-- <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a class="back-cart-btn" href="cart.php">
-                            <i class="fa-solid fa-chevron-left"></i> Back to Cart
-                        </a>
-
-                        <h2 class="text-center mx-auto m-0">Confirm Order</h2>
-
-                        <div style="width: 130px;"></div>
-                    </div>
-                </div> -->
-
                 <div class="card-body">
                     <h4 class="">Order Details</h4>
                     <div class="order-container">
@@ -96,9 +86,9 @@ include 'function/checkout.php';
                                     <tr>
                                         <th width="2%">No.</th>
                                         <th width="40%" colspan="2">Item</th>
-                                        <th width="9%">Price</th>
-                                        <th width="9%">Quantity</th>
-                                        <th width="9%">Subtotal</th>
+                                        <th width="12%">Unit Price (RM)</th>
+                                        <th width="12%">Quantity</th>
+                                        <th width="12%">Subtotal (RM)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="order-body">
@@ -107,11 +97,11 @@ include 'function/checkout.php';
                                         echo '
                                         <tr>
                                             <td>'. ($index + 1) .'</td>
-                                            <td width="15%"><img src="image/flower1.png" width="100"></td>
-                                            <td width="25%">'.$names[$index].'</td>
-                                            <td>RM '.$prices[$index].'</td>
+                                            <td width="10%"><img src="image/'.$images[$index].'.png" width="100"></td>
+                                            <td width="30%">'.$names[$index].'</td>
+                                            <td>'.number_format($prices[$index], 2).'</td>
                                             <td>'.$quantities[$index].'</td>
-                                            <td>RM '.$subtotals[$index].'</td>
+                                            <td>'.number_format($subtotals[$index], 2).'</td>
                                         </tr>
                                         ';
                                     }
@@ -120,7 +110,7 @@ include 'function/checkout.php';
                                 <tfoot id="order-footer">
                                     <tr>
                                         <td colspan="5" class="text-end fw-bold py-3 pe-5">Grand Total (RM)</td>
-                                        <td><?= $grandTotal ?></td>
+                                        <td><?= number_format($grandTotal, 2) ?></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -306,6 +296,10 @@ include 'function/checkout.php';
                         return;
                     }
 
+                    let cardIds = <?= json_encode($selectedItems) ?>;
+                    let paymentMethod = $('input[name="paymentMethod"]:checked').val();
+                    let totalAmount = <?= json_encode($grandTotal) ?>;
+
                     Swal.fire({
                         title: "Order Confirmation",
                         text: "Are you sure to make payment and proceed the order?",
@@ -321,11 +315,12 @@ include 'function/checkout.php';
                                 url: "ajax/create_order.php",
                                 type: "POST",
                                 data: {
-                                    "cart_id" : "",
-                                    "total_amount" : "" 
+                                    "cart_ids" : cartIds,
+                                    "payment_method" : paymentMethod,
+                                    "total_amount" : totalAmount 
                                 },
                                 success: function(response) {
-
+                                    header("Location: receipt.php?order_id=");
                                 },
                                 error: function(){
                                     Swal.fire({

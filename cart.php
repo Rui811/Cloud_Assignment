@@ -1,13 +1,11 @@
 <?php
 include 'header.php';
 
-session_start();
-$_SESSION['customer_id'] = "hdnj";
-if (!isset($_SESSION['customer_id'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-$customer_id = $_SESSION['customer_id'];
+$customer_id = $_SESSION['user_id'];
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +25,7 @@ $customer_id = $_SESSION['customer_id'];
                 margin: 0;
             }
 
-            .back-home-btn {
+            .back-product-btn {
                 text-decoration: none;
                 width: fit-content;
                 font-size: 18px;
@@ -175,8 +173,8 @@ $customer_id = $_SESSION['customer_id'];
 
             <div class="card shadow mt-3">
                 <div class="card-body">
-                    <a class="back-home-btn" href="homepage.php" title="back to homepage">
-                        <i class="fa-solid fa-home"></i> Home
+                    <a class="back-product-btn" href="product.php" title="back to product page">
+                        <i class="fa-solid fa-shop"></i> Shop
                     </a>
                     
                     <div class="cart-container mt-3">
@@ -197,39 +195,6 @@ $customer_id = $_SESSION['customer_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
-                                    <!-- <tr class="cart-item-row">
-                                        <td>
-                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
-                                        </td>
-                                        <td width="15%">
-                                            <img src="image/flower1.png" width="100">
-                                        </td>
-                                        <td width="25%">
-                                            <input type="hidden" name="item_names[]" value="Rosie">Rosie
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_prices[]" value="40.00">RM 40.00
-                                        </td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_subtotals[]" value="40.00">RM 40.00
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr> -->
                                 </tbody>
                             </table>
                             <div id="empty-cart-message" class="empty-cart" style="display: none;">
@@ -273,13 +238,27 @@ $customer_id = $_SESSION['customer_id'];
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            const customerId = <?= $customer_id ?>;
+            let selectedCartIds = [];
+
             $(document).ready(function() {
                 loadCart();
+
+                function storeSelectedCartIds() {
+                    selectedCartIds = [];
+
+                    $('.checkout-selection:checked').each(function() {
+                        selectedCartIds.push($(this).val());
+                    });
+                }
 
                 function loadCart() {
                     $.ajax({
                         url: 'ajax/fetch_cart.php',
-                        type: 'GET',
+                        type: 'POST',
+                        data: {
+                            "customer_id" : customerId
+                        },
                         dataType: 'json',
                         success: function(cartData) {
                             let items = "";
@@ -300,20 +279,21 @@ $customer_id = $_SESSION['customer_id'];
                                                 <input type="checkbox" name="selected_items[]" class="checkout-selection" value="${item.cart_id}" />
                                             </td>
                                             <td width="15%">
-                                                <img src="${item.image}" width="100">
+                                                <input type="hidden" name="item_images[]" value="${item.image}" />
+                                                <img src="image/${item.image}.png" width="100">
                                             </td>
                                             <td width="25%">
-                                                <input type="hidden" name="item_names[]" value="${item.product_name}">${item.product_name}
+                                                <input type="hidden" name="item_names[]" value="${item.productName}" />${item.productName}
                                             </td>
                                             <td>
-                                                <input type="hidden" name="item_prices[]" value="${item.price}">RM ${item.price.toFixed(2)}
+                                                <input type="hidden" name="item_prices[]" value="${item.price}" />RM ${item.price.toFixed(2)}
                                             </td>
                                             <td>
                                                 <div class="quantity-container">
                                                     <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="decrease">
                                                         <i class="fa-solid fa-minus"></i>
                                                     </button>
-                                                    <input type="text" name="item_quantities[]" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                                                    <input type="text" name="item_quantities[]" class="quantity-input" value="${item.quantity}" min="1" readonly />
                                                     <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="increase">
                                                         <i class="fa-solid fa-plus"></i>
                                                     </button>
@@ -331,10 +311,26 @@ $customer_id = $_SESSION['customer_id'];
                                 });
 
                                 $("#cart-body").html(items);
+
+                                //restore user selected items
+                                selectedCartIds.forEach(function(id) {
+                                    $('.checkout-selection[value="' + id + '"]').prop('checked', true);
+                                });
+
+                                //restore selection-all checkbox
+                                $('.checkout-selection-all').prop('checked', $('.checkout-selection:checked').length === $('.checkout-selection').length);
+
+                                updateCheckoutSelection();
                             }
                         },
-                        error: function(xhr, status, error) {
-                            console.error("Error loading cart:", error);
+                        error: function() {
+                            Swal.fire({
+                                title: "ERROR",
+                                text: "An error occured! Please try again later.",
+                                icon: "error",
+                                confirmButtonColor: "Green",
+                                confirmButtonText: "OK"
+                            });
                         }
                     });
                 }
@@ -415,6 +411,7 @@ $customer_id = $_SESSION['customer_id'];
                                 },
                                 success: function(response) {
                                     if(response == "success") {
+                                        storeSelectedCartIds();
                                         loadCart();
                                     }
                                     else{
@@ -446,6 +443,7 @@ $customer_id = $_SESSION['customer_id'];
                         },
                         success: function(response) {
                             if(response == "success") {
+                                storeSelectedCartIds();
                                 loadCart();
                             }
                             else{
@@ -484,6 +482,7 @@ $customer_id = $_SESSION['customer_id'];
                                 },
                                 success: function(response) {
                                     if(response == "success") {
+                                        storeSelectedCartIds();
                                         loadCart();
                                     }
                                     else{
@@ -546,6 +545,7 @@ $customer_id = $_SESSION['customer_id'];
 
                     var itemId = $(this).val();
                     var name = $row.find("input[name='item_names[]']").val();
+                    var image = $row.find("input[name='item_images[]']").val();
                     var price = $row.find("input[name='item_prices[]']").val();
                     var quantity = $row.find("input[name='item_quantities[]']").val();
                     var subtotal = $row.find("input[name='item_subtotals[]']").val();
@@ -553,6 +553,7 @@ $customer_id = $_SESSION['customer_id'];
 
                     $form.append('<input type="hidden" name="selected_items[]" value="' + itemId + '"/>');
                     $form.append('<input type="hidden" name="item_names[]" value="' + name + '"/>');
+                    $form.append('<input type="hidden" name="item_images[]" value="' + image + '"/>');
                     $form.append('<input type="hidden" name="item_prices[]" value="' + price + '"/>');
                     $form.append('<input type="hidden" name="item_quantities[]" value="' + quantity + '"/>');
                     $form.append('<input type="hidden" name="item_subtotals[]" value="' + subtotal + '"/>');

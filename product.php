@@ -24,7 +24,8 @@ while ($row = $category_result->fetch_assoc()) {
 $product_sql = "SELECT p.*, c.catName 
                 FROM product p 
                 JOIN category c ON p.category = c.catName 
-                WHERE (c.catName = ? OR ? = 'All') 
+                WHERE p.status = 1
+                AND (c.catName = ? OR ? = 'All') 
                 AND (p.productName LIKE ?)";
 
 $stmt = $conn->prepare($product_sql);
@@ -232,6 +233,31 @@ $displayProducts = array_slice($products, $startIndex, $perPage);
                 opacity: 1;
             }
 
+            .cart-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #fff4fa;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cart-icon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+            background: #ffdae0;
+        }
+
         </style>
     </head>
     <body>
@@ -267,7 +293,14 @@ $displayProducts = array_slice($products, $startIndex, $perPage);
             <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
                 <a href="?category=<?php echo urlencode($selectedCategory); ?>&search=<?php echo urlencode($searchQuery); ?>&page=<?php echo $i; ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>"> <?php echo $i; ?> </a>
             <?php endfor; ?>
-        </div>  
+        </div> 
+        
+        <div class="cart-icon">
+        <a href="cart.php">
+            <img src="image/cart.png" alt="Cart">
+        </a>
+        </div>
+        
     </body>
 </html>
 

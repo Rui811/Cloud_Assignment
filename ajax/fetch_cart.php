@@ -1,10 +1,14 @@
 <?php
-session_start();
-// include 'db.php';
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cloud_testing";
+// include 'db_connect.php';
+// $host = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "cloud_testing";
+
+$host = "192.168.192.73";
+$username = "nbuser";
+$password = "abc12345";
+$dbname = "cloud";
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
@@ -15,18 +19,17 @@ if ($conn->connect_error) {
 
 header('Content-Type: application/json');
 
-$_SESSION['customer_id'] = 1;
+// if (!isset($_SESSION['user_id'])) {
+//     echo json_encode([]);
+//     exit;
+// }
 
-if (!isset($_SESSION['customer_id'])) {
-    echo json_encode([]);
-    exit;
-}
+// $customer_id = $_SESSION['user_id'];
+$customer_id = $_POST['customer_id'];
 
-$customer_id = $_SESSION['customer_id'];//test
-
-$sql = "SELECT c.cart_id, p.product_name, p.price, p.image, c.quantity
+$sql = "SELECT c.cart_id, p.productName, p.price, p.image, c.quantity
         FROM Cart c
-        JOIN Products p ON c.product_id = p.product_id
+        JOIN Product p ON c.product_id = p.productID
         WHERE c.customer_id = ?";
 
 $stmt = $conn->prepare($sql);

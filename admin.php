@@ -281,11 +281,11 @@ while ($row = $result->fetch_assoc()) {
                                                 <i class="bi bi-pencil-square"></i> Update
                                             </a>
                                             
-                                            <a href="admin.php?id=<?php echo $product['productID']; ?>&status=<?php echo $product['status']; ?>"
-   onclick="return confirm('Are you sure you want to <?php echo $product['status'] == 1 ? 'inactivate' : 'activate'; ?> this product?')"
-   class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
-   <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
-</a>
+                                            <a href="javascript:void(0);" 
+                                            onclick="confirmStatusChange(<?php echo $product['productID']; ?>, <?php echo $product['status']; ?>)"
+                                            class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
+                                                <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
+                                            </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -406,8 +406,34 @@ while ($row = $result->fetch_assoc()) {
     });
 
     $(document).ready(function () {
-        $('#productTable').DataTable();  // 这里的 ID 要跟 table 一致
+        $('#productTable').DataTable();  
     });
+
+    function confirmStatusChange(productID, currentStatus) {
+    Swal.fire({
+        title: `Are you sure you want to ${currentStatus == 1 ? 'inactivate' : 'activate'} this product?`,
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, change it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            Swal.fire({
+                title: "SUCCESS",
+                text: `Product successfully marked as ${currentStatus == 1 ? 'inactivate' : 'activate'}!`,
+                icon: "success",
+                confirmButtonColor: "Green",
+                confirmButtonText: "OK"
+            }).then(function () {
+                window.location.href = `admin.php?id=${productID}&status=${currentStatus}`;
+            });
+           
+        }
+    });
+}
 
     </script>
 </body>
