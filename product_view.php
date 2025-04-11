@@ -3,6 +3,8 @@
 <?php include 'header.php'; ?>
 
 <?php
+$isLoggedIn = isset($_SESSION['user_id']) ? 'true' : 'false';
+
 $host = "192.168.192.73";
 $username = "nbuser";
 $password = "abc12345";
@@ -14,6 +16,7 @@ if ($conn->connect_error) {
 }
 
 $productId = $_GET['id'] ?? 0;
+$customer_id = $_SESSION['user_id'];
 
 $sql = "SELECT * FROM product WHERE productID = ?";
 $stmt = $conn->prepare($sql);
@@ -136,10 +139,27 @@ if (!$product) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+      const isLoggedIn = <?= $isLoggedIn ?>;
+
       $(document).ready(function () {
         $('#addToCartBtn').on('click', function() {
-          
+
+          //check logIn or not
+          if (!isLoggedIn) {
+            Swal.fire({
+              title: "Please log in first",
+              text: "You must be logged in to add items to your cart.",
+              icon: "warning",
+              confirmButtonText: "Go to Login"
+            }).then(() => {
+              window.location.href = "login.php";
+            });
+            
+            return;
+          }
+
           let quantity = $('#quantity').val().trim();
+          let customerId = <?= $customer_id ?>;
           let productId = <?= json_encode($productId) ?>;
           let productName = $('#productName').text();
           let productPrice = $('#productPrice').text();
@@ -160,6 +180,7 @@ if (!$product) {
                 url: "ajax/add_to_cart.php",
                 type: "POST",
                 data: {
+                  "customerId" : customerId,
                   "productId" : productId,
                   "quantity" : quantity
                 },
@@ -171,7 +192,7 @@ if (!$product) {
                       icon: "success",
                       confirmButtonColor: "Green",
                       confirmButtonText: "OK"
-                    }).then(function () {
+                    }).then(() => {
                       window.location.href = "product.php";
                     });
                   }

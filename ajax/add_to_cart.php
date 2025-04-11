@@ -12,33 +12,55 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$_SESSION['user_id'] = 1;
-
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['errorToast'] = "Invalid Request!";
-    header("Location: product.php");
-    exit();
-    return;
-}
-
 if (!isset($_POST['productId'])) {
-    $_SESSION['errorToast'] = "Invalid Request!";
-    header("Location: product.php");
+    // $_SESSION['errorToast'] = "Invalid Request!";
+    // header("Location: product.php");
+    echo "error";
     exit();
-    return;
 }
 
 $productId = $_POST['productId'];
 $quantity = $_POST['quantity'];
-$customerId = $_SESSION['user_id'];
+$customerId = $_POST['customerId'];
 
-$sql = "INSERT INTO `Cart` (customer_id, product_id, quantity) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("iii", $customerId, $productId, $quantity);
+try {
+    $selectSql = "SELECT * FROM `Cart` WHERE customer_id = ? AND product_id = ?";
+    $selectStmt = $conn->prepare($selectSql);
+    $selectStmt->bind_param("ii", $customerId, $productId);
+    $selectStmt->execute();
+    $result = $selectStmt->get_result();
 
-if ($stmt->execute()) {
-    echo "success";
-} else {
+    //if exists, then update quantity
+    //if not, then create new record
+    if($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+
+        $originalQty = $row['quantity'];
+        $updatedQty = $originalQty + $quantity;
+
+        $updateSql = "UPDATE `Cart` SET quantity = ? WHERE customer_id = ? AND product_id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bind_param("iii", $updatedQty, $customerId, $productId);
+
+        if ($updateStmt->execute()) {
+            echo "success";
+        } else {
+            echo "error";
+        }
+    }
+    else {
+        $insertSql = "INSERT INTO `Cart` (customer_id, product_id, quantity) VALUES (?, ?, ?)";
+        $insertStmt = $conn->prepare($insertSql);
+        $insertStmt->bind_param("iii", $customerId, $productId, $quantity);
+
+        if ($insertStmt->execute()) {
+            echo "success";
+        } else {
+            echo "error";
+        }
+    }
+
+} catch (Exception $ex) {
     echo "error";
 }
 
