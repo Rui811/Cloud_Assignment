@@ -279,20 +279,21 @@ $customer_id = $_SESSION['user_id'];
                                                 <input type="checkbox" name="selected_items[]" class="checkout-selection" value="${item.cart_id}" />
                                             </td>
                                             <td width="15%">
+                                                <input type="hidden" name="item_images[]" value="${item.image}" />
                                                 <img src="image/${item.image}.png" width="100">
                                             </td>
                                             <td width="25%">
-                                                <input type="hidden" name="item_names[]" value="${item.productName}">${item.productName}
+                                                <input type="hidden" name="item_names[]" value="${item.productName}" />${item.productName}
                                             </td>
                                             <td>
-                                                <input type="hidden" name="item_prices[]" value="${item.price}">RM ${item.price.toFixed(2)}
+                                                <input type="hidden" name="item_prices[]" value="${item.price}" />RM ${item.price.toFixed(2)}
                                             </td>
                                             <td>
                                                 <div class="quantity-container">
                                                     <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="decrease">
                                                         <i class="fa-solid fa-minus"></i>
                                                     </button>
-                                                    <input type="text" name="item_quantities[]" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                                                    <input type="text" name="item_quantities[]" class="quantity-input" value="${item.quantity}" min="1" readonly />
                                                     <button class="quantity-btn update-qty" data-id="${item.cart_id}" data-action="increase">
                                                         <i class="fa-solid fa-plus"></i>
                                                     </button>
@@ -544,6 +545,7 @@ $customer_id = $_SESSION['user_id'];
 
                     var itemId = $(this).val();
                     var name = $row.find("input[name='item_names[]']").val();
+                    var image = $row.find("input[name='item_images[]']").val();
                     var price = $row.find("input[name='item_prices[]']").val();
                     var quantity = $row.find("input[name='item_quantities[]']").val();
                     var subtotal = $row.find("input[name='item_subtotals[]']").val();
@@ -551,6 +553,7 @@ $customer_id = $_SESSION['user_id'];
 
                     $form.append('<input type="hidden" name="selected_items[]" value="' + itemId + '"/>');
                     $form.append('<input type="hidden" name="item_names[]" value="' + name + '"/>');
+                    $form.append('<input type="hidden" name="item_images[]" value="' + image + '"/>');
                     $form.append('<input type="hidden" name="item_prices[]" value="' + price + '"/>');
                     $form.append('<input type="hidden" name="item_quantities[]" value="' + quantity + '"/>');
                     $form.append('<input type="hidden" name="item_subtotals[]" value="' + subtotal + '"/>');
