@@ -138,6 +138,7 @@ if (!$product) {
     <script>
       $(document).ready(function () {
         $('#addToCartBtn').on('click', function() {
+          
           let quantity = $('#quantity').val().trim();
           let productId = <?= json_encode($productId) ?>;
           let productName = $('#productName').text();
@@ -170,6 +171,8 @@ if (!$product) {
                       icon: "success",
                       confirmButtonColor: "Green",
                       confirmButtonText: "OK"
+                    }).then(function () {
+                      window.location.href = "product.php";
                     });
                   }
                   else {
