@@ -1,6 +1,13 @@
 <?php
-
+session_start();
+if (isset($_SESSION['login_error'])) {
+    $error_message = $_SESSION['login_error'];
+    unset($_SESSION['login_error']);
+} else {
+    $error_message = '';
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'header.php'; ?>
@@ -63,25 +70,13 @@
             background-position: center;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .wrapper {
-            animation: fadeIn 1s ease-in-out;
-        }
-
         h2 {
             font-weight: 600;
             color: #ff6b81;
+        }
+
+        #loginForm {
+            margin-top: 40px;
         }
 
         .form-control {
@@ -125,6 +120,12 @@
             color: #666;
         }
 
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
         @media (max-width: 768px) {
             .wrapper {
                 flex-direction: column;
@@ -143,27 +144,26 @@
     </style>
 </head>
 
-
-
 <body>
 
     <div class="wrapper">
         <div class="login-container">
             <h2>Welcome Back! 🎀</h2>
             <p>Login to continue shopping for cute gifts!</p>
-            <form action="login_process.php" method="POST">
+
+            <form id="loginForm">
                 <div class="mb-3">
                     <input type="text" name="identifier" class="form-control" placeholder="Username or Email" required>
+                    <div class="error-message" id="username-error"></div>
                 </div>
                 <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <input type="password" name="password" class="form-control" placeholder="Password" required id="passwordField">
+                    <div class="error-message" id="password-error"></div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
                 <div class="text-center mt-2">
-                    <a href="forgot_password.php" class="text-decoration-none"
-                        style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
+                    <a href="forgot_password.php" class="text-decoration-none" style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
                 </div>
-
             </form>
             <p class="signup-link">Don't have an account? <a href="signup.php">Sign Up Now!</a></p>
         </div>
@@ -176,6 +176,40 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); 
+
+            let formData = new FormData(this);
+
+            fetch('login_process.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('username-error').textContent = '';
+                    document.getElementById('password-error').textContent = '';
+
+                    if (data.status === 'success') {
+                        window.location.href = data.redirect;
+                    } else {
+                        if (data.field === 'identifier') {
+                            document.getElementById('username-error').textContent = data.message;
+                        } else if (data.field === 'password') {
+                            document.getElementById('password-error').textContent = data.message;
+                        }
+
+                        document.getElementById('passwordField').value = ''; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
 </body>
 
 </html>

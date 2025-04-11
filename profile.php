@@ -132,7 +132,7 @@ include 'profile_helper.php';
         }
 
         ul li button:hover {
-            background-color:rgba(244, 201, 239, 0.85);
+            background-color:rgba(238, 182, 231, 0.85);
         }
 
         .logout-icon {
@@ -183,14 +183,14 @@ include 'profile_helper.php';
 
     <div class="wrapper">
         <div class="profile-section">
-            <img src="image/sample-profile.jpg" alt="Profile Image" class="profile-image">
+            <img src="image/cust_pic1.jpg" alt="Profile Image" class="profile-image">
 
             <div class="box profile-details">
                 <div class="label-tag">PROFILE DETAILS</div>
-                <p><strong>Name:</strong> Kexin</p>
-                <p><strong>Email:</strong> kexin@email.com</p>
-                <p><strong>Phone:</strong> 012-3456789</p>
-                <p><strong>Address:</strong> Bagan Serai, Perak</p>
+                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['cust_name']); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['cust_email']); ?></p>
+                <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['cust_phone']); ?></p>
+                <p><strong>Address:</strong> <?php echo htmlspecialchars($user['cust_address']); ?></p>
             </div>
         </div>
 

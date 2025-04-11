@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 $host = "192.168.192.73";
@@ -13,7 +12,7 @@ if ($conn->connect_error) {
 }
 
 $identifier = $_POST['identifier']; 
-$password = $_POST['password'];
+$password = $_POST['password']; 
 
 $sql = "SELECT * FROM customer WHERE cust_email = ? OR cust_username = ?";
 $stmt = $conn->prepare($sql);
@@ -25,16 +24,19 @@ if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
 
     if (password_verify($password, $user['cust_psw'])) {
-        $_SESSION['user_id'] = $user['customer_id'];
-        $_SESSION['username'] = $user['cust_username'];
+        $_SESSION['user_id'] = $user['customer_id']; 
+        $_SESSION['username'] = $user['cust_username']; 
         $_SESSION['email'] = $user['cust_email'];
-        header("Location: homepage.php"); 
+
+        echo json_encode(['status' => 'success', 'redirect' => 'profile.php']);
         exit();
     } else {
-        echo "Incorrect password.";
+        echo json_encode(['status' => 'error', 'message' => 'Incorrect password.']);
+        exit();
     }
 } else {
-    echo "No account found with that email or username.";
+    echo json_encode(['status' => 'error', 'message' => 'No account found with that email or username.']);
+    exit();
 }
 
 $stmt->close();
