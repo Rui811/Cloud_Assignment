@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 $productId = $_GET['id'] ?? 0;
-$customer_id = $_SESSION['user_id'];
+$customer_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "";
 
 $sql = "SELECT * FROM product WHERE productID = ?";
 $stmt = $conn->prepare($sql);
@@ -159,7 +159,7 @@ if (!$product) {
           }
 
           let quantity = $('#quantity').val().trim();
-          let customerId = <?= $customer_id ?>;
+          let customerId = <?= json_encode($customer_id) ?>;
           let productId = <?= json_encode($productId) ?>;
           let productName = $('#productName').text();
           let productPrice = $('#productPrice').text();
