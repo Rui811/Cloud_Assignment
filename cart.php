@@ -25,7 +25,7 @@ $customer_id = $_SESSION['user_id'];
                 margin: 0;
             }
 
-            .back-home-btn {
+            .back-product-btn {
                 text-decoration: none;
                 width: fit-content;
                 font-size: 18px;
@@ -173,8 +173,8 @@ $customer_id = $_SESSION['user_id'];
 
             <div class="card shadow mt-3">
                 <div class="card-body">
-                    <a class="back-home-btn" href="homepage.php" title="back to homepage">
-                        <i class="fa-solid fa-home"></i> Home
+                    <a class="back-product-btn" href="product.php" title="back to product page">
+                        <i class="fa-solid fa-shop"></i> Shop
                     </a>
                     
                     <div class="cart-container mt-3">
@@ -195,39 +195,6 @@ $customer_id = $_SESSION['user_id'];
                                 </thead>
                                 <tbody id="cart-body">
                                     <!-- Items will be loaded here via AJAX -->
-                                    <!-- <tr class="cart-item-row">
-                                        <td>
-                                            <input type="checkbox" name="selected_items[]" class="checkout-selection" value="item-code-id1" />
-                                        </td>
-                                        <td width="15%">
-                                            <img src="image/flower1.png" width="100">
-                                        </td>
-                                        <td width="25%">
-                                            <input type="hidden" name="item_names[]" value="Rosie">Rosie
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_prices[]" value="40.00">RM 40.00
-                                        </td>
-                                        <td>
-                                            <div class="quantity-container">
-                                                <button class="quantity-btn update-qty" data-id="" data-action="decrease">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="text" name="item_quantities[]" class="quantity-input" value="1" min="1" readonly>
-                                                <button class="quantity-btn update-qty" data-id="" data-action="increase">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="item_subtotals[]" value="40.00">RM 40.00
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button class="remove-item" data-id="">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr> -->
                                 </tbody>
                             </table>
                             <div id="empty-cart-message" class="empty-cart" style="display: none;">
