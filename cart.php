@@ -1,13 +1,11 @@
 <?php
 include 'header.php';
 
-session_start();
-$_SESSION['customer_id'] = "hdnj";
-if (!isset($_SESSION['customer_id'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-$customer_id = $_SESSION['customer_id'];
+$customer_id = $_SESSION['user_id'];
 ?>
 
 <!DOCTYPE html>
@@ -273,13 +271,18 @@ $customer_id = $_SESSION['customer_id'];
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            const customerId = <?= $customer_id ?>;
+
             $(document).ready(function() {
                 loadCart();
 
                 function loadCart() {
                     $.ajax({
                         url: 'ajax/fetch_cart.php',
-                        type: 'GET',
+                        type: 'POST',
+                        data: {
+                            "customer_id" : customerId
+                        },
                         dataType: 'json',
                         success: function(cartData) {
                             let items = "";
@@ -300,10 +303,10 @@ $customer_id = $_SESSION['customer_id'];
                                                 <input type="checkbox" name="selected_items[]" class="checkout-selection" value="${item.cart_id}" />
                                             </td>
                                             <td width="15%">
-                                                <img src="${item.image}" width="100">
+                                                <img src="image/${item.image}.png" width="100">
                                             </td>
                                             <td width="25%">
-                                                <input type="hidden" name="item_names[]" value="${item.product_name}">${item.product_name}
+                                                <input type="hidden" name="item_names[]" value="${item.productName}">${item.productName}
                                             </td>
                                             <td>
                                                 <input type="hidden" name="item_prices[]" value="${item.price}">RM ${item.price.toFixed(2)}
@@ -333,8 +336,14 @@ $customer_id = $_SESSION['customer_id'];
                                 $("#cart-body").html(items);
                             }
                         },
-                        error: function(xhr, status, error) {
-                            console.error("Error loading cart:", error);
+                        error: function() {
+                            Swal.fire({
+                                title: "ERROR",
+                                text: "An error occured! Please try again later.",
+                                icon: "error",
+                                confirmButtonColor: "Green",
+                                confirmButtonText: "OK"
+                            });
                         }
                     });
                 }

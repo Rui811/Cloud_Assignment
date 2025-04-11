@@ -1,10 +1,14 @@
 <?php
-session_start();
-// include 'db.php';
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cloud_testing";
+// include 'db_connect.php';
+// $host = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "cloud_testing";
+
+$host = "192.168.192.73";
+$username = "nbuser";
+$password = "abc12345";
+$dbname = "cloud";
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
@@ -13,14 +17,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$id = $_POST['id'];
-
-if(!isset($id)) {
+if(!isset($_POST['id'])) {
     $_SESSION['errorToast'] ="Invalid Request!";
     header("Location: cart.php");
     exit();
     return;
 }
+
+$id = $_POST['id'];
 
 $sql = "DELETE FROM Cart WHERE cart_id = ?";
 $stmt = $conn->prepare($sql);
