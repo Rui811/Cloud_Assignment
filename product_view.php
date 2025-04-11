@@ -109,14 +109,14 @@ if (!$product) {
 
                 </div>
                 <div class="col-md-7">
-                <h2 class="product-title"><?php echo htmlspecialchars($product['productName']); ?></h2>
+                <h2 class="product-title" id="productName"><?php echo htmlspecialchars($product['productName']); ?></h2>
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p>RM <?php echo number_format($product['price'], 2); ?></p>
 
       <div class="mt-4 d-flex align-items-center">
             <label for="quantity" class="me-2 fw-bold">Quantity:</label>
             <input type="number" id="quantity" class="form-control w-25 me-3" min="1" value="1">
-            <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+            <button class="btn btn-primary" id="addToCartBtn">Add to Cart</button>
           </div>
 
           <div id="cartMessage" class="mt-3 text-success fw-bold"></div>
@@ -133,5 +133,69 @@ if (!$product) {
 
     <?php include './footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      $(document).ready(function () {
+        $('#addToCartBtn').on('click', function() {
+          let quantity = $('#quantity').val().trim();
+          let productId = <?= json_encode($productId) ?>;
+          let productName = $('#productName').text();
+          let productPrice = $('#productPrice').text();
+          let textMsg = `Product : ${productName} x${quantity}`;
+
+          Swal.fire({
+            title: "Confirm add to cart?",
+            html: textMsg,
+            icon: "info",
+            confirmButtonColor: "Green",
+            confirmButtonText: "Confirm",
+            showCancelButton: true,
+            cancelButtonColor: "Crimson",
+            cancelButtonText: "Cancel"
+          }).then((result) => {
+            if(result.isConfirmed) {
+              $.ajax({
+                url: "ajax/add_to_cart.php",
+                type: "POST",
+                data: {
+                  "productId" : productId,
+                  "quantity" : quantity
+                },
+                success: function(response) {
+                  if(response == "success") {
+                    Swal.fire({
+                      title: "SUCCESS",
+                      text: "Product successfully added to cart!",
+                      icon: "success",
+                      confirmButtonColor: "Green",
+                      confirmButtonText: "OK"
+                    });
+                  }
+                  else {
+                    Swal.fire({
+                      title: "FAILED",
+                      text: "An error occured! Please try again later.",
+                      icon: "error",
+                      confirmButtonColor: "Green",
+                      confirmButtonText: "OK"
+                    });
+                  }
+                },
+                error: function() {
+                  Swal.fire({
+                    title: "ERROR",
+                    text: "An error occured! Please try again later.",
+                    icon: "error",
+                    confirmButtonColor: "Green",
+                    confirmButtonText: "OK"
+                  });
+                }
+              });
+            }
+          });
+        });
+      });
+    </script>
 </body>
 </html>
