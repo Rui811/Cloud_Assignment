@@ -239,9 +239,18 @@ $customer_id = $_SESSION['user_id'];
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             const customerId = <?= $customer_id ?>;
+            let selectedCartIds = [];
 
             $(document).ready(function() {
                 loadCart();
+
+                function storeSelectedCartIds() {
+                    selectedCartIds = [];
+
+                    $('.checkout-selection:checked').each(function() {
+                        selectedCartIds.push($(this).val());
+                    });
+                }
 
                 function loadCart() {
                     $.ajax({
@@ -301,6 +310,16 @@ $customer_id = $_SESSION['user_id'];
                                 });
 
                                 $("#cart-body").html(items);
+
+                                //restore user selected items
+                                selectedCartIds.forEach(function(id) {
+                                    $('.checkout-selection[value="' + id + '"]').prop('checked', true);
+                                });
+
+                                //restore selection-all checkbox
+                                $('.checkout-selection-all').prop('checked', $('.checkout-selection:checked').length === $('.checkout-selection').length);
+
+                                updateCheckoutSelection();
                             }
                         },
                         error: function() {
@@ -391,6 +410,7 @@ $customer_id = $_SESSION['user_id'];
                                 },
                                 success: function(response) {
                                     if(response == "success") {
+                                        storeSelectedCartIds();
                                         loadCart();
                                     }
                                     else{
@@ -422,6 +442,7 @@ $customer_id = $_SESSION['user_id'];
                         },
                         success: function(response) {
                             if(response == "success") {
+                                storeSelectedCartIds();
                                 loadCart();
                             }
                             else{
@@ -460,6 +481,7 @@ $customer_id = $_SESSION['user_id'];
                                 },
                                 success: function(response) {
                                     if(response == "success") {
+                                        storeSelectedCartIds();
                                         loadCart();
                                     }
                                     else{
