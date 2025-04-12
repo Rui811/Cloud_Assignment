@@ -55,6 +55,7 @@ if (isset($_SESSION['login_error'])) {
             box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
             margin-left: 28%;
             margin-top: 5%;
+            animation: fadeIn 1s ease-in-out;
         }
 
         .login-container {
@@ -124,6 +125,18 @@ if (isset($_SESSION['login_error'])) {
             color: red;
             font-size: 14px;
             margin-top: 5px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {

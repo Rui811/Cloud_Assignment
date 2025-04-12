@@ -28,7 +28,7 @@ if ($result->num_rows === 1) {
         $_SESSION['username'] = $user['cust_username']; 
         $_SESSION['email'] = $user['cust_email'];
 
-        echo json_encode(['status' => 'success', 'redirect' => 'profile.php']);
+        echo json_encode(['status' => 'success', 'redirect' => 'homepage.php']);
         exit();
     } else {
         echo json_encode([
