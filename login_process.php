@@ -28,7 +28,12 @@ if ($result->num_rows === 1) {
         $_SESSION['username'] = $user['cust_username']; 
         $_SESSION['email'] = $user['cust_email'];
 
-        echo json_encode(['status' => 'success', 'redirect' => 'homepage.php']);
+        echo json_encode([
+            'status' => 'success',
+            'username' => $user['cust_username'],
+            'redirect' => 'homepage.php'
+        ]);
+        
         exit();
     } else {
         echo json_encode([
@@ -45,6 +50,7 @@ if ($result->num_rows === 1) {
         'message' => 'No account found with that email or username.'
     ]);
     exit();
+    
 }
 
     

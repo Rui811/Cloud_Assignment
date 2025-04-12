@@ -204,17 +204,12 @@ unset($_SESSION['signup_success']);
     </div>
 
     <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="successModalLabel">Account Created!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Your account has been successfully created. You can now <a href="login.php">login here</a>! 🎉
-                </div>
+    <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-labelledby="loginSuccessModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <h5 class="modal-title mb-3" id="loginSuccessModalLabel">Login Successful!</h5>
+                <p id="welcomeMessage">Welcome, <span id="modalUsername"></span>!</p>
             </div>
         </div>
     </div>
@@ -272,7 +267,7 @@ unset($_SESSION['signup_success']);
         </script>
     <?php endif; ?>
 
-    
+
 </body>
 
 </html>
