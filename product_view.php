@@ -36,6 +36,9 @@ if (!$product) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChapaLang Graduation Bouquets</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
     body {
       background-image: url("image/wallpaper2.png");
@@ -63,6 +66,7 @@ if (!$product) {
 
     .product-img {
       max-width: 100%;
+      height:420px;
       border-radius: 10px;
     }
 
@@ -98,6 +102,27 @@ if (!$product) {
         position: static;
       }
     }
+
+    .back-product-btn {
+      margin-bottom:10px ;
+      margin-top:-20px;
+      text-decoration: none;
+      width: fit-content;
+      font-size: 18px;
+      font-weight: bold;
+      padding-left: 0px;
+      color:rgb(92, 96, 173);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: 0.5s ease-in-out;
+
+    &:hover {
+      transform: translateX(-4px);
+      color:rgb(64, 68, 151);
+      }
+    }
     </style>
 </head>
 
@@ -105,6 +130,10 @@ if (!$product) {
 
     <main class="container">
         <div class="product-card">
+          <a class="back-product-btn" href="product.php" title="back to product page">
+                  <i class="fa-solid fa-shop"></i> Shop
+              </a>
+        
             <div class="row align-items-center">
                 <!-- Image on the right -->
                 <div class="col-md-5 text-center mt-4 mt-md-0">
@@ -121,14 +150,8 @@ if (!$product) {
             <input type="number" id="quantity" class="form-control w-25 me-3" min="1" value="1">
             <button class="btn btn-primary" id="addToCartBtn">Add to Cart</button>
           </div>
-
-          <div id="cartMessage" class="mt-3 text-success fw-bold"></div>
       </div>
                 </div>
-
-    <script>
-        
-    </script>
                 
             </div>
         </div>

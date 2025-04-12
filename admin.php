@@ -10,6 +10,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$categoryMap = [];
+$categoryQuery = $conn->query("SELECT catID, catName FROM category");
+while ($cat = $categoryQuery->fetch_assoc()) {
+    $categoryMap[$cat['catID']] = $cat['catName'];
+}
+
 //check is admin or not
 $adminName = $_SESSION['admin'] ?? null;
 $sql = "SELECT * FROM admin WHERE admin_username = ?";
@@ -67,11 +73,10 @@ while ($row = $category_result->fetch_assoc()) {
 }
 
 // Get products
-$product_sql = "SELECT p.*, c.catName 
-                FROM product p 
-                JOIN category c ON p.category = c.catName 
-                WHERE (c.catName = ? OR ? = 'All') 
-                AND (p.productName LIKE ?)";
+$product_sql = "SELECT * FROM product 、
+                WHERE (category = ? OR ? = 'All') 
+                AND (productName LIKE ?)";
+
 
 $stmt = $conn->prepare($product_sql);
 $likeSearch = '%' . $searchQuery . '%';
@@ -278,7 +283,7 @@ while ($row = $result->fetch_assoc()) {
                     <div class="container mt-4">
                     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 50px;">
                             <h4 class="mb-0" >Product List</h4>
-                            <a href="add_product.php" class="btn btn-primary" style="background-color: #673de6;">Add Product</a>
+                            <a href="admin_product.php" class="btn btn-primary" style="background-color: #673de6;">Add Product</a>
                         </div>
                         <div class="table-responsive">
                             <table id="productTable" class="table table-striped">
@@ -294,11 +299,28 @@ while ($row = $result->fetch_assoc()) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($products as $product): ?>
+                                <?php foreach ($products as $index => $product): ?>
                                         <tr>
-                                            <td><?php echo 'P' . str_pad($product['productID'], 4, '0', STR_PAD_LEFT); ?></td>
+                                            <td><?php echo 'P' . str_pad($index+1, 4, '0', STR_PAD_LEFT); ?></td>
                                             <td><?php echo htmlspecialchars($product['productName']); ?></td>
-                                            <td><?php echo htmlspecialchars($product['catName']); ?></td>
+                                            <td>
+                                                <?php
+                                                $catNames = [];
+
+                                                if (!empty($product['category'])) {
+                                                    $catIds = explode(',', $product['category']);
+
+                                                    foreach ($catIds as $catId) {
+                                                        $catId = trim($catId);
+                                                        if (!empty($catId) && isset($categoryMap[$catId])) {
+                                                            $catNames[] = $categoryMap[$catId];
+                                                        }
+                                                    }
+                                                }
+
+                                                echo !empty($catNames) ? implode(', ', $catNames) : '-';
+                                                ?>
+                                            </td>
                                             <td><?php echo number_format($product['price'], 2); ?></td>
                                             <td>
                                                 <?php if ($product['status'] == 1): ?>
@@ -307,7 +329,7 @@ while ($row = $result->fetch_assoc()) {
                                                 <span class="text-danger fw-bold">Inactive</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><a href="update_product.php?id=<?php echo $product['productID']; ?>" class="btn btn-success btn-sm me-1">
+                                            <td><a href="admin_product.php?edit=<?php echo $product['productID']; ?>" class="btn btn-success btn-sm me-1">
                                                 <i class="bi bi-pencil-square"></i> Update
                                             </a>
                                             

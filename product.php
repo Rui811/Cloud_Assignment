@@ -1,11 +1,14 @@
-<?php include 'header.php'; ?>
-<?php
-    $host = "192.168.192.73";
-    $username = "nbuser";
-    $password = "abc12345";
-    $database = "cloud";
 
-    $conn = new mysqli($host, $username, $password, $database);
+<?php
+
+include 'header.php';
+
+$host = "192.168.192.73";
+$username = "nbuser";
+$password = "abc12345";
+$database = "cloud";
+
+$conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -14,23 +17,38 @@ if ($conn->connect_error) {
 $selectedCategory = $_GET['category'] ?? "All";
 $searchQuery = $_GET['search'] ?? "";
 
+// 获取所有分类信息，同时建立映射
 $category_sql = "SELECT * FROM category";
 $category_result = $conn->query($category_sql);
 $categories = ["All"];
+$categoryMap = [];
+
 while ($row = $category_result->fetch_assoc()) {
     $categories[] = $row['catName'];
+    $categoryMap[$row['catName']] = $row['catID'];
 }
 
-$product_sql = "SELECT p.*, c.catName 
-                FROM product p 
-                JOIN category c ON p.category = c.catName 
-                WHERE p.status = 1
-                AND (c.catName = ? OR ? = 'All') 
-                AND (p.productName LIKE ?)";
-
-$stmt = $conn->prepare($product_sql);
+// 根据分类筛选产品
 $likeSearch = '%' . $searchQuery . '%';
-$stmt->bind_param("sss", $selectedCategory, $selectedCategory, $likeSearch);
+
+if ($selectedCategory !== 'All') {
+    $product_sql = "SELECT p.*, c.catName 
+                    FROM product p 
+                    JOIN category c ON FIND_IN_SET(c.catID, p.category)
+                    WHERE p.status = 1
+                    AND c.catName = ?
+                    AND p.productName LIKE ?";
+    $stmt = $conn->prepare($product_sql);
+    $stmt->bind_param("ss", $selectedCategory, $likeSearch);
+} else {
+    $product_sql = "SELECT DISTINCT p.* 
+                    FROM product p 
+                    WHERE p.status = 1
+                    AND p.productName LIKE ?";
+    $stmt = $conn->prepare($product_sql);
+    $stmt->bind_param("s", $likeSearch);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -39,14 +57,14 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 
-// Pagination
+// 分页
 $perPage = 12;
 $totalProducts = count($products);
 $totalPages = ceil($totalProducts / $perPage);
 $page = isset($_GET['page']) ? max(1, min($_GET['page'], $totalPages)) : 1;
 $startIndex = ($page - 1) * $perPage;
 $displayProducts = array_slice($products, $startIndex, $perPage);
-
+$selectedCategoryID = $categoryMap[$selectedCategory] ?? null;
 ?>
 
 
@@ -127,8 +145,10 @@ $displayProducts = array_slice($products, $startIndex, $perPage);
     
             .product img { 
                 width: 100%; 
-                height: auto; 
-                border-radius: 5px; 
+                border-radius: 5px;
+                height: 300px; 
+                object-fit: cover; 
+ 
             }
     
             .product h2 { 
@@ -202,7 +222,6 @@ $displayProducts = array_slice($products, $startIndex, $perPage);
 
             .image-container img {
                 width: 100%;
-                height: auto;
                 display: block;
                 transition: opacity 0.3s ease;
             }
