@@ -59,7 +59,7 @@ if (!$product) {
       background-color: #ffffff;
       padding: 30px;
       border-radius: 10px;
-      margin: 30px auto;
+      margin: 70px auto;
       max-width: 900px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -157,7 +157,6 @@ if (!$product) {
         </div>
     </main>
 
-    <?php include './footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

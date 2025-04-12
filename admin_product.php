@@ -67,33 +67,52 @@ $existingCategoryIDs = explode(',', $product['category']);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<style>
+    .product-card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      margin: 70px auto;
+      max-width: 900px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    </style>
 <body>
+<div class="product-card">
 <div class="container mt-4">
     <h2><?= $editMode ? 'Edit Product' : 'Add New Product' ?></h2>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="editID" value="<?= $product['productID'] ?>">
+    <form method="POST" enctype="multipart/form-data" class="container mt-5">
+    <input type="hidden" name="editID" value="<?= $product['productID'] ?? '' ?>">
 
-        <div class="mb-3">
-            <label class="form-label">Product Name:</label>
-            <input type="text" name="productName" class="form-control" value="<?= htmlspecialchars($product['productName']) ?>" required>
+    <div class="row align-items-stretch">
+
+        <!-- Left column -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Product Name:</label>
+                <input type="text" name="productName" class="form-control" value="<?= htmlspecialchars($product['productName'] ?? '') ?>" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Price (RM):</label>
+                <input type="number" step="0.01" name="price" class="form-control" value="<?= htmlspecialchars($product['price'] ?? '') ?>" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description:</label>
+                <textarea name="description" rows="4" class="form-control"><?= htmlspecialchars($description ?? '') ?></textarea>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Price (RM):</label>
-            <input type="number" step="0.01" name="price" class="form-control" value="<?= htmlspecialchars($product['price']) ?>" required>
-        </div>
-
-        <div class="mb-3">
-            <label>Description:</label><br>
-            <textarea name="description" rows="4" cols="50"><?= htmlspecialchars($description ?? '') ?></textarea><br>
-        </div>
-
+        <!-- Right column -->
+        <!-- Right column -->
+<div class="col-md-6 d-flex flex-column justify-content-between" style="min-height: 100%;">
+    <div>
         <div class="mb-3">
             <label class="form-label">Image (PNG only):</label>
             <input type="file" name="image" accept=".png" class="form-control">
-            <?php if ($editMode): ?>
-                <p>Current Image: <?= htmlspecialchars($product['image']) ?>.png</p>
-                
+            <?php if ($editMode && !empty($product['image'])): ?>
+                <p class="mt-2">Current Image: <?= htmlspecialchars($product['image']) ?>.png</p>
             <?php endif; ?>
         </div>
 
@@ -102,15 +121,22 @@ $existingCategoryIDs = explode(',', $product['category']);
             <?php while ($row = $categoryResult->fetch_assoc()): ?>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox" name="categories[]" value="<?= $row['catID'] ?>"
-                        <?= in_array($row['catID'], $existingCategoryIDs) ? 'checked' : '' ?>>
+                        <?= isset($existingCategoryIDs) && in_array($row['catID'], $existingCategoryIDs) ? 'checked' : '' ?>>
                     <label class="form-check-label"><?= htmlspecialchars($row['catName']) ?></label>
                 </div>
             <?php endwhile; ?>
         </div>
+    </div>
 
+    <!-- Button aligned bottom right -->
+    <div class="mt-auto d-flex justify-content-end">
         <button type="submit" class="btn btn-primary"><?= $editMode ? 'Update Product' : 'Add Product' ?></button>
-    </form>
+    </div>
+    </div>
+</form>
+
 </div>
+            </div>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const success = urlParams.get('success');
