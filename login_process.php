@@ -31,13 +31,23 @@ if ($result->num_rows === 1) {
         echo json_encode(['status' => 'success', 'redirect' => 'profile.php']);
         exit();
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Incorrect password.']);
+        echo json_encode([
+            'status' => 'error',
+            'field' => 'password',
+            'message' => 'Incorrect password.'
+        ]);
         exit();
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'No account found with that email or username.']);
+    echo json_encode([
+        'status' => 'error',
+        'field' => 'identifier',
+        'message' => 'No account found with that email or username.'
+    ]);
     exit();
 }
+
+    
 
 $stmt->close();
 $conn->close();

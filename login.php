@@ -157,12 +157,14 @@ if (isset($_SESSION['login_error'])) {
                     <div class="error-message" id="username-error"></div>
                 </div>
                 <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required id="passwordField">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required
+                        id="passwordField">
                     <div class="error-message" id="password-error"></div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
                 <div class="text-center mt-2">
-                    <a href="forgot_password.php" class="text-decoration-none" style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
+                    <a href="forgot_password.php" class="text-decoration-none"
+                        style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
                 </div>
             </form>
             <p class="signup-link">Don't have an account? <a href="signup.php">Sign Up Now!</a></p>
@@ -179,7 +181,7 @@ if (isset($_SESSION['login_error'])) {
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault(); 
+            event.preventDefault();
 
             let formData = new FormData(this);
 
@@ -189,6 +191,7 @@ if (isset($_SESSION['login_error'])) {
             })
                 .then(response => response.json())
                 .then(data => {
+                    //clear previous msg
                     document.getElementById('username-error').textContent = '';
                     document.getElementById('password-error').textContent = '';
 
@@ -201,7 +204,8 @@ if (isset($_SESSION['login_error'])) {
                             document.getElementById('password-error').textContent = data.message;
                         }
 
-                        document.getElementById('passwordField').value = ''; 
+                        //clear password field
+                        document.getElementById('passwordField').value = '';
                     }
                 })
                 .catch(error => {
