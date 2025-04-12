@@ -23,6 +23,15 @@ $result = $stmt->get_result();
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
 
+    if ($user['status'] == 0) {
+        echo json_encode([
+            'status' => 'error',
+            'field' => 'identifier',
+            'message' => 'Your account is inactive.'
+        ]);
+        exit();
+    }
+
     if (password_verify($password, $user['cust_psw'])) {
         $_SESSION['user_id'] = $user['customer_id']; 
         $_SESSION['username'] = $user['cust_username']; 

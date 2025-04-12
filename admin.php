@@ -47,18 +47,18 @@ if ($result->num_rows === 0) {
 }
 
 $productID = $_GET['id'] ?? 0;
-    $currentStatus = $_GET['status'] ?? null;
-    
-    if ($productID && $currentStatus !== null) {
-        $newStatus = ($currentStatus == 1) ? 0 : 1;
-    
-        $sql = "UPDATE product SET status = ? WHERE productID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $newStatus, $productID);
-        $stmt->execute();
-    
-        $stmt->close();
-    }
+$currentStatus = $_GET['status'] ?? null;
+
+if ($productID && $currentStatus !== null) {
+    $newStatus = ($currentStatus == 1) ? 0 : 1;
+
+    $sql = "UPDATE product SET status = ? WHERE productID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $newStatus, $productID);
+    $stmt->execute();
+
+    $stmt->close();
+}
 
 // Get filters
 $selectedCategory = $_GET['category'] ?? "All";
@@ -100,7 +100,7 @@ while ($row = $result->fetch_assoc()) {
     <title>Admin | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" >
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -127,7 +127,8 @@ while ($row = $result->fetch_assoc()) {
             color: #fff;
         }
 
-        a.logOutAlert:hover, a.profile:hover {
+        a.logOutAlert:hover,
+        a.profile:hover {
             background-color: #dc3545;
             color: #fff;
         }
@@ -150,8 +151,9 @@ while ($row = $result->fetch_assoc()) {
             display: block;
         }
 
-        .buttonAddProduct
-        {background-color: #673de6;}
+        .buttonAddProduct {
+            background-color: #673de6;
+        }
     </style>
 </head>
 
@@ -163,26 +165,27 @@ while ($row = $result->fetch_assoc()) {
                 <h4 class="fw-bold mb-4">CHAPALANG ADMIN</h4>
                 <ul class="navbar-nav">
                     <li><a href="#" class="nav-link active" data-target="homePage">
-                        <i class="bi bi-house-door-fill me-2"></i> Dashboard</a>
+                            <i class="bi bi-house-door-fill me-2"></i> Dashboard</a>
                     </li>
                     <li><a href="#" class="nav-link" data-target="orderPage">
-                        <i class="bi bi-table me-2"></i> Order</a>
+                            <i class="bi bi-table me-2"></i> Order</a>
                     </li>
                     <li><a href="#" class="nav-link" data-target="productPage">
-                        <i class="bi bi-grid me-2"></i>Product</a>
+                            <i class="bi bi-grid me-2"></i>Product</a>
                     </li>
                     <li><a href="#" class="nav-link" data-target="userPage">
-                        <i class="bi bi-person-circle me-2"></i>Customers</a>
+                            <i class="bi bi-person-circle me-2"></i>Customers</a>
                     </li>
                 </ul>
                 <div class="mt-auto">
                     <a href="#" class="profile" data-bs-toggle="modal" data-bs-target="#accountSettingModal">
                         <i class="bi bi-gear-fill me-2"></i> Account Setting
                     </a>
-                    
-                    <a href="#" class="logOutAlert mt-auto" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
+
+                    <a href="#" class="logOutAlert mt-auto" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i>
+                        Log out</a>
                 </div>
-                
+
             </div>
 
             <!-- Main Content -->
@@ -191,7 +194,8 @@ while ($row = $result->fetch_assoc()) {
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Dashboard</h2>
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
+                                style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
                             <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
@@ -225,14 +229,15 @@ while ($row = $result->fetch_assoc()) {
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Order</h2>
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
+                                style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
                             <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">
-                    <h4 class="mb-3">Order List</h4>
+                        <h4 class="mb-3">Order List</h4>
                         <div class="table-responsive">
                             <table id="orderTable" class="table table-striped">
                                 <thead>
@@ -274,21 +279,23 @@ while ($row = $result->fetch_assoc()) {
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Product</h2>
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
+                                style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
                             <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
                     <div class="container mt-4">
-                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 50px;">
-                            <h4 class="mb-0" >Product List</h4>
-                            <a href="admin_product.php" class="btn btn-primary" style="background-color: #673de6;">Add Product</a>
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 50px;">
+                            <h4 class="mb-0">Product List</h4>
+                            <a href="admin_product.php" class="btn btn-primary" style="background-color: #673de6;">Add
+                                Product</a>
                         </div>
                         <div class="table-responsive">
                             <table id="productTable" class="table table-striped">
                                 <thead>
-                                    
+
                                     <tr>
                                         <th>Product ID</th>
                                         <th>Name</th>
@@ -299,9 +306,9 @@ while ($row = $result->fetch_assoc()) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php foreach ($products as $index => $product): ?>
+                                    <?php foreach ($products as $index => $product): ?>
                                         <tr>
-                                            <td><?php echo 'P' . str_pad($index+1, 4, '0', STR_PAD_LEFT); ?></td>
+                                            <td><?php echo 'P' . str_pad($index + 1, 4, '0', STR_PAD_LEFT); ?></td>
                                             <td><?php echo htmlspecialchars($product['productName']); ?></td>
                                             <td>
                                                 <?php
@@ -324,20 +331,21 @@ while ($row = $result->fetch_assoc()) {
                                             <td><?php echo number_format($product['price'], 2); ?></td>
                                             <td>
                                                 <?php if ($product['status'] == 1): ?>
-                                                <span class="text-success fw-bold">Active</span>
+                                                    <span class="text-success fw-bold">Active</span>
                                                 <?php else: ?>
-                                                <span class="text-danger fw-bold">Inactive</span>
+                                                    <span class="text-danger fw-bold">Inactive</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><a href="admin_product.php?edit=<?php echo $product['productID']; ?>" class="btn btn-success btn-sm me-1">
-                                                <i class="bi bi-pencil-square"></i> Update
-                                            </a>
-                                            
-                                            <a href="javascript:void(0);" 
-                                            onclick="confirmStatusChange(<?php echo $product['productID']; ?>, <?php echo $product['status']; ?>)"
-                                            class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
-                                                <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
-                                            </a>
+                                            <td><a href="admin_product.php?edit=<?php echo $product['productID']; ?>"
+                                                    class="btn btn-success btn-sm me-1">
+                                                    <i class="bi bi-pencil-square"></i> Update
+                                                </a>
+
+                                                <a href="javascript:void(0);"
+                                                    onclick="confirmStatusChange(<?php echo $product['productID']; ?>, <?php echo $product['status']; ?>)"
+                                                    class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
+                                                    <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -351,47 +359,111 @@ while ($row = $result->fetch_assoc()) {
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Customer</h2>
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                            <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center"
+                                style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
                             </div>
                             <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
-                    <div class="container mt-4">Hi,Customer</div>
+                    <div class="container mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">Customer List</h4>
+                            <button class="btn btn-primary" style="background-color: #673de6;"
+                                onclick="openAddCustomerModal()">Add Customer</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="customerTable" class="table table-striped">
+
+                                <thead>
+                                    <tr>
+                                        <th>Customer ID</th>
+                                        <th>Username</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $cust_query = $conn->query("SELECT * FROM customer ORDER BY customer_id ASC");
+                                    while ($cust = $cust_query->fetch_assoc()):
+                                        ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($cust['customer_id']) ?></td>
+                                            <td><?= htmlspecialchars($cust['cust_username']) ?></td>
+                                            <td><?= htmlspecialchars($cust['cust_name']) ?></td>
+                                            <td><?= htmlspecialchars($cust['cust_email']) ?></td>
+                                            <td><?= htmlspecialchars($cust['cust_phone']) ?></td>
+                                            <td><?= htmlspecialchars($cust['cust_address']) ?></td>
+                                            <td>
+                                                <?php if ($cust['status'] == 1): ?>
+                                                    <span class="text-success fw-bold">Active</span>
+                                                <?php else: ?>
+                                                    <span class="text-danger fw-bold">Inactive</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    <a href="javascript:void(0);"
+                                                        onclick='openUpdateCustomerModal(<?= json_encode($cust); ?>)'
+                                                        class="btn btn-success btn-sm">
+
+                                                        <i class="bi bi-pencil-square"></i> Update
+                                                    </a>
+                                                    <a href="javascript:void(0);"
+                                                        onclick="confirmCustomerStatusChange(<?= $cust['customer_id']; ?>, <?= $cust['status']; ?>)"
+                                                        class="btn btn-sm <?= $cust['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
+                                                        <?= $cust['status'] == 1 ? 'Deactivate' : 'Activate'; ?>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
         </div>
     </div>
-    
+
     <!-- Account Setting Modal -->
-    <div class="modal fade" id="accountSettingModal" tabindex="-1" aria-labelledby="accountSettingModalLabel" aria-hidden="true">
+    <div class="modal fade" id="accountSettingModal" tabindex="-1" aria-labelledby="accountSettingModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="accountSettingModalLabel">Account Settings</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body">
                     <form id="accountSettingsForm">
                         <div class="mb-3">
                             <label for="adminName" class="form-label">Name</label>
                             <input type="text" class="form-control" id="adminName" value="AliAbuAkau">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="adminEmail" class="form-label">Email</label>
                             <input type="email" class="form-control" id="adminEmail" value="admin@example.com">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="adminPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter new password">
+                            <input type="password" class="form-control" id="adminPassword"
+                                placeholder="Enter new password">
                         </div>
                     </form>
                 </div>
-                
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" form="accountSettingsForm" class="btn btn-primary">Save Changes</button>
@@ -407,88 +479,230 @@ while ($row = $result->fetch_assoc()) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    
+
     <script>
-    $(document).ready(function () {
-        $('#orderTable').DataTable();
-    });
+        $(document).ready(function () {
+            $('#orderTable').DataTable();
+        });
 
-    //save changes at account settings
-    document.getElementById('accountSettingsForm').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        Swal.fire('Saved!', 'Your settings have been updated.', 'success');
-    });
+        //save changes at account settings
+        document.getElementById('accountSettingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            Swal.fire('Saved!', 'Your settings have been updated.', 'success');
+        });
 
-    // targetPage will be active if onclick
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
+        // targetPage will be active if onclick
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+
+                const targetId = this.getAttribute('data-target');
+
+                document.querySelectorAll('.page-content').forEach(page => {
+                    page.classList.remove('active');
+                });
+
+                const targetPage = document.getElementById(targetId);
+                if (targetPage) targetPage.classList.add('active');
+            });
+        });
+
+        //log out button
+        document.getElementById('logoutBtn').addEventListener('click', function (e) {
             e.preventDefault();
 
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            this.classList.add('active');
-
-            const targetId = this.getAttribute('data-target');
-
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
-
-            const targetPage = document.getElementById(targetId);
-            if (targetPage) targetPage.classList.add('active');
-        });
-    });
-
-    //log out button
-    document.getElementById('logoutBtn').addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        Swal.fire({
-            title: 'Are you sure you want to \n log out?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = 'admin_login.php';
-            }
-        });
-    });
-
-    $(document).ready(function () {
-        $('#productTable').DataTable();  
-    });
-
-    function confirmStatusChange(productID, currentStatus) {
-    Swal.fire({
-        title: `Are you sure you want to ${currentStatus == 1 ? 'inactivate' : 'activate'} this product?`,
-        icon: 'warning',
-        showCancelButton: true,
-        cancelButtonColor: '#d33',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, change it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            
             Swal.fire({
-                title: "SUCCESS",
-                text: `Product successfully marked as ${currentStatus == 1 ? 'inactivate' : 'activate'}!`,
-                icon: "success",
-                confirmButtonColor: "Green",
-                confirmButtonText: "OK"
-            }).then(function () {
-                window.location.href = `admin.php?id=${productID}&status=${currentStatus}`;
+                title: 'Are you sure you want to \n log out?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'admin_login.php';
+                }
             });
-           
+        });
+
+        $(document).ready(function () {
+            $('#productTable').DataTable();
+        });
+
+        function confirmStatusChange(productID, currentStatus) {
+            Swal.fire({
+                title: `Are you sure you want to ${currentStatus == 1 ? 'inactivate' : 'activate'} this product?`,
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    Swal.fire({
+                        title: "SUCCESS",
+                        text: `Product successfully marked as ${currentStatus == 1 ? 'inactivate' : 'activate'}!`,
+                        icon: "success",
+                        confirmButtonColor: "Green",
+                        confirmButtonText: "OK"
+                    }).then(function () {
+                        window.location.href = `admin.php?id=${productID}&status=${currentStatus}`;
+                    });
+
+                }
+            });
         }
-    });
-}
+
+        $(document).ready(function () {
+            $('#customerTable').DataTable();
+        });
+
+        function confirmCustomerStatusChange(customerID, currentStatus) {
+            Swal.fire({
+                title: `Are you sure you want to ${currentStatus == 1 ? 'deactivate' : 'activate'} this customer?`,
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `admin_customer.php?id=${customerID}&status=${currentStatus}`;
+                }
+            });
+        }
+
+        function openUpdateCustomerModal(customer) {
+            Swal.fire({
+                title: 'Update Customer Info',
+                html: `
+            <form id="updateCustomerForm">
+                <input type="hidden" name="customer_id" value="${customer.customer_id}">
+                <div class="mb-2 text-start">
+                    <label>Username</label>
+                    <input class="form-control" type="text" value="${customer.cust_username}" disabled>
+                </div>
+                <div class="mb-2 text-start">
+                    <label>Email</label>
+                    <input class="form-control" type="email" value="${customer.cust_email}" disabled>
+                </div>
+                <div class="mb-2 text-start">
+                    <label>Full Name</label>
+                    <input class="form-control" type="text" name="cust_name" value="${customer.cust_name}" required>
+                </div>
+                <div class="mb-2 text-start">
+                    <label>Phone</label>
+                    <div class="input-group">
+                        <span class="input-group-text">+60</span>
+                        <input class="form-control" type="text" name="cust_phone" 
+                            value="${customer.cust_phone.replace(/^60/, '')}" required>
+                    </div>
+                </div>
+                <div class="mb-2 text-start">
+                    <label>Address</label>
+                    <textarea class="form-control" name="cust_address" rows="2" required>${customer.cust_address}</textarea>
+                </div>
+            </form>
+        `,
+                showCancelButton: true,
+                confirmButtonText: 'Save Changes',
+                preConfirm: () => {
+                    const form = document.getElementById('updateCustomerForm');
+                    const formData = new FormData(form);
+                    return fetch('admin_customer.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status !== 'success') {
+                                throw new Error(data.message);
+                            }
+                            return data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(error.message);
+                        });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Updated!', 'Customer information updated successfully.', 'success')
+                        .then(() => location.reload());
+                }
+            });
+        }
+
+        function openAddCustomerModal() {
+            Swal.fire({
+                title: 'Add New Customer',
+                html: `
+        <form id="addCustomerForm">
+            <div class="mb-2 text-start">
+                <label>Username</label>
+                <input class="form-control" type="text" name="cust_username" required>
+            </div>
+            <div class="mb-2 text-start">
+                <label>Email</label>
+                <input class="form-control" type="email" name="cust_email" required>
+            </div>
+            <div class="mb-2 text-start">
+                <label>Full Name</label>
+                <input class="form-control" type="text" name="cust_name" required>
+            </div>
+            <div class="mb-2 text-start">
+                <label>Phone</label>
+                <div class="input-group">
+                    <span class="input-group-text">+60</span>
+                    <input class="form-control" type="text" name="cust_phone" required>
+                </div>
+            </div>
+            <div class="mb-2 text-start">
+                <label>Address</label>
+                <textarea class="form-control" name="cust_address" rows="2" required></textarea>
+            </div>
+            <div class="mb-2 text-start">
+                <label>Password</label>
+                <input class="form-control" type="password" name="cust_password" required>
+            </div>
+        </form>
+        `,
+                showCancelButton: true,
+                confirmButtonText: 'Add Customer',
+                preConfirm: () => {
+                    const form = document.getElementById('addCustomerForm');
+                    const formData = new FormData(form);
+                    return fetch('admin_customer.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status !== 'success') {
+                                throw new Error(data.message);
+                            }
+                            return data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(error.message);
+                        });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Success!', 'New customer has been added.', 'success')
+                        .then(() => location.reload());
+                }
+            });
+        }
+
 
     </script>
 </body>
 
 </html>
-
