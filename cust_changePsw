@@ -1,0 +1,55 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    echo 'Session expired. Please login again.';
+    exit;
+}
+
+$customer_id = $_SESSION['user_id'];
+$current_password = $_POST['current_password'] ?? '';
+$new_password = $_POST['new_password'] ?? '';
+
+if (strlen(trim($new_password)) < 6) {
+    echo 'New password must be at least 6 characters.';
+    exit;
+}
+
+// Connect to database
+$conn = new mysqli('192.168.192.73', 'nbuser', 'abc12345', 'cloud');
+if ($conn->connect_error) {
+    echo 'Database connection error.';
+    exit;
+}
+
+// Get current hashed password from DB
+$stmt = $conn->prepare("SELECT cust_psw FROM customer WHERE customer_id = ?");
+$stmt->bind_param("s", $customer_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+if (!$user) {
+    echo 'User not found.';
+    exit;
+}
+
+// Verify current password
+if (!password_verify($current_password, $user['cust_psw'])) {
+    echo 'Incorrect current password.';
+    exit;
+}
+
+// Hash new password
+$hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+// Update in database
+$update = $conn->prepare("UPDATE customer SET cust_psw = ? WHERE customer_id = ?");
+$update->bind_param("ss", $hashed_new_password, $customer_id);
+
+if ($update->execute()) {
+    echo 'success';
+} else {
+    echo 'Failed to update password.';
+}
+?>

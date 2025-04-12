@@ -1,5 +1,5 @@
 <?php
-include 'profile_helper.php'; 
+include 'profile_helper.php';
 ?>
 
 <!DOCTYPE html>
@@ -13,6 +13,7 @@ include 'profile_helper.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <style>
         body {
@@ -75,6 +76,7 @@ include 'profile_helper.php';
             object-fit: cover;
             border-radius: 10px;
             border: 3px solid #333;
+            margin-top: 25px;
         }
 
         .box {
@@ -89,7 +91,7 @@ include 'profile_helper.php';
         .settings {
             background-color: rgba(229, 209, 243, 0.66);
             flex: 0 0 30%;
-            max-width: 300px;
+            max-width: 250px;
         }
 
         .orders {
@@ -105,7 +107,7 @@ include 'profile_helper.php';
             border-radius: 15px;
             font-weight: 600;
             font-size: 14px;
-            border: 1px solid #ddd;
+            border: 3px solid #ddd;
         }
 
         ul {
@@ -121,7 +123,7 @@ include 'profile_helper.php';
         ul li button {
             width: 100%;
             padding: 10px;
-            background-color:rgb(255, 255, 255);
+            background-color: rgb(255, 255, 255);
             color: grey;
             border: none;
             border-radius: 5px;
@@ -132,7 +134,7 @@ include 'profile_helper.php';
         }
 
         ul li button:hover {
-            background-color:rgba(238, 182, 231, 0.85);
+            background-color: rgba(238, 182, 231, 0.85);
         }
 
         .logout-icon {
@@ -176,6 +178,49 @@ include 'profile_helper.php';
             font-size: 14px;
             color: #666;
         }
+
+        .btn-pink {
+            background-color: #f78fb3;
+            color: white;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-pink:hover {
+            background-color: rgb(255, 219, 228);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #6b4c7c;
+        }
+
+        .modal {
+            display: none;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+        }
+
+        textarea.form-control:focus,
+        input.form-control:focus {
+            border-color: #f78fb3;
+            box-shadow: 0 0 0 0.2rem rgba(247, 143, 179, 0.25);
+        }
     </style>
 </head>
 
@@ -187,8 +232,9 @@ include 'profile_helper.php';
 
             <div class="box profile-details">
                 <div class="label-tag">PROFILE DETAILS</div>
-                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['cust_name']); ?></p>
+                <p><strong>Username:</strong> <?php echo htmlspecialchars($user['cust_username']); ?></p>
                 <p><strong>Email:</strong> <?php echo htmlspecialchars($user['cust_email']); ?></p>
+                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['cust_name']); ?></p>
                 <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['cust_phone']); ?></p>
                 <p><strong>Address:</strong> <?php echo htmlspecialchars($user['cust_address']); ?></p>
             </div>
@@ -198,8 +244,13 @@ include 'profile_helper.php';
             <div class="box settings">
                 <div class="label-tag">SETTINGS</div>
                 <ul>
-                    <li><button onclick="window.location.href='#'">Edit Profile</button></li>
-                    <li><button onclick="window.location.href='#'">Change Password</button></li>
+
+                    <button type="button" class="btn w-100 py-2"
+                        style="background-color: rgb(255, 255, 255); color: grey; border-radius: 5px; font-weight: 600; margin-bottom: 10px;"
+                        data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        Edit Profile
+                    </button>
+                    <li><button type="button" onclick="showChangePasswordPopup()">Change Password</button></li>
                     <li><button onclick="window.location.href='#'">Delete Account</button></li>
                 </ul>
             </div>
@@ -220,7 +271,144 @@ include 'profile_helper.php';
         &copy; 2025 Chapalang Graduation Gifts | Made with ❤️
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow-lg" style="background-color:rgb(255, 255, 255);">
+                <form method="POST" action="profile.php">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title w-100 text-center fw-bold" id="editProfileModalLabel"
+                            style="color: #c06c84;">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control rounded-pill bg-light text-muted"
+                                value="<?php echo htmlspecialchars($user['cust_username']); ?>" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control rounded-pill bg-light text-muted"
+                                value="<?php echo htmlspecialchars($user['cust_email']); ?>" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="cust_name" class="form-control rounded-pill"
+                                value="<?php echo htmlspecialchars($user['cust_name']); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <div class="input-group">
+                                <span class="input-group-text rounded-start-pill bg-light border-end-0">+60</span>
+                                <input type="text" name="cust_phone" class="form-control rounded-end-pill"
+                                    pattern="\d{7,10}" maxlength="10" required value="<?php
+                                    echo htmlspecialchars(
+                                        (substr($user['cust_phone'], 0, 2) === '60') ? substr($user['cust_phone'], 2) : $user['cust_phone']
+                                    );
+                                    ?>" title="Enter 7 to 10 digits after +60">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea name="cust_address" class="form-control rounded-4"
+                                rows="3"><?php echo trim(htmlspecialchars($user['cust_address'])); ?></textarea>
+                        </div>
+
+                        <div class="modal-footer border-0 d-flex justify-content-center gap-2 pb-4">
+                            <button type="submit" name="update_profile" class="btn btn-pink rounded-pill px-4">Save
+                                Changes</button>
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+
+
+    <script>
+        document.querySelector('input[name="cust_phone"]').addEventListener('input', function (e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+    </script>
+
+    <!-- sweetalert for successful update profile-->
+    <?php if (isset($_GET['updated']) && $_GET['updated'] == '1'): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated!',
+                    text: 'Your changes have been saved.',
+                    confirmButtonColor: '#f78fb3',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+
+                if (history.replaceState) {
+                    const cleanURL = window.location.origin + window.location.pathname;
+                    history.replaceState(null, null, cleanURL);
+                }
+            });
+        </script>
+    <?php endif; ?>
+
+    <script>
+        function showChangePasswordPopup() {
+            Swal.fire({
+                title: 'Change Password',
+                html:
+                    `<input type="password" id="current" class="swal2-input" placeholder="Current Password">
+             <input type="password" id="newpass" class="swal2-input" placeholder="New Password (min 6)">
+             <input type="password" id="confirm" class="swal2-input" placeholder="Confirm New Password">`,
+                showCancelButton: true,
+                confirmButtonText: 'Update',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const current = Swal.getPopup().querySelector('#current').value;
+                    const newpass = Swal.getPopup().querySelector('#newpass').value;
+                    const confirm = Swal.getPopup().querySelector('#confirm').value;
+
+                    if (!current || !newpass || !confirm) {
+                        Swal.showValidationMessage(`Please fill all fields`);
+                    } else if (newpass.length < 6) {
+                        Swal.showValidationMessage(`New password must be at least 6 characters`);
+                    } else if (newpass !== confirm) {
+                        Swal.showValidationMessage(`New password and confirmation do not match`);
+                    }
+
+                    return { current, newpass };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('cust_changePsw.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `current_password=${encodeURIComponent(result.value.current)}&new_password=${encodeURIComponent(result.value.newpass)}`
+                    })
+                        .then(res => res.text())
+                        .then(data => {
+                            if (data.trim() === 'success') {
+                                Swal.fire('Updated!', 'Password changed successfully!', 'success');
+                            } else {
+                                Swal.fire('Error', data, 'error');
+                            }
+                        });
+                }
+            });
+        }
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>
