@@ -73,7 +73,7 @@ while ($row = $category_result->fetch_assoc()) {
 }
 
 // Get products
-$product_sql = "SELECT * FROM product 、
+$product_sql = "SELECT * FROM product 
                 WHERE (category = ? OR ? = 'All') 
                 AND (productName LIKE ?)";
 
