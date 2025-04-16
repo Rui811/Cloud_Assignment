@@ -49,7 +49,7 @@ try {
     $selectSql = "SELECT c.product_id, c.quantity, p.price 
                 FROM `Cart` c 
                 INNER JOIN `Product` p 
-                ON c.product_id = p.product_id 
+                ON c.product_id = p.productID 
                 WHERE c.cart_id = ?";
     $selectStmt = $conn->prepare($selectSql);
 
@@ -57,7 +57,7 @@ try {
     $insertDetailStmt = $conn->prepare($insertDetailSql);
 
     foreach($cart_ids as $cartId) {
-        $selectStmt->bind_param("i", $cart_id);
+        $selectStmt->bind_param("i", $cartId);
         $selectStmt->execute();
         $result = $selectStmt->get_result();
 

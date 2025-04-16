@@ -298,7 +298,7 @@ include 'function/checkout.php';
                         return;
                     }
 
-                    let cardIds = <?= json_encode($selectedItems) ?>;
+                    let cartIds = <?= json_encode($selectedItems) ?>;
                     let paymentMethod = $('input[name="paymentMethod"]:checked').val();
                     let totalAmount = <?= json_encode($grandTotal) ?>;
 
