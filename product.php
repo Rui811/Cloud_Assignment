@@ -57,8 +57,7 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 
-// 分页
-$perPage = 12;
+$perPage = 8;
 $totalProducts = count($products);
 $totalPages = ceil($totalProducts / $perPage);
 $page = isset($_GET['page']) ? max(1, min($_GET['page'], $totalPages)) : 1;
