@@ -42,7 +42,6 @@ if (!empty($errors)) {
     exit();
 }
 
-// If no error, hash password and insert
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 $stmt = $conn->prepare("INSERT INTO customer (cust_username, cust_email, cust_psw) VALUES (?, ?, ?)");
 $stmt->bind_param("sss", $username, $email, $hashedPassword);
@@ -50,6 +49,6 @@ $stmt->execute();
 $stmt->close();
 
 $_SESSION['signup_success'] = true;
-header("Location: signup.php");
+header("Location: login.php");
 exit();
 ?>

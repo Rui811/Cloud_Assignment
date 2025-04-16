@@ -251,7 +251,7 @@ include 'profile_helper.php';
                         Edit Profile
                     </button>
                     <li><button type="button" onclick="showChangePasswordPopup()">Change Password</button></li>
-                    <li><button onclick="window.location.href='#'">Delete Account</button></li>
+                    <li><button type="button" onclick="deleteAccount()">Delete Account</button></li>
                 </ul>
             </div>
 
@@ -363,10 +363,10 @@ include 'profile_helper.php';
         function showChangePasswordPopup() {
             Swal.fire({
                 title: 'Change Password',
-                html:
-                    `<input type="password" id="current" class="swal2-input" placeholder="Current Password">
-             <input type="password" id="newpass" class="swal2-input" placeholder="New Password (min 6)">
-             <input type="password" id="confirm" class="swal2-input" placeholder="Confirm New Password">`,
+                html: `
+            <input type="password" id="current" class="swal2-input" placeholder="Current Password">
+            <input type="password" id="newpass" class="swal2-input" placeholder="New Password">
+            <input type="password" id="confirm" class="swal2-input" placeholder="Confirm New Password">`,
                 showCancelButton: true,
                 confirmButtonText: 'Update',
                 focusConfirm: false,
@@ -375,12 +375,13 @@ include 'profile_helper.php';
                     const newpass = Swal.getPopup().querySelector('#newpass').value;
                     const confirm = Swal.getPopup().querySelector('#confirm').value;
 
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
                     if (!current || !newpass || !confirm) {
-                        Swal.showValidationMessage(`Please fill all fields`);
-                    } else if (newpass.length < 6) {
-                        Swal.showValidationMessage(`New password must be at least 6 characters`);
+                        Swal.showValidationMessage('Please fill all fields');
+                    } else if (!passwordRegex.test(newpass)) {
+                        Swal.showValidationMessage('Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character');
                     } else if (newpass !== confirm) {
-                        Swal.showValidationMessage(`New password and confirmation do not match`);
+                        Swal.showValidationMessage('New password and confirmation do not match');
                     }
 
                     return { current, newpass };
@@ -403,11 +404,32 @@ include 'profile_helper.php';
                 }
             });
         }
+
+        function deleteAccount() {
+            Swal.fire({
+                title: 'Are you sure you want to deactivate your account?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, deactivate it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deactivateForm').submit();
+                }
+            });
+        }
+
     </script>
 
+    <form id="deactivateForm" action="delete_account.php" method="POST" style="display: none;">
+        <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
+    </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </body>
 

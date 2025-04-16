@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id']) && isset($_GET['s
     $stmt->close();
     $conn->close();
 
-    header("Location: admin_customer.php");
+    header("Location: admin.php");
     exit;
 }
 
