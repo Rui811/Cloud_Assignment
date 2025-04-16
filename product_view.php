@@ -59,7 +59,9 @@ if (!$product) {
       background-color: #ffffff;
       padding: 30px;
       border-radius: 10px;
-      margin: 70px auto;
+      margin:auto;
+      margin-bottom:70px;
+      margin-top:30px;
       max-width: 900px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -104,35 +106,34 @@ if (!$product) {
     }
 
     .back-product-btn {
-      margin-bottom:10px ;
-      margin-top:-20px;
-      text-decoration: none;
-      width: fit-content;
-      font-size: 18px;
-      font-weight: bold;
-      padding-left: 0px;
-      color:rgb(92, 96, 173);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      transition: 0.5s ease-in-out;
+                text-decoration: none;
+                font-size: 26px;
+                color:rgb(115, 121, 227);
+                font-weight: bold;
+                transition: 0.3s ease-in-out;
 
-    &:hover {
-      transform: translateX(-4px);
-      color:rgb(64, 68, 151);
-      }
-    }
+                &:hover {
+                    transform: translateX(-3.5px);
+                    color:rgb(138, 143, 238);
+                }
+            }
     </style>
 </head>
 
 <body>
 
     <main class="container">
-        <div class="product-card">
-          <a class="back-product-btn" href="product.php" title="back to product page">
-                  <i class="fa-solid fa-shop"></i> Shop
-              </a>
+      
+      <div class="d-flex justify-content-between align-items-center" style="margin-top:30px;">
+        <div style="margin-left:190px;">
+                  <a class="back-product-btn ms-2" href="product.php" title="back to cart">
+                      <i class="fa-solid fa-chevron-left"></i>
+                  </a>
+          </div><div style="margin-right:550px;">
+                  <h2 class="text-center mx-auto m-0">Product Detail</h2>
+          </div>
+              </div>
+      <div class="product-card">
         
             <div class="row align-items-center">
                 <!-- Image on the right -->

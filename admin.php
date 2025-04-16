@@ -275,7 +275,7 @@ while ($row = $result->fetch_assoc()) {
                     </div>
                 </div>
 
-                <div id="productPage" class="page-content">
+                <div id="productPage" class="page-content" style="margin-bottom:50px">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Product</h2>
                         <div class="d-flex align-items-center gap-2">
@@ -570,7 +570,7 @@ while ($row = $result->fetch_assoc()) {
                 showCancelButton: true,
                 cancelButtonColor: '#d33',
                 confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, change it!',
+                confirmButtonText: 'Yes',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
