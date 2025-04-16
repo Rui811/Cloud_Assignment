@@ -24,27 +24,36 @@ if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
 
     if ($user['status'] == 0) {
+        $stmt->close();
+        $conn->close();
+
         echo json_encode([
             'status' => 'error',
             'field' => 'identifier',
             'message' => 'Your account is inactive.'
         ]);
-        exit();
+        exit(); 
     }
 
     if (password_verify($password, $user['cust_psw'])) {
+        // Save session data
         $_SESSION['user_id'] = $user['customer_id']; 
         $_SESSION['username'] = $user['cust_username']; 
         $_SESSION['email'] = $user['cust_email'];
+
+        $stmt->close();
+        $conn->close();
 
         echo json_encode([
             'status' => 'success',
             'username' => $user['cust_username'],
             'redirect' => 'homepage.php'
         ]);
-        
-        exit();
+        exit(); 
     } else {
+        $stmt->close();
+        $conn->close();
+
         echo json_encode([
             'status' => 'error',
             'field' => 'password',
@@ -53,17 +62,14 @@ if ($result->num_rows === 1) {
         exit();
     }
 } else {
+    $stmt->close();
+    $conn->close();
+
     echo json_encode([
         'status' => 'error',
         'field' => 'identifier',
         'message' => 'No account found with that email or username.'
     ]);
-    exit();
-    
+    exit(); 
 }
-
-    
-
-$stmt->close();
-$conn->close();
 ?>
