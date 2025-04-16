@@ -18,6 +18,7 @@ if ($conn->connect_error) {
 $productId = $_GET['id'] ?? 0;
 $customer_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "";
 
+
 $sql = "SELECT * FROM product WHERE productID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $productId);
@@ -26,9 +27,11 @@ $result = $stmt->get_result();
 $product = $result->fetch_assoc();
 
 if (!$product) {
-    echo "<h2>Product not found.</h2>";
-    exit;
+  echo "<h2>Product not found.</h2>";
+  exit;
 }
+$isCustomizable = strpos($product['category'], '3') !== false;
+
 ?>
 
 <head>
@@ -146,6 +149,13 @@ if (!$product) {
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p>RM <?php echo number_format($product['price'], 2); ?></p>
 
+                <?php if ($isCustomizable): ?>
+  <div class="mt-3">
+    <label for="remark" class="form-label fw-bold">Remark (Optional):</label>
+    <textarea id="remark" class="form-control" rows="3" placeholder="Enter your customization request here..."></textarea>
+  </div>
+<?php endif; ?>
+
       <div class="mt-4 d-flex align-items-center">
             <label for="quantity" class="me-2 fw-bold">Quantity:</label>
             <input type="number" id="quantity" class="form-control w-25 me-3" min="1" value="1">
@@ -186,7 +196,12 @@ if (!$product) {
           let productId = <?= json_encode($productId) ?>;
           let productName = $('#productName').text();
           let productPrice = $('#productPrice').text();
+          let remark = $('#remark').length > 0 ? $('#remark').val().trim() : "";
           let textMsg = `Product : ${productName} x${quantity}`;
+
+          if (remark) {
+        textMsg += `<br>Remark:${remark}`;
+      }
 
           Swal.fire({
             title: "Confirm add to cart?",
