@@ -126,7 +126,7 @@ include 'function/checkout.php';
 
                         <div class="payment-container row mt-3 p-3">
                             <div class="col-6 border-end border-2">
-                                <input type="radio" name="paymentMethod" id="card" value="card" checked /> <label for="card" class="paymentMethod">Credit/Debit Card</label>
+                                <input type="radio" name="paymentMethod" id="Card" value="Card" checked /> <label for="card" class="paymentMethod">Credit/Debit Card</label>
 
                                 <div id="card-field" class="mt-3 px-2 row">
                                     <label for="cardHolder">Card holder: </label>
@@ -212,11 +212,13 @@ include 'function/checkout.php';
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            const customerId = <?= $customerId ?>;
+
             $(document).ready(function() {
                 function updatePaymentMethod() {
                     let paymentMethod = $('input[name="paymentMethod"]:checked').val();
 
-                    if(paymentMethod === 'card') {
+                    if(paymentMethod === 'Card') {
                         $('#card-field input').prop('disabled', false);
                         $('#TouchNGo-field input').prop('disabled', true);
 
@@ -241,7 +243,7 @@ include 'function/checkout.php';
 
                     let paymentMethod = $('input[name="paymentMethod"]:checked').val();
 
-                    if(paymentMethod === 'card') {
+                    if(paymentMethod === 'Card') {
                         let cardHolder = $('#cardHolder').val().trim();
                         let cardNum = $('#cardNum').val().trim();
                         let expiryDate = $('#expiryDate').val().trim();
@@ -315,12 +317,29 @@ include 'function/checkout.php';
                                 url: "ajax/create_order.php",
                                 type: "POST",
                                 data: {
+                                    "customer_id" : customerId,
                                     "cart_ids" : cartIds,
                                     "payment_method" : paymentMethod,
                                     "total_amount" : totalAmount 
                                 },
                                 success: function(response) {
-                                    header("Location: receipt.php?order_id=");
+                                    let data = JSON.parse(response);
+
+                                    if (data.success) {
+                                        window.location.href = "receipt.php?order_id=" + data.orderId;
+                                    }
+                                    else {
+                                        Swal.fire({
+                                            title: "Failed to create Order!",
+                                            text: 'An error occurred! Please try again later.',
+                                            icon: "error",
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: "Crimson"
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    }
+                                    
                                 },
                                 error: function(){
                                     Swal.fire({
