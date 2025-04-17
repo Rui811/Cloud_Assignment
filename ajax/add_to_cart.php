@@ -22,11 +22,20 @@ if (!isset($_POST['productId'])) {
 $productId = $_POST['productId'];
 $quantity = $_POST['quantity'];
 $customerId = $_POST['customerId'];
+$remark = trim($_POST['remark']) !== "" ? $_POST['remark'] : null;
 
 try {
-    $selectSql = "SELECT * FROM `Cart` WHERE customer_id = ? AND product_id = ?";
-    $selectStmt = $conn->prepare($selectSql);
-    $selectStmt->bind_param("ii", $customerId, $productId);
+    if ($remark === null) {
+        $selectSql = "SELECT * FROM `Cart` WHERE customer_id = ? AND product_id = ? AND remark IS NULL";
+        $selectStmt = $conn->prepare($selectSql);
+        $selectStmt->bind_param("ii", $customerId, $productId);
+    }
+    else {
+        $selectSql = "SELECT * FROM `Cart` WHERE customer_id = ? AND product_id = ? AND remark = ?";
+        $selectStmt = $conn->prepare($selectSql);
+        $selectStmt->bind_param("iis", $customerId, $productId, $remark);
+    }
+
     $selectStmt->execute();
     $result = $selectStmt->get_result();
 
@@ -35,12 +44,13 @@ try {
     if($result->num_rows > 0) {
         $row = $result->fetch_assoc();
 
+        $cartId = $row['cart_id'];
         $originalQty = $row['quantity'];
         $updatedQty = $originalQty + $quantity;
 
-        $updateSql = "UPDATE `Cart` SET quantity = ? WHERE customer_id = ? AND product_id = ?";
+        $updateSql = "UPDATE `Cart` SET quantity = ? WHERE cart_id = ?";
         $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param("iii", $updatedQty, $customerId, $productId);
+        $updateStmt->bind_param("ii", $updatedQty, $cartId);
 
         if ($updateStmt->execute()) {
             echo "success";
@@ -49,9 +59,9 @@ try {
         }
     }
     else {
-        $insertSql = "INSERT INTO `Cart` (customer_id, product_id, quantity) VALUES (?, ?, ?)";
+        $insertSql = "INSERT INTO `Cart` (customer_id, product_id, quantity, remark) VALUES (?, ?, ?, ?)";
         $insertStmt = $conn->prepare($insertSql);
-        $insertStmt->bind_param("iii", $customerId, $productId, $quantity);
+        $insertStmt->bind_param("iiis", $customerId, $productId, $quantity, $remark);
 
         if ($insertStmt->execute()) {
             echo "success";

@@ -200,7 +200,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
           let textMsg = `Product : ${productName} x${quantity}`;
 
           if (remark) {
-        textMsg += `<br>Remark:${remark}`;
+        textMsg += `<br>Remark: ${remark}`;
       }
 
           Swal.fire({
@@ -220,7 +220,8 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                 data: {
                   "customerId" : customerId,
                   "productId" : productId,
-                  "quantity" : quantity
+                  "quantity" : quantity,
+                  "remark" : remark
                 },
                 success: function(response) {
                   if(response == "success") {
