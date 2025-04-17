@@ -57,6 +57,18 @@ $customer_id = $_SESSION['user_id'];
                 padding-right: 10px;
             }
 
+            .cart-items table {
+                margin-bottom: 0;
+            }
+
+            .cart-items thead th {
+                position: sticky;
+                top: 0;
+                background-color: #2D328F;
+                color: white;
+                z-index: 1;
+            }
+
             .summary-card {
                 width: 100%;
                 position: sticky;
@@ -114,8 +126,54 @@ $customer_id = $_SESSION['user_id'];
             }
 
             .checkout-selection, .checkout-selection-all {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                width: 14px;
+                height: 14px;
+                border-radius: 4px;
+                cursor: pointer;
+                position: relative;
+                outline: none;
                 transform: scale(1.5);
                 transition: 0.3s ease;
+            }
+
+            .checkout-selection {
+                border: 2px solid #2D328F;
+
+                &:checked {
+                    background-color: #2D328F;
+                    border-color: #2D328F;
+
+                    &::after {
+                        content: '\2713'; /* ✓ checkmark */
+                        position: absolute;
+                        color: white;
+                        font-size: 14px;
+                        line-height: 10px;
+                    }
+                }
+            }
+
+            .checkout-selection-all {
+                border-color: white;
+                background-color: white;
+
+                &:checked {
+                    background-color: white;
+                    border-color: white;
+
+                    &::after {
+                        content: '\2713'; /* ✓ checkmark */
+                        position: absolute;
+                        top: 0;
+                        left: 2px;
+                        color: #2D328F;
+                        font-size: 14px;
+                        line-height: 14px;
+                    }
+                }
             }
 
             .quantity-container {
@@ -173,7 +231,7 @@ $customer_id = $_SESSION['user_id'];
             }
 
             #cart-summary-items {
-                max-height: 300px;
+                max-height: 250px;
                 overflow-y: auto;
                 padding-right: 5px;
             }
@@ -193,9 +251,9 @@ $customer_id = $_SESSION['user_id'];
                         <!-- Cart Items (Fetched using AJAX) -->
                         <div class="cart-items">
                             <table class="table mb-4">
-                                <thead style="background-color: #2D328F; color: white;">
+                                <thead>
                                     <tr>
-                                        <th width="2%">
+                                        <th style="min-width: 40px;" class="text-center align-middle">
                                             <input type="checkbox" name="" class="checkout-selection-all" id="" />
                                         </th>
                                         <th width="40%" colspan="2">Item</th>
@@ -287,7 +345,7 @@ $customer_id = $_SESSION['user_id'];
 
                                     items += `
                                         <tr class="cart-item-row">
-                                            <td>
+                                            <td class="text-center align-middle">
                                                 <input type="checkbox" name="selected_items[]" class="checkout-selection" value="${item.cart_id}" />
                                             </td>
                                             <td width="15%">
