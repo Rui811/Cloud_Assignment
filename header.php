@@ -43,7 +43,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="product.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#categories">Category</a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="profile.php">

@@ -284,7 +284,7 @@ $selectedCategoryID = $categoryMap[$selectedCategory] ?? null;
                 <h3>Categories</h3>
                 <form method="GET" class="search-container">
                     <input type="text" name="search" placeholder="Search..." value="<?php echo htmlspecialchars($searchQuery); ?>">
-                    <button type="submit">Search</button>
+                    <button type="submit" style="background-color: #ff77a9; color: white;">Search</button>
                 </form>
                 <ul>
                     <?php foreach ($categories as $category) : ?>
