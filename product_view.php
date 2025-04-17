@@ -147,14 +147,14 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                 <div class="col-md-7">
                 <h2 class="product-title" id="productName"><?php echo htmlspecialchars($product['productName']); ?></h2>
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
-                <p>RM <?php echo number_format($product['price'], 2); ?></p>
+                <b style="font-size:20px;">RM <?php echo number_format($product['price'], 2); ?></b>
 
                 <?php if ($isCustomizable): ?>
-  <div class="mt-3">
-    <label for="remark" class="form-label fw-bold">Remark (Optional):</label>
-    <textarea id="remark" class="form-control" rows="3" placeholder="Enter your customization request here..."></textarea>
-  </div>
-<?php endif; ?>
+                <div class="mt-3">
+                <label for="remark" class="form-label fw-bold">Remark (Optional):</label>
+                <textarea id="remark" class="form-control" rows="3" placeholder="👉 You can remark with your preferred message to custom personal gift"></textarea>
+                </div>
+                <?php endif; ?>
 
       <div class="mt-4 d-flex align-items-center">
             <label for="quantity" class="me-2 fw-bold">Quantity:</label>
@@ -200,7 +200,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
           let textMsg = `Product : ${productName} x${quantity}`;
 
           if (remark) {
-        textMsg += `<br>Remark: ${remark}`;
+        textMsg += `<br>Remark:${remark}`;
       }
 
           Swal.fire({
@@ -220,8 +220,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                 data: {
                   "customerId" : customerId,
                   "productId" : productId,
-                  "quantity" : quantity,
-                  "remark" : remark
+                  "quantity" : quantity
                 },
                 success: function(response) {
                   if(response == "success") {
