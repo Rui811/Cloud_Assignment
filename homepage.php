@@ -30,6 +30,7 @@ if ($product_result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChapaLang Graduation Gifts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -86,6 +87,7 @@ if ($product_result->num_rows > 0) {
             text-align: center;
             margin-top: 20px;
             padding-bottom: 30px;
+            font-family: 'Poppins', sans-serif;
         }
 
         #categories .category-container {
@@ -271,6 +273,7 @@ if ($product_result->num_rows > 0) {
         .more-link {
             text-align: center;
             margin-top: 20px;
+            border: 0.5px solid black;
         }
 
         /* Cart Icon */
@@ -460,9 +463,18 @@ if ($product_result->num_rows > 0) {
         }
 
         .product .btn-success:hover {
-            background-color:rgb(187, 191, 194);
+            background-color: rgb(187, 191, 194);
             border-color: #545b62;
             color: #fff;
+        }
+
+        .navbar, .product h2, .product p {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .add-to-cart {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -478,13 +490,13 @@ if ($product_result->num_rows > 0) {
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="image/headerPic.gif" class="d-block" alt="Advertisement 1">
+                    <img src="image/headerPic3.gif" class="d-block" alt="Advertisement 1">
                 </div>
                 <div class="carousel-item">
                     <img src="image/headerPic2.gif" class="d-block" alt="Advertisement 2">
                 </div>
                 <div class="carousel-item">
-                    <img src="image/headerPic3.gif" class="d-block" alt="Advertisement 3">
+                    <img src="image/headerPic.gif" class="d-block" alt="Advertisement 3">
                 </div>
             </div>
         </div>
@@ -551,8 +563,13 @@ if ($product_result->num_rows > 0) {
                     </a>
                     <h2><?php echo htmlspecialchars($product['productName']); ?></h2>
                     <p>RM<?php echo number_format($product['price'], 2); ?></p>
-                    <a href="cart.php?action=add&productID=<?php echo $product['productID']; ?>" class="btn btn-success">Add
-                        to Cart</a>
+                    <a href="javascript:void(0);" class="btn btn-success add-to-cart"
+                        data-product-id="<?php echo $product['productID']; ?>" data-quantity="1"
+                        data-customer-id="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''; ?>"
+                        data-remark="">
+                        Add to Cart
+                    </a>
+
                 </div>
             <?php endforeach; ?>
         </div>
@@ -601,6 +618,81 @@ if ($product_result->num_rows > 0) {
             <img src="image/cart.png" alt="Cart">
         </a>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').on('click', function () {
+                var productId = $(this).data('product-id');
+                var quantity = $(this).data('quantity');
+                var customerId = $(this).data('customer-id');
+                var remark = $(this).data('remark');
+
+                if (!customerId) {
+                    Swal.fire({
+                        title: "Please log in first",
+                        text: "You must be logged in to add items to your cart.",
+                        icon: "warning",
+                        confirmButtonText: "Go to Login"
+                    }).then(() => {
+                        window.location.href = "login.php";
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to add this product to your cart?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Add it!',
+                    cancelButtonText: 'No, Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'ajax/add_to_cart.php',
+                            type: 'POST',
+                            data: {
+                                productId: productId,
+                                quantity: quantity,
+                                customerId: customerId,
+                                remark: remark
+                            },
+                            success: function (response) {
+                                if (response === 'success') {
+                                    Swal.fire({
+                                        title: "Success!",
+                                        text: "Product successfully added to your cart!",
+                                        icon: "success",
+                                        confirmButtonText: "OK"
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: "Error",
+                                        text: "There was an error adding the product to the cart. Please try again later.",
+                                        icon: "error",
+                                        confirmButtonText: "OK"
+                                    });
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "Something went wrong. Please try again later.",
+                                    icon: "error",
+                                    confirmButtonText: "OK"
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+
 </body>
 
 <?php include 'footer.php'; ?>
