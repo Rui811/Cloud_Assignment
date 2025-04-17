@@ -153,7 +153,7 @@ $existingCategoryIDs = explode(',', $product['category']);
             confirmButtonColor: "green",
             confirmButtonText: "OK"
         }).then(() => {
-            window.location.href = "admin.php";
+            window.location.href = "admin_product.php";
         });
     }
 
