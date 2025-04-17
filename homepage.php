@@ -271,6 +271,7 @@ if ($product_result->num_rows > 0) {
         .more-link {
             text-align: center;
             margin-top: 20px;
+            border: 0.5px solid black;
         }
 
         /* Cart Icon */
