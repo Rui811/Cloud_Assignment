@@ -678,7 +678,8 @@ while ($row = $result->fetch_assoc()) {
                 preConfirm: () => {
                     const form = document.getElementById('addCustomerForm');
                     const formData = new FormData(form);
-                    return fetch('admin_customer.php', {
+
+                    return fetch('add_customer.php', {
                         method: 'POST',
                         body: formData
                     })
