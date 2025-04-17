@@ -166,6 +166,18 @@ $customer_id = $_SESSION['user_id'];
                 padding: 10px;
             }
 
+            .cart-item-remark {
+                margin-top: 4px;
+                font-size: 0.9rem;
+                font-style: italic;
+            }
+
+            #cart-summary-items {
+                max-height: 300px;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+
         </style>
     </head>
     <body>
@@ -221,7 +233,7 @@ $customer_id = $_SESSION['user_id'];
                                     <h5>Grand Total: RM <span id="grand-total">0.00</span></h5>
                                 </div>
                                 
-                                <div class="checkout-container">
+                                <div class="checkout-container mt-2">
                                     <form method="post" action="checkout.php" id="checkout-form">
                                         <button type="submit" name="checkout" class="btn checkoutBtn">
                                             <i class="fa-solid fa-check"></i> Checkout (<span id="total-selected">0 items</span>)
@@ -283,7 +295,16 @@ $customer_id = $_SESSION['user_id'];
                                                 <img src="image/${item.image}.png" width="100">
                                             </td>
                                             <td width="25%">
-                                                <input type="hidden" name="item_names[]" value="${item.productName}" />${item.productName}
+                                                <input type="hidden" name="item_names[]" value="${item.productName}" />
+                                                <div>
+                                                    <div style="font-weight: 600; font-size: 1rem;">
+                                                        ${item.productName}
+                                                    </div>
+                                                    <div class="cart-item-remark text-muted">
+                                                        Remark: ${item.remark ? item.remark : "-"}
+                                                    </div>
+                                                    <input type="hidden" name="item_remarks[]" value="${item.remark ? item.remark : "-"}" />
+                                                </div>
                                             </td>
                                             <td>
                                                 <input type="hidden" name="item_prices[]" value="${item.price}" />RM ${item.price.toFixed(2)}
@@ -360,9 +381,25 @@ $customer_id = $_SESSION['user_id'];
 
                         var name = $row.find("input[name='item_names[]']").val();
                         var quantity = $row.find("input[name='item_quantities[]']").val();
+                        var remark = $row.find("input[name='item_remarks[]']").val();
+                        var subtotal = $row.find("input[name='item_subtotals[]']").val();
+
+                        //to check that if this is the last item
+                        var totalItems = selectedItems.length;
+                        var isLast = index === totalItems - 1;
 
                         //if quantities updated, the summary quantity not updated
-                        $('#cart-summary-items').append('<div class="d-flex justify-content-between"><span>' + name + '</span><span>x' + quantity + '</span></div>');
+                        $('#cart-summary-items').append(`
+                            <div class="${isLast ? '' : 'border-bottom pb-3 mb-3'}">
+                                <div class="d-flex justify-content-between">
+                                    <span>${name}</span>
+                                    <div class="text-end">x${quantity} <br><span class="text-muted">RM ${parseFloat(subtotal).toFixed(2)}</span></div>
+                                </div>
+                                <div class="" style="font-size: 0.85rem; color: #6c757d; font-style: italic; padding-left: 2px;">
+                                    Remark: ${remark}
+                                </div>
+                            </div>
+                        `);
                     });
 
                     $('#total-selected').text(totalSelected + ' items');
