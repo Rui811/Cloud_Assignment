@@ -14,6 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_items"])) {
     $prices = $_POST['item_prices'];
     $quantities = $_POST['item_quantities'];
     $subtotals = $_POST['item_subtotals'];
+    $remarks = $_POST['item_remarks'];
     $grandTotal = $_POST['grand_total'];
 }
 else {

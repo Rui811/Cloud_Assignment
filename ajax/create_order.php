@@ -46,14 +46,14 @@ try {
     $orderId = $orderStmt->insert_id;
 
     //create order_detail
-    $selectSql = "SELECT c.product_id, c.quantity, p.price 
+    $selectSql = "SELECT c.product_id, c.quantity, p.price, c.remark 
                 FROM `Cart` c 
                 INNER JOIN `Product` p 
                 ON c.product_id = p.productID 
                 WHERE c.cart_id = ?";
     $selectStmt = $conn->prepare($selectSql);
 
-    $insertDetailSql = "INSERT INTO `Order_Details` (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+    $insertDetailSql = "INSERT INTO `Order_Details` (order_id, product_id, quantity, unit_price, remark) VALUES (?, ?, ?, ?, ?)";
     $insertDetailStmt = $conn->prepare($insertDetailSql);
 
     foreach($cart_ids as $cartId) {
@@ -65,8 +65,13 @@ try {
             $productId = $row['product_id'];
             $quantity = $row['quantity'];
             $unitPrice = $row['price'];
+            $remark = $row['remark'];
 
-            $insertDetailStmt->bind_param("iiid", $orderId, $productId, $quantity, $unitPrice);
+            if ($remark === null) {
+                $remark = null;
+            }
+
+            $insertDetailStmt->bind_param("iiids", $orderId, $productId, $quantity, $unitPrice, $remark);
             $insertDetailStmt->execute();
         }
 

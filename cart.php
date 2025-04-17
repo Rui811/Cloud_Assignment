@@ -644,6 +644,7 @@ $customer_id = $_SESSION['user_id'];
                     var price = $row.find("input[name='item_prices[]']").val();
                     var quantity = $row.find("input[name='item_quantities[]']").val();
                     var subtotal = $row.find("input[name='item_subtotals[]']").val();
+                    var remark = $row.find("input[name='item_remarks[]']").val();
                     var grandTotal = $('#grand-total').text();
 
                     $form.append('<input type="hidden" name="selected_items[]" value="' + itemId + '"/>');
@@ -652,6 +653,7 @@ $customer_id = $_SESSION['user_id'];
                     $form.append('<input type="hidden" name="item_prices[]" value="' + price + '"/>');
                     $form.append('<input type="hidden" name="item_quantities[]" value="' + quantity + '"/>');
                     $form.append('<input type="hidden" name="item_subtotals[]" value="' + subtotal + '"/>');
+                    $form.append('<input type="hidden" name="item_remarks[]" value="' + remark + '"/>');
                     $form.append('<input type="hidden" name="grand_total" value="' + grandTotal + '"/>');
                 });
 

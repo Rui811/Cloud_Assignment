@@ -50,6 +50,21 @@ include 'function/checkout.php';
                 }
             }
 
+            .remark-label {
+                font-weight: 600;
+
+                & i {
+                    margin-right: 5px;
+                    color: #6c757d;
+                }
+            }
+
+            .remark-text {
+                font-style: italic;
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
             footer {
                 font-family: 'Poppins', sans-serif;
                 position: absolute;
@@ -79,7 +94,7 @@ include 'function/checkout.php';
             <div class="card shadow mt-3">
                 <div class="card-body">
                     <h4 class="">Order Details</h4>
-                    <div class="order-container">
+                    <div class="order-container mt-3">
                         <div class="order-items">
                             <table class="table mb-4">
                                 <thead class="table-active">
@@ -98,7 +113,9 @@ include 'function/checkout.php';
                                         <tr>
                                             <td>'. ($index + 1) .'</td>
                                             <td width="10%"><img src="image/'.$images[$index].'.png" width="100"></td>
-                                            <td width="30%">'.$names[$index].'</td>
+                                            <td width="30%">'.$names[$index].'<br>
+                                                <span class="remark-label text-muted"><i class="fas fa-sticky-note"></i> Remark:</span>
+                                                <span class="remark-text">'.$remarks[$index].'</span></td>
                                             <td>'.number_format($prices[$index], 2).'</td>
                                             <td>'.$quantities[$index].'</td>
                                             <td>'.number_format($subtotals[$index], 2).'</td>
