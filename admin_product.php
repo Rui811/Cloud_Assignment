@@ -81,7 +81,7 @@ $existingCategoryIDs = explode(',', $product['category']);
 <div class="product-card">
 <div class="container mt-4">
     <h2><?= $editMode ? 'Edit Product' : 'Add New Product' ?></h2>
-    <form method="POST" enctype="multipart/form-data" class="container mt-5">
+    <form method="POST" enctype="multipart/form-data" class="container mt-5" onsubmit="return validateForm()">
     <input type="hidden" name="editID" value="<?= $product['productID'] ?? '' ?>">
 
     <div class="row align-items-stretch">
@@ -91,11 +91,13 @@ $existingCategoryIDs = explode(',', $product['category']);
             <div class="mb-3">
                 <label class="form-label">Product Name:</label>
                 <input type="text" name="productName" class="form-control" value="<?= htmlspecialchars($product['productName'] ?? '') ?>" required>
+                <div class="text-danger" id="error-name"></div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Price (RM):</label>
                 <input type="number" step="0.01" name="price" class="form-control" value="<?= htmlspecialchars($product['price'] ?? '') ?>" required>
+                <div class="text-danger" id="error-price"></div>
             </div>
 
             <div class="mb-3">
@@ -111,6 +113,7 @@ $existingCategoryIDs = explode(',', $product['category']);
         <div class="mb-3">
             <label class="form-label">Image (PNG only):</label>
             <input type="file" name="image" accept=".png" class="form-control">
+            <div class="text-danger mt-1" id="error-image"></div>
             <?php if ($editMode && !empty($product['image'])): ?>
                 <p class="mt-2">Current Image: <?= htmlspecialchars($product['image']) ?>.png</p>
             <?php endif; ?>
@@ -125,6 +128,7 @@ $existingCategoryIDs = explode(',', $product['category']);
                     <label class="form-check-label"><?= htmlspecialchars($row['catName']) ?></label>
                 </div>
             <?php endwhile; ?>
+            <div class="text-danger mt-1" id="error-category"></div>
         </div>
     </div>
 
@@ -164,6 +168,52 @@ $existingCategoryIDs = explode(',', $product['category']);
             window.location.href = "admin.php";
         });
     }
+
+    function validateForm() {
+    let isValid = true;
+
+    document.getElementById("error-name").innerText = "";
+    document.getElementById("error-price").innerText = "";
+    document.getElementById("error-category").innerText = "";
+    document.getElementById("error-image").innerText = "";
+
+    const name = document.querySelector('[name="productName"]').value.trim();
+    const price = parseFloat(document.querySelector('[name="price"]').value);
+    const categoryCheckboxes = document.querySelectorAll('[name="categories[]"]:checked');
+    const imageInput = document.querySelector('[name="image"]');
+    const editID = document.querySelector('[name="editID"]').value;
+
+    if (!name) {
+        document.getElementById("error-name").innerText = "Product name cannot be empty.";
+        isValid = false;
+    }
+
+    if (isNaN(price) || price <= 0) {
+        document.getElementById("error-price").innerText = "Price must be greater than 0.";
+        isValid = false;
+    }
+
+    if (categoryCheckboxes.length === 0) {
+        document.getElementById("error-category").innerText = "Please select at least one category.";
+        isValid = false;
+    }
+
+    const file = imageInput.files[0];
+    if (!editID && !file) {
+        document.getElementById("error-image").innerText = "Please upload a PNG image.";
+        isValid = false;
+    } else if (file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext !== "png") {
+            document.getElementById("error-image").innerText = "Only PNG images are allowed.";
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
+    
 </script>
 
 </body>
