@@ -478,13 +478,13 @@ if ($product_result->num_rows > 0) {
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="image/headerPic.gif" class="d-block" alt="Advertisement 1">
+                    <img src="image/headerPic3.gif" class="d-block" alt="Advertisement 1">
                 </div>
                 <div class="carousel-item">
                     <img src="image/headerPic2.gif" class="d-block" alt="Advertisement 2">
                 </div>
                 <div class="carousel-item">
-                    <img src="image/headerPic3.gif" class="d-block" alt="Advertisement 3">
+                    <img src="image/headerPic.gif" class="d-block" alt="Advertisement 3">
                 </div>
             </div>
         </div>
