@@ -16,7 +16,7 @@ while ($cat = $categoryQuery->fetch_assoc()) {
     $categoryMap[$cat['catID']] = $cat['catName'];
 }
 
-//check is admin or not
+$admin = []; // Initialize $admin
 $adminName = $_SESSION['admin'] ?? null;
 $sql = "SELECT * FROM admin WHERE admin_username = ?";
 $stmt = $conn->prepare($sql);
@@ -44,7 +44,11 @@ if ($result->num_rows === 0) {
         </script>
         </body></html>";
     exit;
+} else {
+    $admin = $result->fetch_assoc(); // Fetch admin data
 }
+$stmt->close();
+
 
 $productID = $_GET['id'] ?? 0;
 $currentStatus = $_GET['status'] ?? null;
@@ -524,7 +528,7 @@ while ($row = $result->fetch_assoc()) {
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = 'admin_login.php';
+                    window.location.href = 'admin_logout.php';
                 }
             });
         });
