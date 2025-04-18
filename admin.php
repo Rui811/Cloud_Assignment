@@ -329,6 +329,55 @@ while ($row = $result->fetch_assoc()) {
                         </div>
                     </div>
                 </div>
+            
+            <!-- Change Password Modal -->
+            <div class="modal fade" id="changePasswordModal" tabindex="-1"aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="bi bi-shield-lock-fill me-2"></i> Change Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <form id="passwordForm" method="POST" action="update_password.php">
+                                <div class="mb-3">
+                                    <label for="oldPassword" class="form-label"><i class="bi bi-key-fill me-1"></i>Old Password</label>
+                                    <input type="password" class="form-control" id="oldPassword" name="old_password" placeholder="Enter your Old password" required> 
+                                    
+                                    <div id="oldPasswordMatchError" class="form-text text-danger" style="display: none;">Incorrect old password.</div>
+                                </div>
+                                             
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label"><i class="bi bi-key-fill me-1"></i>New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="Enter your new password" required readonly>
+                                    
+                                    <div id="samePasswordError" class="form-text text-danger" style="display: none;">New password cannot be the same as the old password.</div>
+                                    
+                                    <!-- Validation Message -->
+                                    <small class="text-muted">Password must be at least 8 characters long.</small><br>
+                                    <small id="uppercaseReq" class="text-danger"><i class="bi bi-x-octagon-fill me-1"></i> At least one uppercase letter</small><br>
+                                    <small id="lowercaseReq" class="text-danger"><i class="bi bi-x-octagon-fill me-1"></i> At least one lowercase letter</small><br>
+                                    <small id="numberReq" class="text-danger"><i class="bi bi-x-octagon-fill me-1"></i> At least one number</small><br>
+                                    <small id="specialCharReq" class="text-danger"><i class="bi bi-x-octagon-fill me-1"></i> At least one special character</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label"><i class="bi bi-key-fill me-1"></i> Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm your new password" required readonly>
+                                    
+                                    <div id="passwordMatchError" class="form-text text-danger" style="display: none;">New password and confirm password do not match.</div>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" id="updatePasswordBtn" disabled>Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Main Content -->
             <div>
@@ -924,6 +973,128 @@ while ($row = $result->fetch_assoc()) {
                         text: 'There was a network error. Please check your connection and try again.'
                     });
                 });
+        });
+
+        //CHANGE PASSWORD
+        document.addEventListener("DOMContentLoaded", function () {
+            //get input password
+            const oldPassword = document.getElementById("oldPassword");
+            const newPassword = document.getElementById("newPassword");
+            const confirmPassword = document.getElementById("confirmPassword");
+            const updateBtn = document.getElementById("updatePasswordBtn");
+            
+            //error check
+            const oldPasswordMatchError = document.getElementById("oldPasswordMatchError");
+            const samePasswordError = document.getElementById("samePasswordError");
+            const passwordMatchError = document.getElementById("passwordMatchError");
+
+            //requirement of the new password
+            const uppercaseReq = document.getElementById("uppercaseReq");
+            const lowercaseReq = document.getElementById("lowercaseReq");
+            const numberReq = document.getElementById("numberReq");
+            const specialCharReq = document.getElementById("specialCharReq");
+
+            let validNewPassword = false;
+            let passwordsMatch = false;
+
+            oldPassword.addEventListener("keyup", function () {
+                const value = oldPassword.value.trim();
+
+                if (value.length === 0) {
+                    newPassword.readOnly = true;
+                    confirmPassword.readOnly = true;
+                    updateBtn.disabled = true;
+                } else {
+                    newPassword.readOnly = false;
+                }
+            });
+
+            // Validate new password
+            newPassword.addEventListener("input", function () {
+                const newVal = newPassword.value;
+                const oldVal = oldPassword.value;
+
+                // Don't allow same as old password
+                if (newVal === oldVal) {
+                    samePasswordError.style.display = "block";
+                } else {
+                    samePasswordError.style.display = "none";
+                }
+
+                const hasUpper = /[A-Z]/.test(newVal);
+                const hasLower = /[a-z]/.test(newVal);
+                const hasNumber = /[0-9]/.test(newVal);
+                const hasSpecial = /[!@#$%^&*_(),.?":{}|<>]/.test(newVal);
+                const mixLength = newVal.length >= 8;
+
+                // Toggle styles
+                uppercaseReq.className = hasUpper ? "text-success" : "text-danger";
+                lowercaseReq.className = hasLower ? "text-success" : "text-danger";
+                numberReq.className = hasNumber ? "text-success" : "text-danger";
+                specialCharReq.className = hasSpecial ? "text-success" : "text-danger";
+
+                validNewPassword = hasUpper && hasLower && hasNumber && hasSpecial && mixLength && newVal !== oldVal;
+
+                if (validNewPassword) {
+                    confirmPassword.readOnly = false;
+                } else {
+                    confirmPassword.readOnly = true;
+                    updateBtn.disabled = true;
+                }
+            });
+
+            // Confirm password match with new password
+            confirmPassword.addEventListener("input", function () {
+                if (confirmPassword.value === newPassword.value && validNewPassword) {
+                    passwordMatchError.style.display = "none";
+                    updateBtn.disabled = false;
+                    passwordsMatch = true;
+                } else {
+                    passwordMatchError.style.display = "block";
+                    updateBtn.disabled = true;
+                    passwordsMatch = false;
+                }
+            });
+        });
+
+        document.getElementById("passwordForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("admin_password.php", {
+                method: "POST",
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Password Updated!",
+                        text: "Your password has been successfully updated.",
+                        confirmButtonColor: "#673de6"
+                    }).then(() => {
+                        window.location.href = 'admin.php';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Invalid Password",
+                        text: "Your old password is incorrect.",
+                        confirmButtonColor: "#673de6"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error updating password:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong. Please try again later.",
+                    confirmButtonColor: "#673de6"
+                });
+            });
         });
     </script>
 </body>

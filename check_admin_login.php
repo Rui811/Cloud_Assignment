@@ -24,6 +24,7 @@ if ($result->num_rows > 0) {
 
     if (isset($admin) && password_verify($pass, $admin['admin_password'])) {
         $_SESSION['admin'] = $admin['admin_username'];
+        $_SESSION['admin_id'] = $admin['admin_id'];
         echo 'success';
     } else {
         echo 'fail'; // password mismatch
