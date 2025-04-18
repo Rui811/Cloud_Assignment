@@ -165,8 +165,8 @@ include 'function/receipt.php';
 
                     <!-- <h3 class="text-center mb-4">Receipt</h3> -->
                     <h2 class="mb-3">Order #<?= $orderId; ?></h2>
-                    <p><strong>Date:</strong> <?= $orderDate; ?></p>
-                    <p><strong>Status:</strong> <?= $orderStatus; ?></p>
+                    <p><strong>Order Date:</strong> <?= $orderDate; ?></p>
+                    <p><strong>Order Status:</strong> <?= $orderStatus; ?></p>
 
                     <hr>
 
