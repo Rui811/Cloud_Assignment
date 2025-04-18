@@ -16,7 +16,7 @@ while ($cat = $categoryQuery->fetch_assoc()) {
     $categoryMap[$cat['catID']] = $cat['catName'];
 }
 
-//check is admin or not
+$admin = []; // Initialize $admin
 $adminName = $_SESSION['admin'] ?? null;
 $sql = "SELECT * FROM admin WHERE admin_username = ?";
 $stmt = $conn->prepare($sql);
@@ -44,7 +44,11 @@ if ($result->num_rows === 0) {
         </script>
         </body></html>";
     exit;
+} else {
+    $admin = $result->fetch_assoc(); // Fetch admin data
 }
+$stmt->close();
+
 
 $productID = $_GET['id'] ?? 0;
 $currentStatus = $_GET['status'] ?? null;
@@ -108,6 +112,13 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding-top: 20px;
+            overflow-y: auto;
             min-height: 100vh;
             background-color: #f4f7fe;
         }
@@ -133,10 +144,6 @@ while ($row = $result->fetch_assoc()) {
             color: #fff;
         }
 
-        .main-content {
-            padding: 20px;
-        }
-
         .topbar {
             padding: 15px 20px;
             background-color: #fff;
@@ -145,6 +152,8 @@ while ($row = $result->fetch_assoc()) {
 
         .page-content {
             display: none;
+            padding: 20px;
+            margin-left: 240px;
         }
 
         .page-content.active {
@@ -153,6 +162,78 @@ while ($row = $result->fetch_assoc()) {
 
         .buttonAddProduct {
             background-color: #673de6;
+        }
+
+        .dropdown-menu {
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border: none;
+            padding: 10px 0;
+            min-width: 240px;
+        }
+
+        .dropdown-menu .dropdown-item {
+            color: black;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease, padding-left 0.2s ease;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #e3323a;
+            padding-left: 26px;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+            /* hide arrow*/
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .profile:hover {
+            color: #ccc;
+        }
+
+        input.is-invalid {
+            border: 2px solid red;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+
+        .form-control.is-invalid~.invalid-feedback {
+            display: block;
+        }
+
+        .form-text.text-danger {
+            display: none; /* Initially hide the custom error messages */
         }
     </style>
 </head>
@@ -177,19 +258,80 @@ while ($row = $result->fetch_assoc()) {
                             <i class="bi bi-person-circle me-2"></i>Customers</a>
                     </li>
                 </ul>
-                <div class="mt-auto">
-                    <a href="#" class="profile" data-bs-toggle="modal" data-bs-target="#accountSettingModal">
+
+                <div class="dropdown mt-auto">
+                    <a class="profile dropdown-toggle" href="#" role="button" id="accountSettingDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-gear-fill me-2"></i> Account Setting
                     </a>
 
-                    <a href="#" class="logOutAlert mt-auto" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i>
-                        Log out</a>
+                    <ul class="dropdown-menu dropdown-menu" aria-labelledby="accountSettingDropdown">
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changeProfileModal">
+                                <i class="bi bi-person-lines-fill me-2"></i> Change Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <i class="bi bi-lock-fill me-2"></i> Change Password
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <a href="#" class="logOutAlert mt-auto" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i> Log out</a>
+
                 </div>
 
             </div>
 
+
+            <!-- Change Profile Modal -->
+            <div class="modal fade" id="changeProfileModal" tabindex="-1" aria-labelledby="changeProfileModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Change Profile</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="profileForm">
+                                    <div class="mb-3">
+                                        <label for="adminName" class="form-label">Name</label>
+                                        <!-- <small class="text-muted">This field cannot be changed.</small> -->
+                                        <input type="text" class="form-control" id="adminName"
+                                            value="<?= htmlspecialchars($admin['admin_name'] ?? '') ?>"" readonly>
+                                        
+                                </div>
+                                <div class=" mb-3">
+                                        <label for="adminUsername" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="adminUsername"
+                                            value="<?= htmlspecialchars($admin['admin_username'] ?? '') ?>" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="adminEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="adminEmail"
+                                            value="<?= htmlspecialchars($admin['admin_email'] ?? '') ?>" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="adminPhone" class="form-label">Phone</label>
+                                        <input type="text" class="form-control" name="admin_phone" id="adminPhone"
+                                            value="<?= htmlspecialchars($admin['admin_phone'] ?? '') ?>">
+                                    </div>
+                                    <input type="hidden" id="originalAdminPhone"
+                                        value="<?= htmlspecialchars($admin['admin_phone'] ?? '') ?>">
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" form="profileForm" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <!-- Main Content -->
-            <div class="col-md-10">
+            <div>
                 <div id="homePage" class="page-content active">
                     <div class="topbar d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">Dashboard</h2>
@@ -524,7 +666,7 @@ while ($row = $result->fetch_assoc()) {
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = 'admin_login.php';
+                    window.location.href = 'admin_logout.php';
                 }
             });
         });
@@ -702,7 +844,87 @@ while ($row = $result->fetch_assoc()) {
             });
         }
 
+        function validatePhoneNumber(phone) {
+            const regex011 = /^011-\d{8}$/;
+            const regexOther = /^01[02456789]-\d{7}$/;
+            return regex011.test(phone) || regexOther.test(phone);
+        }
 
+        document.getElementById('profileForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const phoneInput = document.getElementById('adminPhone');
+            const phone = phoneInput.value;
+            const originalPhoneInput = document.getElementById('originalAdminPhone');
+            const originalPhone = originalPhoneInput ? originalPhoneInput.value : null;
+
+            if (originalPhone !== null && phone === originalPhone) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Number Unchanged',
+                    text: 'The new phone number you entered is the same as the current number.'
+                });
+                return;
+            }
+
+            if (!validatePhoneNumber(phone)) {
+                phoneInput.classList.add('is-invalid');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Phone Number',
+                    text: 'Please enter a valid phone number (e.g., 010-4567899 or 011-45446989)'
+                });
+                return;
+            }
+
+            const formData = new FormData(this);
+            fetch('admin_profile.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Profile Updated!',
+                            text: 'Your profile information has been updated successfully.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = 'admin.php';
+                        });
+                    } else if (data === 'failed') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Update Failed',
+                            text: 'There was an error updating your profile. Please try again later.'
+                        });
+                    } else if (data === 'invalid') {
+                        phoneInput.classList.add('is-invalid');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Invalid Input',
+                            text: 'The phone number you entered is not in the correct format.'
+                        });
+                    } else {
+                        console.error('Unexpected response from server:', data);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                            text: 'An unexpected error occurred. Please try again.'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending request:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'There was a network error. Please check your connection and try again.'
+                    });
+                });
+        });
     </script>
 </body>
 
