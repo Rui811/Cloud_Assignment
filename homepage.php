@@ -146,7 +146,7 @@ if ($product_result->num_rows > 0) {
         #shop {
             background-color: #f8f9fa;
             padding: 30px 0;
-            max-width: 100%;
+            /* max-width: 100%; */
             width: 100%;
             margin: 0 auto;
             padding-left: 0;
@@ -210,7 +210,7 @@ if ($product_result->num_rows > 0) {
         .product-container {
             display: grid;
             margin-left: 30px;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             /* 4 items per row */
             gap: 30px;
             flex: 1;
@@ -550,7 +550,7 @@ if ($product_result->num_rows > 0) {
             <?php
             $productCounter = 0;
             foreach ($displayProducts as $product):
-                if ($productCounter >= 8)
+                if ($productCounter >= 6)
                     break;
                 $productCounter++;
                 ?>

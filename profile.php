@@ -1,5 +1,30 @@
 <?php
 include 'profile_helper.php';
+include 'order_history.php';
+
+$customerId = $_SESSION['user_id'];
+$orders = getOrderHistory($customerId, $conn);
+
+$grouped_orders = [];
+
+foreach ($orders as $order) {
+    if (!isset($grouped_orders[$order['order_id']])) {
+        $grouped_orders[$order['order_id']] = [
+            'order_id' => $order['order_id'],
+            'order_date' => $order['order_date'],
+            'total_amount' => $order['total_amount'],
+            'order_state' => $order['order_state'],
+            'products' => []
+        ];
+    }
+    $grouped_orders[$order['order_id']]['products'][] = [
+        'product_id' => $order['product_id'],
+        'image' => $order['image'],
+        'productName' => $order['productName'],
+        'quantity' => $order['quantity'],
+        'unit_price' => $order['unit_price']
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -96,12 +121,55 @@ include 'profile_helper.php';
 
         .orders {
             background-color: rgba(250, 207, 239, 0.69);
+            overflow-y: auto;
+            max-height: 400px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .order-history-container {
+            max-height: 200px;
+            overflow-y: scroll;
+            padding-right: 10px;
+            margin-top: 20px;
+        }
+
+        .order-item {
+            padding: 10px;
+            background-color: #fff;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .order-item p {
+            margin: 5px 0;
+        }
+
+        .order-item ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .order-item ul li {
+            margin: 5px 0;
         }
 
         .label-tag {
             position: absolute;
             top: -15px;
             left: 20px;
+            background-color: #fff;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 3px solid #ddd;
+        }
+
+        .label-tag-order {
+            position: absolute;
+            top: 5px;
+            left: 590px;
             background-color: #fff;
             padding: 5px 15px;
             border-radius: 15px;
@@ -221,6 +289,12 @@ include 'profile_helper.php';
             border-color: #f78fb3;
             box-shadow: 0 0 0 0.2rem rgba(247, 143, 179, 0.25);
         }
+
+        .order-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -256,12 +330,61 @@ include 'profile_helper.php';
             </div>
 
             <div class="box orders">
-                <div class="label-tag">ORDERS</div>
-                <p>No recent orders yet.</p>
+                <div class="label-tag-order">ORDER HISTORY</div>
+                <div class="order-history-container">
+                    <?php
+                    foreach ($grouped_orders as $order):
+                        ?>
+                        <div class="order-item">
+                            <p><strong>Order ID: #</strong> <?php echo htmlspecialchars($order['order_id']); ?></p>
+                            <p><strong>Order Date:</strong> <?php echo htmlspecialchars($order['order_date']); ?></p>
+                            <p><strong>Total Amount:</strong> RM <?php echo number_format($order['total_amount'], 2); ?></p>
+                            <p><strong>Order Status:</strong> <?php echo htmlspecialchars($order['order_state']); ?></p>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th> </th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach ($order['products'] as $product):
+                                        ?>
+                                        <tr>
+                                            <td><img src="image/<?php echo htmlspecialchars($product['image']); ?>.png"
+                                                    alt="<?php echo htmlspecialchars($product['productName']); ?>"
+                                                    class="order-item-img">
+                                            </td>
+
+                                            <td><?php echo htmlspecialchars($product['productName']); ?></td>
+
+                                            <td><?php echo htmlspecialchars($product['quantity']); ?></td>
+
+                                            <td>RM <?php echo number_format($product['unit_price'], 2); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <a href="receipt.php?order_id=<?php echo $order['order_id']; ?>"
+                                class="btn btn-pink w-100 mt-3">
+                                View Receipt
+                            </a>
+
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
             </div>
+
+
         </div>
 
     </div>
+
+
 
     <div class="logout-icon" onclick="window.location.href='logout.php';">
         <i class="fas fa-sign-out-alt"></i>
