@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Kuala_Lumpur');
+
 // require_once 'db_connect.php';
 // $host = "localhost";
 // $username = "root";
