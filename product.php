@@ -17,7 +17,6 @@ if ($conn->connect_error) {
 $selectedCategory = $_GET['category'] ?? "All";
 $searchQuery = $_GET['search'] ?? "";
 
-// 获取所有分类信息，同时建立映射
 $category_sql = "SELECT * FROM category";
 $category_result = $conn->query($category_sql);
 $categories = ["All"];
@@ -118,11 +117,11 @@ $selectedCategoryID = $categoryMap[$selectedCategory] ?? null;
                 font-size: 18px; 
                 color: #333;
                 padding-bottom: 2px; 
+                text-decoration: none;
             }
 
             .sidebar a:hover {
-                color: #28a745; /* Change text color on hover */
-                border-color: #28a745; /* Change the underline color on hover */
+                color: #ff77a9; /* Change text color on hover */
                 font-weight: bold;
                 
             }
