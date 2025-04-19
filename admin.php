@@ -310,9 +310,8 @@ include 'admin_analytics.php';
                                 <form id="profileForm">
                                     <div class="mb-3">
                                         <label for="adminName" class="form-label">Name</label>
-                                        <!-- <small class="text-muted">This field cannot be changed.</small> -->
                                         <input type="text" class="form-control" id="adminName"
-                                            value="<?= htmlspecialchars($admin['admin_name'] ?? '') ?>"" readonly>
+                                            value="<?= htmlspecialchars($admin['admin_name'] ?? '') ?>" readonly>
                                         
                                 </div>
                                 <div class=" mb-3">
@@ -1216,6 +1215,29 @@ include 'admin_analytics.php';
                 }]
             }
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileModal = new bootstrap.Modal(document.getElementById('changeProfileModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            const passwordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            document.querySelector('[data-bs-target="#changeProfileModal"]').addEventListener('click', function (e) {
+                e.preventDefault();
+                profileModal.show();
+            });
+
+            document.querySelector('[data-bs-target="#changePasswordModal"]').addEventListener('click', function (e) {
+                e.preventDefault();
+                passwordModal.show();
+            });
+        });
+        
     </script>
 </body>
 
