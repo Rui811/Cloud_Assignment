@@ -159,7 +159,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
       <div class="mt-4 d-flex align-items-center">
             <label for="quantity" class="me-2 fw-bold">Quantity:</label>
             <input type="number" id="quantity" class="form-control w-25 me-3" min="1" value="1">
-            <button class="btn btn-primary" id="addToCartBtn">Add to Cart</button>
+            <button class="btn btn-primary" id="addToCartBtn" style="background-color: #fc9bb6 !important;border:none;color:black;font- ">Add to Cart</button>
           </div>
       </div>
                 </div>
