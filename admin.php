@@ -93,6 +93,8 @@ $products = [];
 while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
+
+include 'admin_analytics.php';
 ?>
 
 <!DOCTYPE html>
@@ -235,6 +237,17 @@ while ($row = $result->fetch_assoc()) {
         .form-text.text-danger {
             display: none; /* Initially hide the custom error messages */
         }
+
+        .card-box {
+            min-height: 100px;
+            transition: transform 0.2s ease;
+        }
+
+        .card-box:hover {
+            transform: translateY(-5px);
+        }
+
+
     </style>
 </head>
 
@@ -395,23 +408,67 @@ while ($row = $result->fetch_assoc()) {
                     <div class="container mt-4">
                         <div class="row g-4">
                             <div class="col-md-3">
-                                <div class="bg-white shadow-sm rounded p-3">
-                                    <p class="mb-1 text-muted">Sales</p>
-                                    <h4>RM 12,300.00</h4>
+                                <div class="card-box d-flex justify-content-between align-items-center shadow-sm rounded p-3 bg-white">
+                                    <div class="text-start">
+                                        <p class="mb-0 text-muted">Total Customers</p>
+                                        <h5 class="fw-bold mb-1"><?= $totalCustomers; ?></h5>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="bi bi-person-fill fs-1"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card-box d-flex justify-content-between align-items-center shadow-sm rounded p-3 bg-white">
+                                    <div class="text-start">
+                                        <p class="mb-0 text-muted">Total Orders</p>
+                                        <h5 class="fw-bold mb-1"><?= $totalOrders; ?></h5>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="bi bi-cart-fill fs-1"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="bg-white shadow-sm rounded p-3">
-                                    <p class="mb-1 text-muted">New User</p>
-                                    <h4>111</h4>
+                                <div class="card-box d-flex justify-content-between align-items-center shadow-sm rounded p-3 bg-white">
+                                    <div class="text-start">
+                                        <p class="mb-0 text-muted">Total Products</p>
+                                        <h5 class="fw-bold mb-1"><?= $totalProducts; ?></h5>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="bi bi-box-fill fs-1"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="bg-white shadow-sm rounded p-3">
-                                    <p class="mb-1 text-muted">Product</p>
-                                    <h4>10</h4>
+                                <div class="card-box d-flex justify-content-between align-items-center shadow-sm rounded p-3 bg-white">
+                                    <div class="text-start">
+                                        <p class="mb-0 text-muted">Total Sales</p>
+                                        <h5 class="fw-bold mb-1">RM <?= number_format($totalSales, 2) ?></h5>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="bi bi-currency-dollar fs-1"></i>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">Top 5 Best-Selling Products</h5>
+                            <canvas id="topProductsChart" height="250"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">Daily Orders</h5>
+                            <canvas id="dailyOrdersChart" height="250"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3">Daily Revenue Trend</h5>
+                            <canvas id="dailyRevenueChart" height="100"></canvas>
                         </div>
                     </div>
                 </div>
@@ -669,6 +726,7 @@ while ($row = $result->fetch_assoc()) {
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
     <script>
@@ -1095,6 +1153,68 @@ while ($row = $result->fetch_assoc()) {
                     confirmButtonColor: "#673de6"
                 });
             });
+        });
+
+        const topProductsChart = new Chart(document.getElementById('topProductsChart'), {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode($topProductNames); ?>,
+                datasets: [{
+                    label: 'Units Sold',
+                    data: <?= json_encode($topProductQuantities); ?>,
+                    backgroundColor: [
+                        '#314976', 
+                        '#009db2', 
+                        '#0780cf',
+                        '#3685fe', 
+                        '#26ccd8'
+            ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const dailyOrdersChart = new Chart(document.getElementById('dailyOrdersChart'), {
+            type: 'line',
+            data: {
+                labels: <?= json_encode($dailyDates); ?>,
+                datasets: [{
+                    label: 'Orders',
+                    data: <?= json_encode($dailyOrderCounts); ?>,
+                    borderColor: '#6f42c1',
+                    backgroundColor: 'rgba(111, 66, 193, 0.3)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const dailyRevenueChart = new Chart(document.getElementById('dailyRevenueChart'), {
+            type: 'line',
+            data: {
+                labels: <?= json_encode($dailyDates); ?>,
+                datasets: [{
+                    label: 'Revenue (RM)',
+                    data: <?= json_encode($dailyRevenue); ?>,
+                    borderColor: '#28a745',
+                    backgroundColor: '#28a74533',
+                    fill: true,
+                    tension: 0.4
+                }]
+            }
         });
     </script>
 </body>
