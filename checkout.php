@@ -343,7 +343,15 @@ include 'function/checkout.php';
                                     let data = JSON.parse(response);
 
                                     if (data.success) {
-                                        window.location.href = "receipt.php?from=checkout&order_id=" + data.orderId;
+                                        Swal.fire({
+                                            title: "Order created!",
+                                            text: 'Yey! Your order has successfully created!',
+                                            icon: "success",
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: "Green"
+                                        }).then(() => {
+                                            window.location.href = "receipt.php?from=checkout&order_id=" + data.orderId;
+                                        });                                        
                                     }
                                     else {
                                         Swal.fire({
