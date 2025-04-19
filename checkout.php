@@ -343,7 +343,7 @@ include 'function/checkout.php';
                                     let data = JSON.parse(response);
 
                                     if (data.success) {
-                                        window.location.href = "receipt.php?order_id=" + data.orderId;
+                                        window.location.href = "receipt.php?from=checkout&order_id=" + data.orderId;
                                     }
                                     else {
                                         Swal.fire({

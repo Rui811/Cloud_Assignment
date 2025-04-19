@@ -19,7 +19,15 @@ if (!isset($_GET['order_id'])) {
     return;
 }
 
+if (!isset($_GET['from']) || $_GET['from'] != "checkout" && $_GET['from'] != "profile") {
+    $_SESSION['errorToast'] = "Invalid Request!";
+    header("Location: homepage.php");
+    exit();
+    return;
+}
+
 $orderId = $_GET['order_id'];
+$from = $_GET['from'];
 
 //verify the order ID is for that cust
 $verifySql = "SELECT * FROM `Order` WHERE customer_id = ? AND order_id = ?";

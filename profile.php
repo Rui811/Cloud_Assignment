@@ -368,7 +368,7 @@ foreach ($orders as $order) {
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-                            <a href="receipt.php?order_id=<?php echo $order['order_id']; ?>"
+                            <a href="receipt.php?from=profile&order_id=<?php echo $order['order_id']; ?>"
                                 class="btn btn-pink w-100 mt-3">
                                 View Receipt
                             </a>

@@ -154,7 +154,7 @@ include 'function/receipt.php';
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4 receipt-header">
-                        <a class="back-cart-btn ms-2" href="homepage.php" title="back to Home">
+                        <a class="back-cart-btn ms-2" href="<?= $from == "checkout" ? "homepage" : "profile" ?>.php" title="back to <?= $from == "checkout" ? "Home" : "Profile" ?>">
                             <i class="fa-solid fa-chevron-left"></i>
                         </a>
 
