@@ -205,7 +205,7 @@ include 'function/receipt.php';
                     <div class="d-flex flex-wrap justify-content-between gap-4 no-page-break">
                         <div class="flex-fill" style="min-width: 250px;">
                             <p class="section-title">Total Summary:</p>
-                            <p class="total-line">Grand Total: RM <?= number_format($grandTotal, 2); ?></p>
+                            <p class="total-line">Grand Total: RM <?= number_format($grandTotal, decimals: 2); ?></p>
                         </div>
                         <div class="flex-fill" style="min-width: 250px;">
                             <p class="section-title">Payment Info:</p>
