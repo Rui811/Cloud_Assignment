@@ -76,14 +76,14 @@ $existingCategoryIDs = explode(',', $product['category']);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        height: 100vh;
     }
 
     .product-card {
         background-color: #ffffff;
         padding: 30px;
         border-radius: 10px;
-        margin: 70px auto;
+        margin: auto;
+        margin-top:110px;
         max-width: 900px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
