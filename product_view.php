@@ -44,7 +44,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
 
     <style>
     body {
-      background-image: url("image/wallpaper2.png");
+      background-image: url("image/productViewBg.png");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
