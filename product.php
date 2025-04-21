@@ -139,6 +139,8 @@ $selectedCategoryID = $categoryMap[$selectedCategory] ?? null;
                 padding: 10px ; 
                 border-radius: 5px; 
                 text-align: center; 
+                width: 250px;
+                flex-shrink: 0;
             }
     
             .product img { 
