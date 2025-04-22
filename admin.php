@@ -1720,7 +1720,9 @@ include 'admin_analytics.php';
                     $products = $conn->query("SELECT productID, productName FROM `Product`");
 
                     foreach ($products as $prod) {
-                        echo "<option value='{$prod['productID']}'>{$prod['productName']}</option>";
+                        $formattedID = 'P'.str_pad($prod['productID'], 4, '0', STR_PAD_LEFT);
+
+                        echo "<option value='{$prod['productID']}'>{$formattedID} - {$prod['productName']}</option>";
                     }
                     ?>
                 </select>
