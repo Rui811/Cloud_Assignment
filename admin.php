@@ -107,6 +107,7 @@ include 'admin_analytics.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         body {
@@ -538,8 +539,8 @@ include 'admin_analytics.php';
                                         <td>CUST<?= str_pad($row['customer_id'], 3, '0', STR_PAD_LEFT) ?> (<?= $row['cust_name'] ?>)</td>
                                         <td><?= date('Y-m-d', strtotime($row['order_date'])) ?></td>
                                         <td>RM <?= number_format($row['total_amount'], 2) ?></td>
-                                        <td><?= $row['order_state'] ?></td>
-                                        <td><?= $row['payment_status'] ?></td>
+                                        <td class="<?= ($row['order_state'] == "Confirmed") ? "text-success" : "text-danger" ?> fw-bold"><?= $row['order_state'] ?></td>
+                                        <td class="<?= ($row['payment_status'] == "Paid" ? "text-success" : "text-danger") ?> fw-bold"><?= $row['payment_status'] ?></td>
                                         <td><?= isset($row['updated_by']) ? $row['updated_by'] : "-" ?></td>
                                         <td><?= isset($row['updated_time']) ? $row['updated_time'] : '-' ?></td>
                                         <td><?= isset($row['update_reason']) ? $row['update_reason'] : '-' ?></td>
@@ -1293,6 +1294,9 @@ include 'admin_analytics.php';
 
         //ORDER functions
         function generateOrderDetailHTML(order) {
+            const orderStatusClass = order.order_state === "Confirmed" ? "text-success" : "text-danger";
+            const paymentStatusClass = order.payment_status === "Paid" ? "text-success" : "text-danger";
+
             let itemList = `
                 <table style="width:100%; text-align:left; border-collapse:collapse;">
                     <thead>
@@ -1325,7 +1329,7 @@ include 'admin_analytics.php';
                     <table style="width:100%; border-collapse:collapse;">
                         <tr>
                             <td style="padding:4px 0;"><strong>Order ID:</strong></td>
-                            <td style="padding:4px 0;">#ORD${String(order.order_id).padStart(3, '0')}</td>
+                            <td style="padding:4px 0;" class="text-primary">#ORD${String(order.order_id).padStart(3, '0')}</td>
                         </tr>
                         <tr>
                             <td style="padding:4px 0;"><strong>Customer ID:</strong></td>
@@ -1345,11 +1349,15 @@ include 'admin_analytics.php';
                         </tr>
                         <tr>
                             <td style="padding:4px 0;"><strong>Status:</strong></td>
-                            <td style="padding:4px 0;">${order.order_state}</td>
+                            <td style="padding:4px 0;" class="${orderStatusClass} fw-bold">
+                                ${order.order_state}
+                            </td>
                         </tr>
                         <tr>
                             <td style="padding:4px 0;"><strong>Payment:</strong></td>
-                            <td style="padding:4px 0;">${order.payment_status}</td>
+                            <td style="padding:4px 0;" class="${paymentStatusClass} fw-bold">
+                                ${order.payment_status}
+                            </td>
                         </tr>
                     </table>
                     <hr style="margin:10px 0;">
@@ -1542,8 +1550,234 @@ include 'admin_analytics.php';
             });
         }
 
-        function addNewOrder () {
-            
+        function addNewOrder() {
+            Swal.fire({
+                title: 'Create New Order',
+                html: `
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Select Customer</label>
+                        <select class="form-select" id="swal_customer">
+                            <option value="">-- Choose Customer --</option>
+                            <?php
+                            $customers = $conn->query("SELECT customer_id, cust_name FROM `Customer` WHERE `status` = 1");
+
+                            foreach ($customers as $cust) {
+                                echo "<option value='{$cust['customer_id']}'>CUST".str_pad($cust['customer_id'], 3, '0', STR_PAD_LEFT)." ({$cust['cust_name']})</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Order Items</label>
+                        <div id="swal_orderItemsContainer"></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOrderItemRow()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Note / Reason</label>
+                        <textarea class="form-control" id="swal_reason" rows="2" placeholder="Order Remark"></textarea>
+                    </div>
+                `,
+                width: '60%',
+                showCancelButton: true,
+                confirmButtonColor: "Green",
+                confirmButtonText: "Create Order",
+                cancelButtonColor: "Crimson",
+                cancelButtonText: "Cancel",
+                didOpen: () => {
+                    addOrderItemRow(); //default one row
+                },
+                preConfirm: () => {
+                    const errorMessage = validateOrderForm();
+                    
+                    if (errorMessage) {
+                        Swal.showValidationMessage(errorMessage);
+                        return false; // prevent closing the modal
+                    }
+
+                    const customerId = document.getElementById("swal_customer").value;
+                    const reason = document.getElementById("swal_reason").value;
+
+                    const productEls = document.querySelectorAll(".swal_product");
+                    const quantityEls = document.querySelectorAll(".swal_quantity");
+                    const remarkEls = document.querySelectorAll(".swal_remark");
+
+                    const productIds = [], quantities = [], remarks = [];
+
+                    for (let i = 0; i < productEls.length; i++) {
+                        const pid = productEls[i].value;
+                        const qty = quantityEls[i].value;
+                        const remark = remarkEls[i].value;
+
+                        if (!pid || !qty) continue;
+                        productIds.push(pid);
+                        quantities.push(qty);
+                        remarks.push(remark);
+                    }
+
+                    return {
+                        customer_id: customerId,
+                        product_id: productIds,
+                        quantity: quantities,
+                        remark: remarks,
+                        update_reason: reason
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    $.ajax({
+                        url: 'ajax/admin_create_order.php',
+                        type: 'POST',
+                        data: result.value,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Order created successfully!",
+                                    icon: "success",
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "Green"
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: response.message || "Failed to create order.",
+                                    icon: "error",
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "Green"
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: "Error",
+                                text: "Request failed. Try again.",
+                                icon: "error",
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "Green"
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function validateOrderForm() {
+            const customerId = document.getElementById("swal_customer").value;
+            const reason = document.getElementById("swal_reason").value.trim();
+            const productEls = document.querySelectorAll(".swal_product");
+            const quantityEls = document.querySelectorAll(".swal_quantity");
+
+            let hasValidItem = false;
+
+            for (let i = 0; i < productEls.length; i++) {
+                const pid = productEls[i].value;
+                const qty = parseInt(quantityEls[i].value, 10);
+
+                if (pid) {
+                    if (!qty || qty <= 0) {
+                        return "Quantity must be greater than zero for all selected products.";
+                    }
+
+                    hasValidItem = true;
+                }
+            }
+
+            if (!customerId) {
+                return "Please select a customer.";
+            }
+
+            if (!hasValidItem) {
+                return "Please add at least one item with quantity.";
+            }
+
+            if (!reason) {
+                return "Please enter a note/reason.";
+            }
+
+            return null;
+        }
+
+        let orderItemIndex = 0;
+
+        function addOrderItemRow() {
+            const container = document.getElementById("swal_orderItemsContainer");
+            const row = document.createElement("div");
+
+            const currentIndex = orderItemIndex++;
+
+            row.classList.add("d-flex", "gap-2", "mb-2");
+            row.innerHTML = `
+                <select class="form-select swal_product" data-index="${currentIndex}" style="width: 30%;">
+                    <option value="">-- Product --</option>
+                    <?php
+                    $products = $conn->query("SELECT productID, productName FROM `Product`");
+
+                    foreach ($products as $prod) {
+                        echo "<option value='{$prod['productID']}'>{$prod['productName']}</option>";
+                    }
+                    ?>
+                </select>
+                <input type="number" class="form-control swal_quantity" placeholder="Qty" min="1" style="width: 20%;">
+                <textarea class="form-control swal_remark" rows="1" placeholder="Remark (Optional)" data-index="${currentIndex}" style="width: 40%;"></textarea>
+                <button type="button" class="btn btn-danger px-4 btn-remove-item">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(row);
+
+            row.querySelector(".swal_product").addEventListener("change", function () {
+                const productId = this.value;
+                const idx = this.dataset.index;
+                const remarkBox = document.querySelector(`.swal_remark[data-index="${idx}"]`);
+
+                if (!productId) {
+                    remarkBox.disabled = false;
+                    remarkBox.placeholder = "Remark (Optional)";
+                    return;
+                }
+
+                $.ajax({
+                    url: "ajax/check_customizable.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: { 
+                        "product_id": productId 
+                    },
+                    success: function (response) {
+                        if (response.customizable) {
+                            remarkBox.disabled = false;
+                            remarkBox.placeholder = "Remark (Optional)";
+                        }
+                        else {
+                            remarkBox.disabled = true;
+                            remarkBox.value = '';
+                            remarkBox.placeholder = "This product does not support remark";
+                        }
+                    },
+                    error: function () {
+                        remarkBox.disabled = false;
+                        remarkBox.placeholder = "Remark (Optional)";
+                    }
+                });
+            });
+
+            row.querySelector(".btn-remove-item").addEventListener("click", function () {
+                const allRows = container.querySelectorAll("div.d-flex.gap-2.mb-2");
+
+                if (allRows.length > 1) {
+                    this.parentElement.remove();
+                }
+                else {
+                    Swal.showValidationMessage("Cannot remove. You must have at least one order item.");
+                }
+            });
         }
         
     </script>
