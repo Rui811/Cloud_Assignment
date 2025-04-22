@@ -632,7 +632,9 @@ include 'admin_analytics.php';
                                                     <span class="text-danger fw-bold">Inactive</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><a href="admin_product.php?edit=<?php echo $product['productID']; ?>"
+                                            <td>
+                                            <div class="d-flex flex-column gap-1">
+                                                <a href="admin_product.php?edit=<?php echo $product['productID']; ?>"
                                                     class="btn btn-success btn-sm me-1">
                                                     <i class="bi bi-pencil-square"></i> Update
                                                 </a>
@@ -642,6 +644,7 @@ include 'admin_analytics.php';
                                                     class="btn btn-sm <?php echo $product['status'] == 1 ? 'btn-danger' : 'btn-success'; ?>">
                                                     <?php echo $product['status'] == 1 ? 'Inactivate' : 'Activate'; ?>
                                                 </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
