@@ -483,39 +483,88 @@ include 'admin_analytics.php';
                             <span class="fw-semibold"><?= $_SESSION['admin']; ?></span>
                         </div>
                     </div>
+
                     <div class="container mt-4">
-                        <h4 class="mb-3">Order List</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-3">Order List</h4>
+                            <button class="btn btn-primary" style="background-color: #673de6;" onclick="addNewOrder()">
+                                <i class="fas fa-plus fa-sm text-white-50"></i> Add New Order
+                            </button>
+                        </div>
+
                         <div class="table-responsive">
-                            <table id="orderTable" class="table table-striped">
+                            <table class="table table-striped" id="orderTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th>Order ID</th>
-                                        <th>Customer ID</th>
+                                        <th>Customer Info</th>
                                         <th>Order Date</th>
                                         <th>Total Amount</th>
                                         <th>Order Status</th>
-                                        <th></th>
+                                        <th>Payment Status</th>
+                                        <th>Updated By</th>
+                                        <th>Updated Time</th>
+                                        <th>Update Reason</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Example rows -->
-                                    <tr>
-                                        <td>ORD001</td>
-                                        <td>CUST123(Ali)</td>
-                                        <td>2025-04-08</td>
-                                        <td>RM 299.99</td>
-                                        <td>Completed</td>
-                                        <td></td>
-                                    </tr>
 
+                                <tbody>
+                                    <?php
+                                    $orderSql = "SELECT 
+                                                    o.order_id,
+                                                    o.customer_id,
+                                                    c.cust_name,
+                                                    o.order_date,
+                                                    o.total_amount,
+                                                    o.order_state,
+                                                    p.payment_status,
+                                                    o.updated_by,
+                                                    o.updated_time,
+                                                    o.update_reason
+                                                FROM `Order` o 
+                                                JOIN `Customer` c ON o.customer_id = c.customer_id
+                                                LEFT JOIN `Payment` p ON o.order_id = p.order_id
+                                                ORDER BY o.order_date DESC
+                                                ";
+
+                                    $orderResults = $conn->query($orderSql);
+
+                                    if ($orderResults != null) {
+                                        foreach ($orderResults as $row) { 
+                                    ?>
                                     <tr>
-                                        <td>orderID</td>
-                                        <td>customerID(customerName)</td>
-                                        <td>orderDate</td>
-                                        <td>totalAmount</td>
-                                        <td>orderStatus</td>
-                                        <td></td>
+                                        <td>ORD<?= str_pad($row['order_id'], 3, '0', STR_PAD_LEFT) ?></td>
+                                        <td>CUST<?= str_pad($row['customer_id'], 3, '0', STR_PAD_LEFT) ?> (<?= $row['cust_name'] ?>)</td>
+                                        <td><?= date('Y-m-d', strtotime($row['order_date'])) ?></td>
+                                        <td>RM <?= number_format($row['total_amount'], 2) ?></td>
+                                        <td><?= $row['order_state'] ?></td>
+                                        <td><?= $row['payment_status'] ?></td>
+                                        <td><?= isset($row['updated_by']) ? $row['updated_by'] : "-" ?></td>
+                                        <td><?= isset($row['updated_time']) ? $row['updated_time'] : '-' ?></td>
+                                        <td><?= isset($row['update_reason']) ? $row['update_reason'] : '-' ?></td>
+                                        <td>
+                                            <div class="d-flex flex-column gap-1">
+                                                <button type="button" class="btn btn-primary" onclick="viewOrderDetails('<?= $row['order_id'] ?>')">
+                                                    <i class="fas fa-circle-info text-white-50"></i> View
+                                                </button>
+                                                <?php if ($row['order_state'] == "Confirmed"): ?>
+                                                    <button type="button" class=" btn btn-danger shadow-sm" onclick="confirmCancelOrder('<?= $row['order_id'] ?>')">
+                                                        <i class="fas fa-trash text-white-50"></i> Delete
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
+                                            <!-- <button type="button" class="btn btn-warning" onclick="location.href='updateOrder.php?id=<?= $row['order_id'] ?>'">
+                                                <i class="fas fa-edit text-white-50"></i> Edit
+                                            </button> -->
+                                        </td>
                                     </tr>
+                                    <?php 
+                                        } 
+                                    } else {
+                                        echo '<tr><td colspan="7">No orders found.</td></tr>';
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -1237,6 +1286,262 @@ include 'admin_analytics.php';
                 passwordModal.show();
             });
         });
+
+
+        //ORDER functions
+        function generateOrderDetailHTML(order) {
+            let itemList = `
+                <table style="width:100%; text-align:left; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="border-bottom:1px solid #ccc; padding:4px 0;">Product</th>
+                            <th style="border-bottom:1px solid #ccc; padding:4px 0;">Quantity</th>
+                            <th style="border-bottom:1px solid #ccc; padding:4px 0;">Price (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            order.items.forEach(item => {
+                itemList += `
+                    <tr>
+                        <td style="padding:4px 0;">${item.productName}</td>
+                        <td style="padding:4px 0;">x${item.quantity}</td>
+                        <td style="padding:4px 0;">${parseFloat(item.unit_price).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            itemList += `
+                    </tbody>
+                </table>
+            `;
+
+            let html = `
+                <div style="text-align:left; font-size:14px;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Order ID:</strong></td>
+                            <td style="padding:4px 0;">#ORD${String(order.order_id).padStart(3, '0')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Customer ID:</strong></td>
+                            <td style="padding:4px 0;">CUST${String(order.customer_id).padStart(3, '0')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Customer Name:</strong></td>
+                            <td style="padding:4px 0;">${order.cust_name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Date:</strong></td>
+                            <td style="padding:4px 0;">${order.order_date}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Total:</strong></td>
+                            <td style="padding:4px 0;">RM ${parseFloat(order.total_amount).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Status:</strong></td>
+                            <td style="padding:4px 0;">${order.order_state}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Payment:</strong></td>
+                            <td style="padding:4px 0;">${order.payment_status}</td>
+                        </tr>
+                    </table>
+                    <hr style="margin:10px 0;">
+                    <p><strong>Items Ordered:</strong></p>
+                    ${itemList}
+            `;
+
+            if (order.updated_by) {
+                html += `
+                    <hr style="margin:10px 0;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Last Updated By:</strong></td>
+                            <td style="padding:4px 0;">${order.updated_by}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Updated Time:</strong></td>
+                            <td style="padding:4px 0;">${order.updated_time}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px 0;"><strong>Reason:</strong></td>
+                            <td style="padding:4px 0;">${order.update_reason}</td>
+                        </tr>
+                    </table>
+                `;
+            }
+
+            html += "</div>";
+            return html;
+        }
+
+        function viewOrderDetails (orderId) {
+            $.ajax({
+                url: "ajax/get_order_details.php",
+                type: "POST",
+                data: {
+                    "orderId" : orderId
+                },
+                success: function (response) {
+                    let order = response;
+
+                    if (order.success) {
+                        let textMsg = generateOrderDetailHTML(order);
+
+                        //display order details
+                        Swal.fire({
+                            title: "Order Details",
+                            html: textMsg,
+                            icon: "info",
+                            confirmButtonText: "Close",
+                            confirmButtonColor: "Green"
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Failed to get order details",
+                            text: "Something wrong! Please try again later.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "Green"
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: "ERROR",
+                        text: "An error occured! Please try again later.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "Green"
+                    });
+                }
+            });
+        }
+
+        function confirmCancelOrder (orderId) {
+            const staffName = <?= json_encode($adminName) ?>;
+
+            $.ajax({
+                url: "ajax/get_order_details.php",
+                type: "POST",
+                data: {
+                    "orderId" : orderId
+                },
+                success: function (response) {
+                    let order = response;
+
+                    if (order.success) {
+                        let textMsg = generateOrderDetailHTML(order);
+
+                        //display confirm msg
+                        Swal.fire({
+                            title: "Are you sure?",
+                            html: `<p>Please review the order details below. Cancelling this order is a <strong>permanent action</strong>.</p><br>${textMsg}`,
+                            icon: "warning",
+                            confirmButtonColor: "Green",
+                            confirmButtonText: "Yes, cancel it",
+                            showCancelButton: true,
+                            cancelButtonColor: "Crimson",
+                            cancelButtonText: "No"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: "Cancel Reason",
+                                    text: "Please enter the reason.",
+                                    icon: "info",
+                                    input: "text",
+                                    inputPlaceholder: "Customer order wrongly...",
+                                    showCancelButton: true,
+                                    cancelButtonColor: "Crimson",
+                                    confirmButtonText: "Proceed",
+                                    confirmButtonColor: "Green",
+                                    showLoaderOnConfirm: true,
+                                    preConfirm: (reason) => {
+                                        if (!reason) {
+                                            Swal.showValidationMessage("You need to enter a reason");
+                                            return false;
+                                        }
+
+                                        return reason;
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        var reason = result.value;
+
+                                        $.ajax({
+                                            url: "ajax/admin_cancel_order.php",
+                                            type: "POST",
+                                            data: {
+                                                "orderId" : orderId,
+                                                "reason" : reason,
+                                                "staffName" : staffName
+                                            },
+                                            success: function(response) {
+                                                if (response === "success") {
+                                                    Swal.fire({
+                                                        title: "Order Cancelled",
+                                                        text: 'Order has been marked as cancelled.',
+                                                        icon: "success",
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: "Green"
+                                                    }).then(() => {
+                                                        window.location.reload();
+                                                    });
+                                                }
+                                                else {
+                                                    Swal.fire({
+                                                        title: "Failed to cancel order",
+                                                        text: "Something wrong! Please try again later.",
+                                                        icon: "error",
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: "Green"
+                                                    });
+                                                }
+                                            },
+                                            error: function () {
+                                                Swal.fire({
+                                                    title: "ERROR",
+                                                    text: "An error occured! Please try again later.",
+                                                    icon: "error",
+                                                    confirmButtonText: "OK",
+                                                    confirmButtonColor: "Green"
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Failed to get order details",
+                            text: "Something wrong! Please try again later.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "Green"
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: "ERROR",
+                        text: "An error occured! Please try again later.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "Green"
+                    });
+                }
+            });
+        }
+
+        function addNewOrder () {
+            
+        }
         
     </script>
 </body>
