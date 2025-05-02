@@ -494,15 +494,17 @@ include 'admin_analytics.php';
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped" id="orderTable" width="100%" cellspacing="0">
+                            <table class="table table-striped nowrap" id="orderTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th>Order ID</th>
-                                        <th>Customer Info</th>
                                         <th>Order Date</th>
-                                        <th>Total Amount</th>
+                                        <th>Customer Info</th>
+                                        <th>Order Item Details</th>
                                         <th>Order Status</th>
+                                        <th>Payment Method</th>
                                         <th>Payment Status</th>
+                                        <th>Total Amount</th>
                                         <th>Updated By</th>
                                         <th>Updated Time</th>
                                         <th>Update Reason</th>
@@ -511,59 +513,97 @@ include 'admin_analytics.php';
                                 </thead>
 
                                 <tbody>
-                                    <?php
+                                <?php
                                     $orderSql = "SELECT 
                                                     o.order_id,
+                                                    o.order_date,
+                                                    prod.productName,
+                                                    od.quantity,
+                                                    od.unit_price,
+                                                    o.order_state,
                                                     o.customer_id,
                                                     c.cust_name,
-                                                    o.order_date,
                                                     o.total_amount,
-                                                    o.order_state,
+                                                    p.payment_method,
                                                     p.payment_status,
                                                     o.updated_by,
                                                     o.updated_time,
                                                     o.update_reason
                                                 FROM `Order` o 
-                                                JOIN `Customer` c ON o.customer_id = c.customer_id
+                                                LEFT JOIN `Customer` c ON o.customer_id = c.customer_id
                                                 LEFT JOIN `Payment` p ON o.order_id = p.order_id
-                                                ORDER BY o.order_date DESC
+                                                LEFT JOIN `Order_Details` od ON o.order_id = od.order_id
+                                                LEFT JOIN `Product` prod ON od.product_id = prod.productID
+                                                ORDER BY o.order_date DESC, o.order_id
                                                 ";
 
                                     $orderResults = $conn->query($orderSql);
 
+                                    $orders = [];
+
                                     if ($orderResults != null) {
-                                        foreach ($orderResults as $row) { 
+                                        foreach ($orderResults as $row) {
+                                            $orderId = $row['order_id'];
+
+                                            if (!isset($orders[$orderId])) {
+                                                $orders[$orderId] = [
+                                                    'order_date' => $row['order_date'],
+                                                    'order_state' => $row['order_state'],
+                                                    'customer_id' => $row['customer_id'],
+                                                    'cust_name' => $row['cust_name'],
+                                                    'total_amount' => $row['total_amount'],
+                                                    'payment_method' => $row['payment_method'],
+                                                    'payment_status' => $row['payment_status'],
+                                                    'updated_by' => $row['updated_by'],
+                                                    'updated_time' => $row['updated_time'],
+                                                    'update_reason' => $row['update_reason'],
+                                                    'items' => []
+                                                ];
+                                            }
+
+                                            $orders[$orderId]['items'][] = [
+                                                'productName' => $row['productName'],
+                                                'quantity' => $row['quantity'],
+                                                'unit_price' => $row['unit_price']
+                                            ];
+                                        }
+
+                                        foreach ($orders as $orderId => $order) {
+                                            $itemDetails = "";
+
+                                            foreach ($order['items'] as $item) {
+                                                $itemDetails .= "<li><span style='color: #3498db;'>{$item['productName']}</span> - <span class='text-muted'>RM " . number_format($item['unit_price'], 2) . " x {$item['quantity']}</span></li>";
+                                            }
                                     ?>
                                     <tr>
-                                        <td>ORD<?= str_pad($row['order_id'], 3, '0', STR_PAD_LEFT) ?></td>
-                                        <td>CUST<?= str_pad($row['customer_id'], 3, '0', STR_PAD_LEFT) ?> (<?= $row['cust_name'] ?>)</td>
-                                        <td><?= date('Y-m-d', strtotime($row['order_date'])) ?></td>
-                                        <td>RM <?= number_format($row['total_amount'], 2) ?></td>
-                                        <td class="<?= ($row['order_state'] == "Confirmed") ? "text-success" : "text-danger" ?> fw-bold"><?= $row['order_state'] ?></td>
-                                        <td class="<?= ($row['payment_status'] == "Paid" ? "text-success" : "text-danger") ?> fw-bold"><?= $row['payment_status'] ?></td>
-                                        <td><?= isset($row['updated_by']) ? $row['updated_by'] : "-" ?></td>
-                                        <td><?= isset($row['updated_time']) ? $row['updated_time'] : '-' ?></td>
-                                        <td><?= isset($row['update_reason']) ? $row['update_reason'] : '-' ?></td>
+                                        <td>ORD<?= str_pad($orderId, 3, '0', STR_PAD_LEFT) ?></td>
+                                        <td><?= date('Y-m-d', strtotime($order['order_date'])) ?></td>
+                                        <td>CUST<?= str_pad($order['customer_id'], 3, '0', STR_PAD_LEFT) ?> (<?= $order['cust_name'] ?>)</td>
+                                        <td><ul class="mb-0"><?= $itemDetails ?></ul></td>
+                                        <td class="<?= ($order['order_state'] == "Confirmed") ? "text-success" : "text-danger" ?> fw-bold"><?= $order['order_state'] ?></td>
+                                        <td><?= isset($order['payment_method']) ? $order['payment_method'] : 'N/A' ?></td>
+                                        <td class="<?= ($order['payment_status'] == "Paid" ? "text-success" : "text-danger") ?> fw-bold"><?= $order['payment_status'] ?></td>
+                                        <td class="<?php if ($order['total_amount'] > 500): ?>text-primary fw-bold<?php endif; ?>">RM <?= number_format($order['total_amount'], 2) ?></td>
+                                        <td><?= isset($order['updated_by']) ? $order['updated_by'] : "N/A" ?></td>
+                                        <td><?= isset($order['updated_time']) ? $order['updated_time'] : 'N/A' ?></td>
+                                        <td><?= isset($order['update_reason']) ? $order['update_reason'] : 'N/A' ?></td>
                                         <td>
                                             <div class="d-flex flex-column gap-1">
-                                                <button type="button" class="btn btn-primary" onclick="viewOrderDetails('<?= $row['order_id'] ?>')">
+                                                <button type="button" class="btn btn-primary" onclick="viewOrderDetails('<?= $orderId ?>')">
                                                     <i class="fas fa-circle-info text-white-50"></i> View
                                                 </button>
-                                                <?php if ($row['order_state'] == "Confirmed"): ?>
-                                                    <button type="button" class=" btn btn-danger shadow-sm" onclick="confirmCancelOrder('<?= $row['order_id'] ?>')">
+                                                <?php if ($order['order_state'] == "Confirmed"): ?>
+                                                    <button type="button" class=" btn btn-danger shadow-sm" onclick="confirmCancelOrder('<?= $orderId ?>')">
                                                         <i class="fas fa-trash text-white-50"></i> Delete
                                                     </button>
                                                 <?php endif; ?>
                                             </div>
-                                            <!-- <button type="button" class="btn btn-warning" onclick="location.href='updateOrder.php?id=<?= $row['order_id'] ?>'">
-                                                <i class="fas fa-edit text-white-50"></i> Edit
-                                            </button> -->
                                         </td>
                                     </tr>
                                     <?php 
-                                        } 
+                                        }
                                     } else {
-                                        echo '<tr><td colspan="7">No orders found.</td></tr>';
+                                        echo '<tr><td colspan="12">No orders found.</td></tr>';
                                     }
                                     ?>
                                 </tbody>
@@ -1551,6 +1591,8 @@ include 'admin_analytics.php';
         }
 
         function addNewOrder() {
+            const staffName = <?= json_encode($adminName) ?>;
+
             Swal.fire({
                 title: 'Create New Order',
                 html: `
@@ -1577,9 +1619,18 @@ include 'admin_analytics.php';
                     </div>
 
                     <div class="mb-3 text-start">
-                        <label class="form-label">Note / Reason</label>
-                        <textarea class="form-control" id="swal_reason" rows="2" placeholder="Order Remark"></textarea>
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" id="swal_payment">
+                            <option value="">-- Select Payment Method --</option>
+                            <option value="TouchNGo">Touch 'n Go</option>
+                            <option value="Card">Card</option>
+                        </select>
                     </div>
+
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Note / Reason</label>
+                        <textarea class="form-control" id="swal_reason" rows="2" placeholder="Order Remark (e.g., customer called to place an order)"></textarea>
+                    </div>                    
                 `,
                 width: '60%',
                 showCancelButton: true,
@@ -1600,6 +1651,7 @@ include 'admin_analytics.php';
 
                     const customerId = document.getElementById("swal_customer").value;
                     const reason = document.getElementById("swal_reason").value;
+                    const paymentMethod = document.getElementById("swal_payment").value;
 
                     const productEls = document.querySelectorAll(".swal_product");
                     const quantityEls = document.querySelectorAll(".swal_quantity");
@@ -1608,12 +1660,13 @@ include 'admin_analytics.php';
                     const productIds = [], quantities = [], remarks = [];
 
                     for (let i = 0; i < productEls.length; i++) {
-                        const pid = productEls[i].value;
+                        const prodId = productEls[i].value;
                         const qty = quantityEls[i].value;
                         const remark = remarkEls[i].value;
 
-                        if (!pid || !qty) continue;
-                        productIds.push(pid);
+                        if (!prodId || !qty) continue;
+                        
+                        productIds.push(prodId);
                         quantities.push(qty);
                         remarks.push(remark);
                     }
@@ -1623,15 +1676,31 @@ include 'admin_analytics.php';
                         product_id: productIds,
                         quantity: quantities,
                         remark: remarks,
-                        update_reason: reason
+                        update_reason: reason,
+                        payment_method: paymentMethod
                     };
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
+                    var customerId = result.value.customer_id;
+                    var productIds = result.value.product_id;
+                    var quantities = result.value.quantity;
+                    var remarks = result.value.remark;
+                    var reason = result.value.update_reason;
+                    var paymentMethod = result.value.payment_method;
+
                     $.ajax({
                         url: 'ajax/admin_create_order.php',
                         type: 'POST',
-                        data: result.value,
+                        data: {
+                            "customer_id" : customerId,
+                            "product_id" : productIds,
+                            "quantity" : quantities,
+                            "remark" : remarks,
+                            "update_reason" : reason,
+                            "staffName" : staffName,
+                            "payment_method" : paymentMethod
+                        },
                         success: function (response) {
                             if (response.success) {
                                 Swal.fire({
@@ -1673,14 +1742,15 @@ include 'admin_analytics.php';
             const reason = document.getElementById("swal_reason").value.trim();
             const productEls = document.querySelectorAll(".swal_product");
             const quantityEls = document.querySelectorAll(".swal_quantity");
+            const paymentMethod = document.getElementById("swal_payment").value;
 
             let hasValidItem = false;
 
             for (let i = 0; i < productEls.length; i++) {
-                const pid = productEls[i].value;
+                const prodId = productEls[i].value;
                 const qty = parseInt(quantityEls[i].value, 10);
 
-                if (pid) {
+                if (prodId) {
                     if (!qty || qty <= 0) {
                         return "Quantity must be greater than zero for all selected products.";
                     }
@@ -1697,8 +1767,12 @@ include 'admin_analytics.php';
                 return "Please add at least one item with quantity.";
             }
 
+            if (!paymentMethod) {
+                return "Please select a payment method (e.g., Touch 'n Go or Card).";
+            }
+
             if (!reason) {
-                return "Please enter a note/reason.";
+                return "Please provide a reason for creating this order (e.g., customer called to place an order).";
             }
 
             return null;
