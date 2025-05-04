@@ -24,10 +24,9 @@ if (isset($_GET['edit'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productName = $_POST['productName'];
     $price = $_POST['price'];
-    $selectedCategories = $_POST['categories'];
-    $categoryString = implode(',', $selectedCategories);
-    $editID = $_POST['editID'] ?? null;
+    $selectedCategory = $_POST['category'];
     $description = $_POST['description'];
+    $editID = $_POST['editID'] ?? null;
 
     $imgBaseName = $product['image'];
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -47,13 +46,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($editID) {
         $sql = "UPDATE product SET productName=?, price=?, description=?, image=?, category=? WHERE productID=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sdsssi", $productName, $price, $description, $imgBaseName, $categoryString, $editID);
+        $stmt->bind_param("sdsssi", $productName, $price, $description, $imgBaseName, $selectedCategory, $editID);
         $stmt->execute();
         header("Location: admin_product.php?success=updated");
     } else {
         $sql = "INSERT INTO product (productName, price, description, image, category, status) VALUES (?, ?, ?, ?, ?, 1)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sdsss", $productName, $price, $description, $imgBaseName, $categoryString);
+        $stmt->bind_param("sdsss", $productName, $price, $description, $imgBaseName, $selectedCategory);
         $stmt->execute();
         header("Location: admin_product.php?success=added");
     }
@@ -61,7 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $categoryResult = $conn->query("SELECT * FROM category");
-$existingCategoryIDs = explode(',', $product['category']);
 ?>
 
 <head>
@@ -83,7 +81,7 @@ $existingCategoryIDs = explode(',', $product['category']);
         padding: 30px;
         border-radius: 10px;
         margin: auto;
-        margin-top:110px;
+        margin-top: 110px;
         max-width: 900px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -126,17 +124,31 @@ $existingCategoryIDs = explode(',', $product['category']);
                                 value="<?= htmlspecialchars($product['price'] ?? '') ?>" required>
                             <div class="text-danger" id="error-price"></div>
                         </div>
-
                         <div class="mb-3">
-                            <label class="form-label">Description:</label>
-                            <textarea name="description" rows="4"
-                                class="form-control"><?= htmlspecialchars($description ?? '') ?></textarea>
-                        </div>
+                                <label class="form-label">Category:</label>
+                                <select class="form-select" name="category" required>
+                                    <option value="">-- Select One Category --</option>
+                                    <?php while ($row = $categoryResult->fetch_assoc()): ?>
+                                        <option value="<?= $row['catID'] ?>" <?= $row['catID'] == $product['category'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($row['catName']) ?>
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                                <div class="text-danger mt-1" id="error-category"></div>
+                            </div>
+
+                        
                     </div>
 
                     <!-- Right column -->
                     <div class="col-md-6 d-flex flex-column justify-content-between" style="min-height: 100%;">
                         <div>
+                        <div class="mb-3">
+                            <label class="form-label">Description:</label>
+                            <textarea name="description" rows="4"
+                                class="form-control"><?= htmlspecialchars($description ?? '') ?></textarea>
+                        </div>
+                            
                             <div class="mb-3">
                                 <label class="form-label">Image (PNG only):</label>
                                 <input type="file" name="image" accept=".png" class="form-control">
@@ -146,17 +158,6 @@ $existingCategoryIDs = explode(',', $product['category']);
                                 <?php endif; ?>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Categories:</label><br>
-                                <?php while ($row = $categoryResult->fetch_assoc()): ?>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="categories[]"
-                                            value="<?= $row['catID'] ?>" <?= isset($existingCategoryIDs) && in_array($row['catID'], $existingCategoryIDs) ? 'checked' : '' ?>>
-                                        <label class="form-check-label"><?= htmlspecialchars($row['catName']) ?></label>
-                                    </div>
-                                <?php endwhile; ?>
-                                <div class="text-danger mt-1" id="error-category"></div>
-                            </div>
                         </div>
 
                         <!-- Button aligned bottom right -->
@@ -166,9 +167,9 @@ $existingCategoryIDs = explode(',', $product['category']);
                         </div>
                     </div>
             </form>
-
         </div>
     </div>
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const success = urlParams.get('success');
@@ -181,7 +182,7 @@ $existingCategoryIDs = explode(',', $product['category']);
                 confirmButtonColor: "green",
                 confirmButtonText: "OK"
             }).then(() => {
-                window.location.href = "admin_product.php";
+                window.location.href = "admin.php";
             });
         }
 
@@ -207,7 +208,7 @@ $existingCategoryIDs = explode(',', $product['category']);
 
             const name = document.querySelector('[name="productName"]').value.trim();
             const price = parseFloat(document.querySelector('[name="price"]').value);
-            const categoryCheckboxes = document.querySelectorAll('[name="categories[]"]:checked');
+            const category = document.querySelector('[name="category"]').value;
             const imageInput = document.querySelector('[name="image"]');
             const editID = document.querySelector('[name="editID"]').value;
 
@@ -221,8 +222,8 @@ $existingCategoryIDs = explode(',', $product['category']);
                 isValid = false;
             }
 
-            if (categoryCheckboxes.length === 0) {
-                document.getElementById("error-category").innerText = "Please select at least one category.";
+            if (!category) {
+                document.getElementById("error-category").innerText = "Please select a category.";
                 isValid = false;
             }
 
@@ -240,10 +241,6 @@ $existingCategoryIDs = explode(',', $product['category']);
 
             return isValid;
         }
-
-
     </script>
-
 </body>
-
 </html>
