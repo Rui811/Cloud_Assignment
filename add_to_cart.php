@@ -26,12 +26,12 @@ $remark = trim($_POST['remark']) !== "" ? $_POST['remark'] : null;
 
 try {
     if ($remark === null) {
-        $selectSql = "SELECT * FROM Cart WHERE customer_id = ? AND product_id = ? AND remark IS NULL";
+        $selectSql = "SELECT * FROM cart WHERE customer_id = ? AND product_id = ? AND remark IS NULL";
         $selectStmt = $conn->prepare($selectSql);
         $selectStmt->bind_param("ii", $customerId, $productId);
     }
     else {
-        $selectSql = "SELECT * FROM Cart WHERE customer_id = ? AND product_id = ? AND remark = ?";
+        $selectSql = "SELECT * FROM cart WHERE customer_id = ? AND product_id = ? AND remark = ?";
         $selectStmt = $conn->prepare($selectSql);
         $selectStmt->bind_param("iis", $customerId, $productId, $remark);
     }
@@ -48,7 +48,7 @@ try {
         $originalQty = $row['quantity'];
         $updatedQty = $originalQty + $quantity;
 
-        $updateSql = "UPDATE Cart SET quantity = ? WHERE cart_id = ?";
+        $updateSql = "UPDATE cart SET quantity = ? WHERE cart_id = ?";
         $updateStmt = $conn->prepare($updateSql);
         $updateStmt->bind_param("ii", $updatedQty, $cartId);
 
@@ -59,7 +59,7 @@ try {
         }
     }
     else {
-        $insertSql = "INSERT INTO Cart (customer_id, product_id, quantity, remark) VALUES (?, ?, ?, ?)";
+        $insertSql = "INSERT INTO cart (customer_id, product_id, quantity, remark) VALUES (?, ?, ?, ?)";
         $insertStmt = $conn->prepare($insertSql);
         $insertStmt->bind_param("iiis", $customerId, $productId, $quantity, $remark);
 

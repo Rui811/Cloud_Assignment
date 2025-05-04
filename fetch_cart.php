@@ -28,8 +28,8 @@ header('Content-Type: application/json');
 $customer_id = $_POST['customer_id'];
 
 $sql = "SELECT c.cart_id, p.productName, p.price, p.image, c.quantity, c.remark
-        FROM Cart c
-        JOIN Product p ON c.product_id = p.productID
+        FROM cart c
+        JOIN product p ON c.product_id = p.productID
         WHERE c.customer_id = ?";
 
 $stmt = $conn->prepare($sql);
