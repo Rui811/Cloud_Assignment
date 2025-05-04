@@ -2,9 +2,9 @@
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
 $host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
-$username = "nbuser";
-$password = "abc12345";
-$dbname = "cloud";
+$username = "main";
+$password = "chapalang-password";
+$dbname = "chapalang";
 
 $conn = new mysqli($host, $username, $password, $dbname);
 

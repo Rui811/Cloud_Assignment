@@ -7,9 +7,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
-$username = "nbuser";
-$password = "abc12345";
-$database = "cloud";
+$username = "main";
+$password = "chapalang-password";
+$database = "chapalang";
 $conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {
