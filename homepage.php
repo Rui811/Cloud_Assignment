@@ -652,7 +652,7 @@ if ($product_result->num_rows > 0) {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: 'ajax/add_to_cart.php',
+                            url: 'add_to_cart.php',
                             type: 'POST',
                             data: {
                                 productId: productId,

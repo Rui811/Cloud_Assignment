@@ -215,7 +215,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
           }).then((result) => {
             if(result.isConfirmed) {
               $.ajax({
-                url: "ajax/add_to_cart.php",
+                url: "add_to_cart.php",
                 type: "POST",
                 data: {
                   "customerId" : customerId,
