@@ -21,7 +21,7 @@ if (isset($_SESSION['admin'])) {
             align-items: center;
             margin: 0;
             padding: 0;
-            background-image: url("image/adminBackground.jpg");
+            background-image: url("image/adminBackground.png");
             background-size: cover;
             background-repeat: no-repeat;
         }
