@@ -10,22 +10,22 @@ if ($conn->connect_error) {
 }
 
 // total customer data
-$resultCustomers = mysqli_query($conn, "SELECT COUNT(*) AS totalCustomers FROM Customer");
+$resultCustomers = mysqli_query($conn, "SELECT COUNT(*) AS totalCustomers FROM customer");
 $rowCustomers = mysqli_fetch_assoc($resultCustomers);
 $totalCustomers = $rowCustomers['totalCustomers'];
 
 // total order data
-$resultOrders = mysqli_query($conn, "SELECT COUNT(*) AS totalOrders FROM `Order`");
+$resultOrders = mysqli_query($conn, "SELECT COUNT(*) AS totalOrders FROM `order`");
 $rowOrders = mysqli_fetch_assoc($resultOrders);
 $totalOrders = $rowOrders['totalOrders'];
 
 // total product data
-$resultProducts = mysqli_query($conn, "SELECT COUNT(*) AS totalProducts FROM Product");
+$resultProducts = mysqli_query($conn, "SELECT COUNT(*) AS totalProducts FROM product");
 $rowProducts = mysqli_fetch_assoc($resultProducts);
 $totalProducts = $rowProducts['totalProducts'];
 
 //total Sales
-$totalSalesResult = $conn->query("SELECT SUM(total_amount) AS total FROM `Order` WHERE order_state = 'Confirmed'");
+$totalSalesResult = $conn->query("SELECT SUM(total_amount) AS total FROM `order` WHERE order_state = 'Confirmed'");
 $totalSalesRow = $totalSalesResult->fetch_assoc();
 $totalSales = $totalSalesRow['total'] ?? 0;
 

@@ -16,8 +16,13 @@ while ($cat = $categoryQuery->fetch_assoc()) {
     $categoryMap[$cat['catID']] = $cat['catName'];
 }
 
+
 $admin = []; // Initialize $admin
 $adminName = $_SESSION['admin'] ?? null;
+if (!$adminName) {
+    header("Location: admin_login.php");
+    exit;
+}
 $sql = "SELECT * FROM admin WHERE admin_username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $adminName);
