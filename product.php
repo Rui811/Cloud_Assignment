@@ -3,7 +3,7 @@
 
 include 'header.php';
 
-$host = "192.168.192.73";
+$host = "localhost";
 $username = "nbuser";
 $password = "abc12345";
 $database = "cloud";

@@ -2,7 +2,7 @@
 date_default_timezone_set('Asia/Kuala_Lumpur');
 // require_once 'db_connect.php';
 
-$host = "192.168.192.73";
+$host = "localhost";
 $username = "nbuser";
 $password = "abc12345";
 $dbname = "cloud";

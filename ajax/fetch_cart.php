@@ -5,7 +5,7 @@
 // $password = "";
 // $dbname = "cloud_testing";
 
-$host = "192.168.192.73";
+$host = "localhost";
 $username = "nbuser";
 $password = "abc12345";
 $dbname = "cloud";

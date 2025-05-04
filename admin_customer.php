@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json'); // Ensure we return JSON
 
-$conn = new mysqli('192.168.192.73', 'nbuser', 'abc12345', 'cloud');
+$conn = new mysqli('localhost', 'nbuser', 'abc12345', 'cloud');
 if ($conn->connect_error) {
     echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
     exit;
