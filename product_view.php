@@ -147,7 +147,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                 <div class="col-md-7">
                 <h2 class="product-title" id="productName"><?php echo htmlspecialchars($product['productName']); ?></h2>
                 <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
-                <b style="font-size:20px;">RM <?php echo number_format($product['price'], 2); ?></b>
+                <b style="font-size:20px;" id="productPrice">RM <?php echo number_format($product['price'], 2); ?></b>
 
                 <?php if ($isCustomizable): ?>
                 <div class="mt-3">
@@ -174,57 +174,63 @@ $isCustomizable = strpos($product['category'], '3') !== false;
     <script>
       const isLoggedIn = <?= $isLoggedIn ?>;
 
-      $(document).ready(function () {
-        $('#addToCartBtn').on('click', function() {
+      document.addEventListener('DOMContentLoaded', function () {
+        const addToCartBtn = document.getElementById('addToCartBtn');
 
-          //check logIn or not
-          if (!isLoggedIn) {
+        if (addToCartBtn) {
+          addToCartBtn.addEventListener('click', function() {
+
+            //check logIn or not
+            if (!isLoggedIn) {
+              Swal.fire({
+                title: "Please log in first",
+                text: "You must be logged in to add items to your cart.",
+                icon: "warning",
+                confirmButtonText: "Go to Login"
+              }).then(() => {
+                window.location.href = "login.php";
+              });
+              return;
+            }
+
+            const remarkInput = document.getElementById('remark');
+
+            const quantity = document.getElementById('quantity').value.trim();
+            const customerId = <?= json_encode($customer_id) ?>;
+            const productId = <?= json_encode($productId) ?>;
+            const productName = document.getElementById('productName').textContent;
+            const productPrice = document.getElementById('productPrice').textContent;
+            const remark = remarkInput && remarkInput.length > 0 ? remarkInput.value.trim() : "";
+            let textMsg = `Product : ${productName} x${quantity}`;
+
+            if (remark) {
+              textMsg += `<br>Remark: ${remark}`;
+            }
+
             Swal.fire({
-              title: "Please log in first",
-              text: "You must be logged in to add items to your cart.",
-              icon: "warning",
-              confirmButtonText: "Go to Login"
-            }).then(() => {
-              window.location.href = "login.php";
-            });
-            
-            return;
-          }
+              title: "Confirm add to cart?",
+              html: textMsg,
+              icon: "info",
+              confirmButtonColor: "Green",
+              confirmButtonText: "Confirm",
+              showCancelButton: true,
+              cancelButtonColor: "Crimson",
+              cancelButtonText: "Cancel"
+            }).then((result) => {
+              if(result.isConfirmed) {
+                const formData = new FormData();
+                formData.append("customerId", customerId);
+                formData.append("productId", productId);
+                formData.append("quantity", quantity);
+                formData.append("remark", remark);
 
-          let quantity = $('#quantity').val().trim();
-          let customerId = <?= json_encode($customer_id) ?>;
-          let productId = <?= json_encode($productId) ?>;
-          let productName = $('#productName').text();
-          let productPrice = $('#productPrice').text();
-          let remark = $('#remark').length > 0 ? $('#remark').val().trim() : "";
-          let textMsg = `Product : ${productName} x${quantity}`;
-
-          if (remark) {
-        textMsg += `<br>Remark: ${remark}`;
-      }
-
-          Swal.fire({
-            title: "Confirm add to cart?",
-            html: textMsg,
-            icon: "info",
-            confirmButtonColor: "Green",
-            confirmButtonText: "Confirm",
-            showCancelButton: true,
-            cancelButtonColor: "Crimson",
-            cancelButtonText: "Cancel"
-          }).then((result) => {
-            if(result.isConfirmed) {
-              $.ajax({
-                url: "add_to_cart.php",
-                type: "POST",
-                data: {
-                  "customerId" : customerId,
-                  "productId" : productId,
-                  "quantity" : quantity,
-                  "remark" : remark
-                },
-                success: function(response) {
-                  if(response == "success") {
+                fetch("add_to_cart.php", {
+                  method: "POST",
+                  body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                  if(data === "success") {
                     Swal.fire({
                       title: "SUCCESS",
                       text: "Product successfully added to cart!",
@@ -234,8 +240,7 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                     }).then(() => {
                       window.location.href = "product.php";
                     });
-                  }
-                  else {
+                  } else {
                     Swal.fire({
                       title: "FAILED",
                       text: "An error occured! Please try again later.",
@@ -244,8 +249,9 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                       confirmButtonText: "OK"
                     });
                   }
-                },
-                error: function() {
+                })
+                .catch(error => {
+                  console.error("Error:", error);
                   Swal.fire({
                     title: "ERROR",
                     text: "An error occured! Please try again later.",
@@ -253,12 +259,99 @@ $isCustomizable = strpos($product['category'], '3') !== false;
                     confirmButtonColor: "Green",
                     confirmButtonText: "OK"
                   });
-                }
-              });
-            }
+                });
+              }
+            });
           });
-        });
+        }
       });
+
+
+      // $(document).ready(function () {
+      //   $('#addToCartBtn').on('click', function() {
+
+      //     //check logIn or not
+      //     if (!isLoggedIn) {
+      //       Swal.fire({
+      //         title: "Please log in first",
+      //         text: "You must be logged in to add items to your cart.",
+      //         icon: "warning",
+      //         confirmButtonText: "Go to Login"
+      //       }).then(() => {
+      //         window.location.href = "login.php";
+      //       });
+            
+      //       return;
+      //     }
+
+      //     let quantity = $('#quantity').val().trim();
+      //     let customerId = <?= json_encode($customer_id) ?>;
+      //     let productId = <?= json_encode($productId) ?>;
+      //     let productName = $('#productName').text();
+      //     let productPrice = $('#productPrice').text();
+      //     let remark = $('#remark').length > 0 ? $('#remark').val().trim() : "";
+      //     let textMsg = `Product : ${productName} x${quantity}`;
+
+      //     if (remark) {
+      //       textMsg += `<br>Remark: ${remark}`;
+      //     }
+
+      //     Swal.fire({
+      //       title: "Confirm add to cart?",
+      //       html: textMsg,
+      //       icon: "info",
+      //       confirmButtonColor: "Green",
+      //       confirmButtonText: "Confirm",
+      //       showCancelButton: true,
+      //       cancelButtonColor: "Crimson",
+      //       cancelButtonText: "Cancel"
+      //     }).then((result) => {
+      //       if(result.isConfirmed) {
+      //         $.ajax({
+      //           url: "add_to_cart.php",
+      //           type: "POST",
+      //           data: {
+      //             "customerId" : customerId,
+      //             "productId" : productId,
+      //             "quantity" : quantity,
+      //             "remark" : remark
+      //           },
+      //           success: function(response) {
+      //             if(response == "success") {
+      //               Swal.fire({
+      //                 title: "SUCCESS",
+      //                 text: "Product successfully added to cart!",
+      //                 icon: "success",
+      //                 confirmButtonColor: "Green",
+      //                 confirmButtonText: "OK"
+      //               }).then(() => {
+      //                 window.location.href = "product.php";
+      //               });
+      //             }
+      //             else {
+      //               Swal.fire({
+      //                 title: "FAILED",
+      //                 text: "An error occured! Please try again later.",
+      //                 icon: "error",
+      //                 confirmButtonColor: "Green",
+      //                 confirmButtonText: "OK"
+      //               });
+      //             }
+      //           },
+      //           error: function() {
+      //             Swal.fire({
+      //               title: "ERROR",
+      //               text: "An error occured! Please try again later.",
+      //               icon: "error",
+      //               confirmButtonColor: "Green",
+      //               confirmButtonText: "OK"
+      //             });
+      //           }
+      //         });
+      //       }
+      //     });
+      //   });
+      // });
     </script>
 </body>
 </html>
