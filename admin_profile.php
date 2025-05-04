@@ -1,6 +1,6 @@
 <?php
 session_start();
-$host = "localhost";
+$host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
 $username = "nbuser";
 $password = "abc12345";
 $database = "cloud";

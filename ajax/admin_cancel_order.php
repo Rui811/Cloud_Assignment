@@ -2,7 +2,7 @@
 date_default_timezone_set('Asia/Kuala_Lumpur');
 // require_once 'db_connect.php';
 
-$host = "localhost";
+$host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
 $username = "nbuser";
 $password = "abc12345";
 $dbname = "cloud";

@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$host = "localhost";
+$host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
 $username = "nbuser";
 $password = "abc12345";
 $database = "cloud";
