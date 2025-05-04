@@ -30,7 +30,7 @@ $orderId = $_GET['order_id'];
 $from = $_GET['from'];
 
 //verify the order ID is for that cust
-$verifySql = "SELECT * FROM `Order` WHERE customer_id = ? AND order_id = ?";
+$verifySql = "SELECT * FROM `order` WHERE customer_id = ? AND order_id = ?";
 $verifyStmt = $conn->prepare($verifySql);
 $verifyStmt->bind_param("ii", $customer_id, $orderId);
 $verifyStmt->execute();
@@ -54,9 +54,9 @@ $selectSql = "SELECT o.order_date,
                      pay.payment_method, 
                      pay.payment_status, 
                      pay.payment_date
-              FROM `Order` o 
-              JOIN `Customer` cust ON o.customer_id = cust.customer_id
-              JOIN `Payment` pay ON pay.order_id = o.order_id
+              FROM `order` o 
+              JOIN `customer` cust ON o.customer_id = cust.customer_id
+              JOIN `payment` pay ON pay.order_id = o.order_id
               WHERE o.order_id = ?";
 
 $selectStmt = $conn->prepare($selectSql);
@@ -82,8 +82,8 @@ $itemSql = "SELECT p.productName,
                    od.unit_price, 
                    od.remark, 
                    (od.unit_price * od.quantity) AS subtotal 
-            FROM `Order_Details` od 
-            JOIN `Product` p ON od.product_id = p.productID
+            FROM `order_details` od 
+            JOIN `product` p ON od.product_id = p.productID
             WHERE od.order_id = ?";
 
 $itemStmt = $conn->prepare($itemSql);

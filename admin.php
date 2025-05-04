@@ -529,11 +529,11 @@ include 'admin_analytics.php';
                                                     o.updated_by,
                                                     o.updated_time,
                                                     o.update_reason
-                                                FROM `Order` o 
-                                                LEFT JOIN `Customer` c ON o.customer_id = c.customer_id
-                                                LEFT JOIN `Payment` p ON o.order_id = p.order_id
-                                                LEFT JOIN `Order_Details` od ON o.order_id = od.order_id
-                                                LEFT JOIN `Product` prod ON od.product_id = prod.productID
+                                                FROM `order` o 
+                                                LEFT JOIN `customer` c ON o.customer_id = c.customer_id
+                                                LEFT JOIN `payment` p ON o.order_id = p.order_id
+                                                LEFT JOIN `order_details` od ON o.order_id = od.order_id
+                                                LEFT JOIN `product` prod ON od.product_id = prod.productID
                                                 ORDER BY o.order_date DESC, o.order_id
                                                 ";
 
@@ -1601,7 +1601,7 @@ include 'admin_analytics.php';
                         <select class="form-select" id="swal_customer">
                             <option value="">-- Choose Customer --</option>
                             <?php
-                            $customers = $conn->query("SELECT customer_id, cust_name FROM `Customer` WHERE `status` = 1");
+                            $customers = $conn->query("SELECT customer_id, cust_name FROM `customer` WHERE `status` = 1");
 
                             foreach ($customers as $cust) {
                                 echo "<option value='{$cust['customer_id']}'>CUST".str_pad($cust['customer_id'], 3, '0', STR_PAD_LEFT)." ({$cust['cust_name']})</option>";
@@ -1791,7 +1791,7 @@ include 'admin_analytics.php';
                 <select class="form-select swal_product" data-index="${currentIndex}" style="width: 30%;">
                     <option value="">-- Product --</option>
                     <?php
-                    $products = $conn->query("SELECT productID, productName FROM `Product`");
+                    $products = $conn->query("SELECT productID, productName FROM `product`");
 
                     foreach ($products as $prod) {
                         $formattedID = 'P'.str_pad($prod['productID'], 4, '0', STR_PAD_LEFT);

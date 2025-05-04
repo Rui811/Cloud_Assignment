@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 
 $productId = $_POST['product_id'] ?? 0;
 
-$sql = "SELECT category FROM `Product` WHERE productID = ?";
+$sql = "SELECT category FROM `product` WHERE productID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $productId);
 $stmt->execute();

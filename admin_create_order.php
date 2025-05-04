@@ -45,7 +45,7 @@ try {
         $prodId = $productIds[$i];
         $qty = $quantities[$i];
 
-        $priceStmt = $conn->prepare("SELECT price FROM `Product` WHERE productID = ?");
+        $priceStmt = $conn->prepare("SELECT price FROM `product` WHERE productID = ?");
         $priceStmt->bind_param("i", $prodId);
         $priceStmt->execute();
 
@@ -58,7 +58,7 @@ try {
     }
 
     // 2. create order and get order_id
-    $orderSql = "INSERT INTO `Order` (customer_id, order_date, total_amount, order_state, updated_by, updated_time, update_reason) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $orderSql = "INSERT INTO `order` (customer_id, order_date, total_amount, order_state, updated_by, updated_time, update_reason) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     $orderStmt = $conn->prepare($orderSql);
     $orderStmt->bind_param("isdssss", $customerId, $orderDate, $totalAmount, $orderState, $updatedBy, $updatedTime, $updateReason);
@@ -66,7 +66,7 @@ try {
     $orderId = $orderStmt->insert_id;
 
     // 3. create order_detail
-    $insertDetailSql = "INSERT INTO `Order_Details` (order_id, product_id, quantity, unit_price, remark) VALUES (?, ?, ?, ?, ?)";
+    $insertDetailSql = "INSERT INTO `order_details` (order_id, product_id, quantity, unit_price, remark) VALUES (?, ?, ?, ?, ?)";
     $insertDetailStmt = $conn->prepare($insertDetailSql);
 
     for ($i = 0; $i < count($productIds); $i++) {
@@ -74,7 +74,7 @@ try {
         $qty = $quantities[$i];
         $remark = $remarks[$i] ? $remarks[$i] : '';
 
-        $priceStmt = $conn->prepare("SELECT price FROM `Product` WHERE productID = ?");
+        $priceStmt = $conn->prepare("SELECT price FROM `product` WHERE productID = ?");
         $priceStmt->bind_param("i", $prodId);
         $priceStmt->execute();
 
@@ -88,7 +88,7 @@ try {
     }
 
     // 4. create payment
-    $paymentSql = "INSERT INTO `Payment` (order_id, payment_method, payment_status, payment_date, amount_paid) VALUES (?, ?, ?, ?, ?)";
+    $paymentSql = "INSERT INTO `payment` (order_id, payment_method, payment_status, payment_date, amount_paid) VALUES (?, ?, ?, ?, ?)";
     $paymentStmt = $conn->prepare($paymentSql);
     $paymentStmt->bind_param("isssd", $orderId, $paymentMethod, $paymentStatus, $paymentDate, $totalAmount);
     $paymentStmt->execute();

@@ -28,7 +28,7 @@ $updatedBy = $_POST['staffName'];
 $updatedTime = date('Y-m-d H:i:s');
 
 //order
-$orderSql = "UPDATE `Order` 
+$orderSql = "UPDATE `order` 
              SET order_state = 'Cancelled', 
                  updated_by = ?, 
                  updated_time = ?, 
@@ -40,7 +40,7 @@ $orderStmt->bind_param("sssi", $updatedBy, $updatedTime, $reason, $orderId);
 $orderUpdated = $orderStmt->execute();
 
 //payment
-$paymentSql = "UPDATE `Payment` SET payment_status = ? WHERE order_id = ?";
+$paymentSql = "UPDATE `payment` SET payment_status = ? WHERE order_id = ?";
 $paymentStmt = $conn->prepare($paymentSql);
 $paymentStmt->bind_param("si", $paymentStatus, $orderId);
 $paymentUpdated = $paymentStmt->execute();

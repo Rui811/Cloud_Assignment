@@ -37,9 +37,9 @@ $orderSql = "SELECT
             o.updated_by,
             o.updated_time,
             o.update_reason
-        FROM `Order` o
-        JOIN `Customer` c ON o.customer_id = c.customer_id
-        LEFT JOIN `Payment` p ON o.order_id = p.order_id
+        FROM `order` o
+        JOIN `customer` c ON o.customer_id = c.customer_id
+        LEFT JOIN `payment` p ON o.order_id = p.order_id
         WHERE o.order_id = ?";
 
 $orderStmt = $conn->prepare($orderSql);
@@ -61,8 +61,8 @@ $itemSql = "SELECT
                 p.productName AS productName, 
                 od.quantity, 
                 od.unit_price 
-             FROM `Order_Details` od 
-             JOIN Product p ON od.product_id = p.productID 
+             FROM `order_details` od 
+             JOIN product p ON od.product_id = p.productID 
              WHERE od.order_id = ?";
 $itemStmt = $conn->prepare($itemSql);
 $itemStmt->bind_param("i", $orderId);

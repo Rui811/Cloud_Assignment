@@ -30,7 +30,7 @@ $action = isset($_POST['action']) ? $_POST['action'] : "";
 $value = isset($_POST['value']) ? $_POST['value'] : 0;
 
 if ($action == "increase") {
-    $sql = "UPDATE Cart SET quantity = quantity + 1 WHERE cart_id = ?";
+    $sql = "UPDATE cart SET quantity = quantity + 1 WHERE cart_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 
@@ -41,7 +41,7 @@ if ($action == "increase") {
     }
 }
 else if ($action == "decrease") {
-    $sql = "UPDATE Cart SET quantity = GREATEST(quantity - 1, 1) WHERE cart_id = ?";
+    $sql = "UPDATE cart SET quantity = GREATEST(quantity - 1, 1) WHERE cart_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 
@@ -53,7 +53,7 @@ else if ($action == "decrease") {
 } 
 
 if ($value != 0) {
-    $sql = "UPDATE Cart SET quantity = ? WHERE cart_id = ?";
+    $sql = "UPDATE cart SET quantity = ? WHERE cart_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $value, $id);
 

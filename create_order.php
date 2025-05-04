@@ -40,7 +40,7 @@ try {
     $conn->begin_transaction();
 
     //create order and get order_id
-    $orderSql = "INSERT INTO `Order` (customer_id, order_date, total_amount, order_state) VALUES (?, ?, ?, ?)";
+    $orderSql = "INSERT INTO `order` (customer_id, order_date, total_amount, order_state) VALUES (?, ?, ?, ?)";
 
     $orderStmt = $conn->prepare($orderSql);
     $orderStmt->bind_param("isds", $customerId, $orderDate, $totalAmount, $orderState);
@@ -49,13 +49,13 @@ try {
 
     //create order_detail
     $selectSql = "SELECT c.product_id, c.quantity, p.price, c.remark 
-                FROM `Cart` c 
-                INNER JOIN `Product` p 
+                FROM `cart` c 
+                INNER JOIN product p 
                 ON c.product_id = p.productID 
                 WHERE c.cart_id = ?";
     $selectStmt = $conn->prepare($selectSql);
 
-    $insertDetailSql = "INSERT INTO `Order_Details` (order_id, product_id, quantity, unit_price, remark) VALUES (?, ?, ?, ?, ?)";
+    $insertDetailSql = "INSERT INTO `order_details` (order_id, product_id, quantity, unit_price, remark) VALUES (?, ?, ?, ?, ?)";
     $insertDetailStmt = $conn->prepare($insertDetailSql);
 
     foreach($cart_ids as $cartId) {
@@ -80,13 +80,13 @@ try {
     }
 
     //create payment
-    $paymentSql = "INSERT INTO `Payment` (order_id, payment_method, payment_status, payment_date, amount_paid) VALUES (?, ?, ?, ?, ?)";
+    $paymentSql = "INSERT INTO payment (order_id, payment_method, payment_status, payment_date, amount_paid) VALUES (?, ?, ?, ?, ?)";
     $paymentStmt = $conn->prepare($paymentSql);
     $paymentStmt->bind_param("isssd", $orderId, $paymentMethod, $paymentStatus, $paymentDate, $totalAmount);
     $paymentStmt->execute();
     
     //remove cart_id from cart
-    $deleteSql = "DELETE FROM `Cart` WHERE cart_id = ?";
+    $deleteSql = "DELETE FROM cart WHERE cart_id = ?";
     $deleteStmt = $conn->prepare($deleteSql);
 
     foreach($cart_ids as $cartId) {

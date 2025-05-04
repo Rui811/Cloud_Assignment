@@ -26,7 +26,7 @@ if(!isset($_POST['id'])) {
 
 $id = $_POST['id'];
 
-$sql = "DELETE FROM Cart WHERE cart_id = ?";
+$sql = "DELETE FROM cart WHERE cart_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 
