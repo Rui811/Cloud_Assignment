@@ -18,6 +18,8 @@ if (isset($_SESSION['login_error'])) {
     <title>Login - ChapaLang Graduation Gifts</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -199,6 +201,15 @@ if (isset($_SESSION['login_error'])) {
                 height: 300px;
             }
         }
+
+        .swal2-confirm.btn-pink {
+            background-color: #ff6b81 !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 30px !important;
+            padding: 10px 30px !important;
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 </head>
 
@@ -221,8 +232,10 @@ if (isset($_SESSION['login_error'])) {
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
                 <div class="text-center mt-2">
-                    <a href="forgot_password.php" class="text-decoration-none"
-                        style="color: #ff3b5c; font-size: 14px;">Forgot Password?</a>
+                    <a href="#" class="text-decoration-none" data-bs-toggle="modal"
+                        data-bs-target="#forgotPasswordModal" style="color: #ff3b5c; font-size: 14px;">Forgot
+                        Password?</a>
+
                 </div>
             </form>
             <p class="signup-link">Don't have an account? <a href="signup.php">Sign Up Now!</a></p>
@@ -253,6 +266,36 @@ if (isset($_SESSION['login_error'])) {
             </div>
         </div>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <h5 class="modal-title text-center mb-3" id="forgotPasswordModalLabel" style="color: #ff6b81;">Forgot
+                    Password</h5>
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Enter your registered email"
+                            required>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <img src="generate_captcha.php" alt="CAPTCHA" id="captchaImage" class="img-fluid mb-2"
+                            style="max-width: 100px; border-radius: 5px;">
+                        <br>
+                        <button type="button" onclick="refreshCaptcha()" class="btn btn-link text-secondary"
+                            style="font-size: 14px;">↻ Refresh</button>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="captcha" class="form-control" placeholder="Enter CAPTCHA" required>
+                    </div>
+                    <button type="submit" class="btn btn-pink w-100" id="resetButton">Reset Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -301,6 +344,87 @@ if (isset($_SESSION['login_error'])) {
                     console.error('Error:', error);
                 });
         });
+    </script>
+
+    <script>
+        function refreshCaptcha() {
+            document.getElementById('captchaImage').src = 'generate_captcha.php?' + Date.now();
+        }
+
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('cust_forgotPsw.php', {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                        modal.hide();
+
+                        Swal.fire({
+                            title: '<span style="color:#ff6b81;">Reset Your Password</span>',
+                            html:
+                                '<input type="password" id="swal-password" class="swal2-input" placeholder="New Password" style="border-radius:10px; border:1.5px solid #ff6b81;">' +
+                                '<input type="password" id="swal-confirm" class="swal2-input" placeholder="Confirm Password" style="border-radius:10px; border:1.5px solid #ff6b81;">' +
+                                '<div style="font-size: 13px; color: #555; margin-top:5px;">Password must include uppercase, lowercase, number, and symbol.</div>',
+                            background: '#fffafc',
+                            confirmButtonText: 'Reset Password',
+                            confirmButtonColor: '#ff6b81',
+                            buttonsStyling: true,
+                            customClass: {
+                                popup: 'rounded-4',
+                                confirmButton: 'btn btn-pink'
+                            },
+                            showCancelButton: false,
+                            focusConfirm: false,
+                            preConfirm: () => {
+                                const pwd = document.getElementById('swal-password').value;
+                                const confirm = document.getElementById('swal-confirm').value;
+                                if (!pwd || !confirm) {
+                                    Swal.showValidationMessage('Please fill both fields.');
+                                    return false;
+                                }
+                                if (pwd !== confirm) {
+                                    Swal.showValidationMessage('Passwords do not match.');
+                                    return false;
+                                }
+                                return { password: pwd };
+                            }
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                fetch('reset_password_direct.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: 'new_password=' + encodeURIComponent(result.value.password)
+                                })
+                                    .then(res => res.json())
+                                    .then(resData => {
+                                        console.log("Reset response: ", resData); // helpful for debugging
+                                        if (resData.status === 'success') {
+                                            Swal.fire('Success!', 'Your password has been reset.', 'success');
+                                        } else {
+                                            Swal.fire('Error', resData.message, 'error');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Fetch error:', error);
+                                        Swal.fire('Error', 'Something went wrong while resetting password.', 'error');
+                                    });
+                            }
+                        });
+
+
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                        refreshCaptcha();
+                    }
+                });
+        });
+
+
     </script>
 
 </body>
