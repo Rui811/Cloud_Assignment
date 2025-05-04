@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 $customer_id = $_SESSION['user_id'];
 
-include 'function/receipt.php';
+include 'receiptFunction.php';
 ?>
 
 <!DOCTYPE html>

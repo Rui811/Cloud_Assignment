@@ -1,6 +1,6 @@
 <?php
 include 'header.php';
-include 'function/checkout.php';
+include 'checkoutFunction.php';
 ?>
 
 <!DOCTYPE html>
@@ -331,7 +331,7 @@ include 'function/checkout.php';
                     }).then((result) => {
                         if(result.isConfirmed) {
                             $.ajax({
-                                url: "ajax/create_order.php",
+                                url: "create_order.php",
                                 type: "POST",
                                 data: {
                                     "customer_id" : customerId,

@@ -39,8 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $imgBaseName = pathinfo($imgName, PATHINFO_FILENAME);
         $targetPath = 'image/' . $imgBaseName . '.png';
-        if (!move_uploaded_file($imgTmp, $targetPath))
-            die("Failed to upload image.");
     }
 
     if ($editID) {

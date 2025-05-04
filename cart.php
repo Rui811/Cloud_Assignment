@@ -324,7 +324,7 @@ $customer_id = $_SESSION['user_id'];
 
                 function loadCart() {
                     $.ajax({
-                        url: 'ajax/fetch_cart.php',
+                        url: 'fetch_cart.php',
                         type: 'POST',
                         data: {
                             "customer_id" : customerId
@@ -498,7 +498,7 @@ $customer_id = $_SESSION['user_id'];
                             inputField.val(value);
 
                             $.ajax({
-                                url: "ajax/update_cart.php",
+                                url: "update_cart.php",
                                 type: "POST",
                                 data: {
                                     "id" : id,
@@ -530,7 +530,7 @@ $customer_id = $_SESSION['user_id'];
                     let action = $(this).data("action");
 
                     $.ajax({
-                        url: "ajax/update_cart.php",
+                        url: "update_cart.php",
                         type: "POST",
                         data: {
                             "id" : id,
@@ -570,7 +570,7 @@ $customer_id = $_SESSION['user_id'];
                     }).then((result) => {
                         if(result.isConfirmed) {
                             $.ajax({
-                                url: "ajax/remove_cart.php",
+                                url: "remove_cart.php",
                                 type: "POST",
                                 data: {
                                     "id" : id

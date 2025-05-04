@@ -1431,7 +1431,7 @@ include 'admin_analytics.php';
 
         function viewOrderDetails (orderId) {
             $.ajax({
-                url: "ajax/get_order_details.php",
+                url: "get_order_details.php",
                 type: "POST",
                 data: {
                     "orderId" : orderId
@@ -1477,7 +1477,7 @@ include 'admin_analytics.php';
             const staffName = <?= json_encode($adminName) ?>;
 
             $.ajax({
-                url: "ajax/get_order_details.php",
+                url: "get_order_details.php",
                 type: "POST",
                 data: {
                     "orderId" : orderId
@@ -1524,7 +1524,7 @@ include 'admin_analytics.php';
                                         var reason = result.value;
 
                                         $.ajax({
-                                            url: "ajax/admin_cancel_order.php",
+                                            url: "admin_cancel_order.php",
                                             type: "POST",
                                             data: {
                                                 "orderId" : orderId,
@@ -1690,7 +1690,7 @@ include 'admin_analytics.php';
                     var paymentMethod = result.value.payment_method;
 
                     $.ajax({
-                        url: 'ajax/admin_create_order.php',
+                        url: 'admin_create_order.php',
                         type: 'POST',
                         data: {
                             "customer_id" : customerId,
@@ -1820,7 +1820,7 @@ include 'admin_analytics.php';
                 }
 
                 $.ajax({
-                    url: "ajax/check_customizable.php",
+                    url: "check_customizable.php",
                     type: "POST",
                     dataType: "json",
                     data: { 
