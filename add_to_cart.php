@@ -1,6 +1,6 @@
 <?php
 
-$host = "chapalang-database.clupov6r97vc.us-east-1.rds.amazonaws.com";
+$host = "chapalang-database1.cjpdewbot84w.us-east-1.rds.amazonaws.com";
 $username = "main";
 $password = "chapalang-password";
 $dbname = "chapalang";
