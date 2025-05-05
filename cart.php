@@ -19,8 +19,9 @@ $customer_id = $_SESSION['user_id'];
 
         <style>
             body {
-                background-image: url("image/checkout_background.png"); /* later change, so ugly, still confuse need header and footer or not */
+                /* background-image: url("image/checkout_background.png"); later change, so ugly, still confuse need header and footer or not */
                 /* background-size: cover; */
+                background-color:rgba(221, 221, 221, 0.23);
                 height: 100vh;
                 margin: 0;
             }
@@ -86,17 +87,18 @@ $customer_id = $_SESSION['user_id'];
             }
 
             .checkoutBtn {
-                background-color: #28a745;
+                background-color: #2D328F;
                 color: rgb(232, 232, 232);
                 font-size: 18px;
                 padding: 12px 20px;
                 width: 100%;
                 border: none;
                 border-radius: 5px;
-                transition: 0.3s ease;
+                transition: 0.3s ease-in-out;
 
                 &:hover {
-                    background-color: #218838;
+                    transform: scale(1.01, 1.01);
+                    background-color:rgb(21, 26, 136);
                     color: white;
                 }
             }
@@ -117,12 +119,21 @@ $customer_id = $_SESSION['user_id'];
                 }
             }
 
-            .empty-cart {
+            /* .empty-cart {
                 text-align: center;
                 font-size: 20px;
                 color: gray;
                 font-style: italic;
                 padding: 20px;
+            } */
+            #empty-summary-message {
+                height: 180px;
+            }
+
+            #cart-summary-items {
+                height: 180px;
+                overflow-y: auto;
+                padding-right: 5px;
             }
 
             .checkout-selection, .checkout-selection-all {
@@ -136,7 +147,13 @@ $customer_id = $_SESSION['user_id'];
                 position: relative;
                 outline: none;
                 transform: scale(1.5);
-                transition: 0.3s ease;
+                transition: 0.3s ease-in-out;
+
+                &:hover {
+                    transform: scale(1.55);
+                    border-color: #1a1e6b;
+                    background-color: rgb(238, 238, 238);
+                }
             }
 
             .checkout-selection {
@@ -145,6 +162,11 @@ $customer_id = $_SESSION['user_id'];
                 &:checked {
                     background-color: #2D328F;
                     border-color: #2D328F;
+
+                    &:hover {
+                        border-color: #1a1e6b;
+                        background-color: #1a1e6b;
+                    }
 
                     &::after {
                         content: '\2713'; /* ✓ checkmark */
@@ -163,6 +185,11 @@ $customer_id = $_SESSION['user_id'];
                 &:checked {
                     background-color: white;
                     border-color: white;
+
+                    &:hover {
+                        border-color:rgb(238, 238, 238);
+                        background-color: rgb(238, 238, 238);
+                    }
 
                     &::after {
                         content: '\2713'; /* ✓ checkmark */
@@ -230,12 +257,6 @@ $customer_id = $_SESSION['user_id'];
                 font-style: italic;
             }
 
-            #cart-summary-items {
-                max-height: 250px;
-                overflow-y: auto;
-                padding-right: 5px;
-            }
-
         </style>
     </head>
     <body>
@@ -275,10 +296,10 @@ $customer_id = $_SESSION['user_id'];
                         <!-- Summary (Sticky) -->
                         <div class="col-md-4">
                             <div class="card p-3 summary-card">
-                                <h4 class="text-center">SUMMARY</h4>
-                                <hr>
+                                <h4 class="text-center mb-0">SUMMARY</h4>
+                                <hr class="mt-0">
                                 <div id="empty-summary-message" class="empty-summary text-center text-muted py-3" style="display: none;">
-                                    <i class="fa-solid fa-cart-shopping fa-2x mb-2"></i>
+                                    <i class="fa-solid fa-cart-shopping fa-2x mb-2 mt-4"></i>
                                     <p class="mb-0">No items selected.</p>
                                     <small>Select items from your cart to see the summary here.</small>
                                 </div>
@@ -418,15 +439,17 @@ $customer_id = $_SESSION['user_id'];
                     let totalSelected = $('.checkout-selection:checked').length;
                     var selectedItems = $('.checkout-selection:checked');
                     let grandTotal = 0;
+                    const summaryItemsContainer = document.getElementById('cart-summary-items');
+                    summaryItemsContainer.innerHTML = ''; //clear previous summary items
+                    const emptySummaryMessage = document.getElementById('empty-summary-message');
 
-                    //clear all prev items first, if not will always append
-                    $('#cart-summary-items').empty();
-
-                    if(totalSelected == 0) {
-                        $('#empty-summary-message').show();
-                    }
-                    else {
-                        $('#empty-summary-message').hide();
+                    //toggle the empty summary message
+                    if (totalSelected > 0) {
+                        emptySummaryMessage.style.display = 'none';
+                        document.getElementById('cart-summary-items').style.display = 'block';
+                    } else {
+                        emptySummaryMessage.style.display = 'block';
+                        document.getElementById('cart-summary-items').style.display = 'none';
                     }
                     
                     $('.checkout-selection:checked').each(function() {
