@@ -19,9 +19,9 @@ $customer_id = $_SESSION['user_id'];
 
         <style>
             body {
-                /* background-image: url("image/checkout_background.png"); later change, so ugly, still confuse need header and footer or not */
-                /* background-size: cover; */
-                background-color:rgba(221, 221, 221, 0.23);
+                background-image: url("image/wallpaper2.png");
+                background-size: 2500px 2500px;
+                background-repeat: no-repeat;
                 height: 100vh;
                 margin: 0;
             }

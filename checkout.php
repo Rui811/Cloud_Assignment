@@ -14,7 +14,15 @@ include 'checkoutFunction.php';
 
         <style>
             body {
-                background-image: url("image/checkout_background.png");
+                background-image: url("image/wallpaper2.png");
+                background-size: 2500px 2500px;
+                background-repeat: no-repeat;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .cardIconType {
+                font-size: 30px;
             }
 
             .back-cart-btn {
@@ -42,9 +50,10 @@ include 'checkoutFunction.php';
                 padding: 8px;
                 width: 100%;
                 border-radius: 5px;
-                transition: 0.3s ease;
+                transition: 0.3s ease-in-out;
 
                 &:hover {
+                    transform: scale(1.01, 1.01);
                     background-color: #218838;
                     color: white;
                 }
@@ -143,7 +152,8 @@ include 'checkoutFunction.php';
 
                         <div class="payment-container row mt-3 p-3">
                             <div class="col-6 border-end border-2">
-                                <input type="radio" name="paymentMethod" id="Card" value="Card" checked /> <label for="card" class="paymentMethod">Credit/Debit Card</label>
+                                <input type="radio" name="paymentMethod" id="Card" value="Card" checked /> <label for="Card" class="paymentMethod">Credit/Debit Card</label>
+                                <i class="cardIconType ms-3 me-1 fa-brands fa-cc-mastercard" style="color: red;"></i> <i class="cardIconType fa-brands fa-cc-visa" style="color: navy;"></i> 
 
                                 <div id="card-field" class="mt-3 px-2 row">
                                     <label for="cardHolder">Card holder: </label>
@@ -161,13 +171,13 @@ include 'checkoutFunction.php';
                                     <label for="cardNum">Card number: </label>
                                     <div class="input-group has-validation mt-1 mb-2">
                                         <span class="input-group-text px-4" style="font-size: 20px;">
-                                            <i class="fa-solid fa-credit-card"></i>
+                                            <i id="cardIcon" class="fa-solid fa-credit-card"></i>
                                         </span>
                                         <div id="cardNumError" class="form-floating">
                                             <input type="text" value="" class="form-control" id="cardNum" placeholder="Card Number" required />
                                             <label for="cardNum">Card Number</label>
                                         </div>
-                                        <div class="invalid-feedback">Please enter a valid card number with 16 digits.</div>
+                                        <div class="invalid-feedback" id="cardNumFeedback">Please enter a valid card number.</div>
                                     </div>
 
                                     <div class="col-6">
@@ -201,6 +211,7 @@ include 'checkoutFunction.php';
                             </div>
                             <div class="col-6">
                                 <input type="radio" name="paymentMethod" id="TouchNGo" value="TouchNGo" /> <label for="TouchNGo" class="paymentMethod">TouchNGo</label>
+                                <img src="image/touchNGo2.png" width="50px" class="ms-2 rounded-2" style="position: relative; top: -5px;" />
                                 
                                 <div id="TouchNGo-field" class="mt-3 px-2">
                                     <label for="phoneNum">Phone Number: </label>
@@ -212,7 +223,7 @@ include 'checkoutFunction.php';
                                             <input type="text" value="" class="form-control" id="phoneNum" placeholder="Phone Number" required />
                                             <label for="phoneNum">012-3456789</label>
                                         </div>
-                                        <div class="invalid-feedback">Please enter a valid phone number (e.g. 012-1234567 or 011-12345678).</div>
+                                        <div id="phoneNumFeedback" class="invalid-feedback">Please enter a valid phone number (e.g. 012-1234567 or 011-12345678).</div>
                                     </div>
                                 </div>
                             </div>
@@ -253,6 +264,28 @@ include 'checkoutFunction.php';
                     }
                 }
 
+                $('#cardNum').on('input', function () {
+                    const cardNumber = $(this).val().replace(/\s+/g, ''); //remove spaces
+                    const cardIcon = $('#cardIcon');
+
+                    if (/^4/.test(cardNumber)) {
+                        cardIcon
+                            .removeClass()
+                            .addClass('fa-brands fa-cc-visa')
+                            .css('color', 'navy');
+                    } else if (/^5[1-5]/.test(cardNumber) || /^2(2[2-9][1-9]|[3-6][0-9]{2}|7[01][0-9]|720)/.test(cardNumber)) {
+                        cardIcon
+                            .removeClass()
+                            .addClass('fa-brands fa-cc-mastercard')
+                            .css('color', 'red');
+                    } else {
+                        cardIcon
+                            .removeClass()
+                            .addClass('fa-solid fa-credit-card')
+                            .css('color', 'black');
+                    }
+                });
+
                 function validateForm() {
                     let isValid = true;
                     $('.form-control').removeClass('is-invalid');
@@ -263,6 +296,7 @@ include 'checkoutFunction.php';
                     if(paymentMethod === 'Card') {
                         let cardHolder = $('#cardHolder').val().trim();
                         let cardNum = $('#cardNum').val().trim();
+                        const cardNumError = $('#cardNumFeedback');
                         let expiryDate = $('#expiryDate').val().trim();
                         let cvc = $('#cvc').val().trim();
 
@@ -272,9 +306,27 @@ include 'checkoutFunction.php';
                             isValid = false;
                         }
 
-                        if (!cardNum.match(/^\d{16}$/)) {
+                        if (/^4/.test(cardNum)) {
+                            // Visa
+                            if (!(cardNum.length === 13 || cardNum.length === 16)) {
+                                $('#cardNum').addClass('is-invalid');
+                                $('#cardNumError').addClass('is-invalid');
+                                cardNumError.text('Visa card must be 13 or 16 digits long.');
+                                isValid = false;
+                            }
+                        } else if (/^(5[1-5]|2[2-7])/.test(cardNum)) {
+                            // MasterCard
+                            if (cardNum.length !== 16) {
+                                $('#cardNum').addClass('is-invalid');
+                                $('#cardNumError').addClass('is-invalid');
+                                cardNumError.text('MasterCard must be 16 digits long.');
+                                isValid = false;
+                            }
+                        } else {
+                            // Not Visa or MasterCard
                             $('#cardNum').addClass('is-invalid');
                             $('#cardNumError').addClass('is-invalid');
+                            cardNumError.text('Only Visa (starts with 4) or MasterCard (starts with 51–55 or 2221–2720) are accepted.');
                             isValid = false;
                         }
 
@@ -293,9 +345,28 @@ include 'checkoutFunction.php';
                     else if(paymentMethod === 'TouchNGo') {
                         let phoneNum = $('#phoneNum').val().trim();
 
-                        if (!phoneNum.match(/^01[0-9]-\d{7,8}$/)) {
+                        if (!phoneNum) {
                             $('#phoneNum').addClass('is-invalid');
                             $('#phoneNumError').addClass('is-invalid');
+                            $('#phoneNumFeedback').text('Please enter your phone number.');
+                            isValid = false;
+                        }
+                        else if (!/^01[0-9]-\d{7,8}$/.test(phoneNum)) {
+                            $('#phoneNum').addClass('is-invalid');
+                            $('#phoneNumError').addClass('is-invalid');
+                            $('#phoneNumFeedback').text('Please enter a valid Malaysian phone number starting with 01, followed by a hyphen, and then 7 or 8 digits.');
+                            isValid = false;
+                        }
+                        else if (phoneNum.startsWith('011-') && phoneNum.substring(4).length !== 7 && phoneNum.substring(4).length !== 8) {
+                            $('#phoneNum').addClass('is-invalid');
+                            $('#phoneNumError').addClass('is-invalid');
+                            $('#phoneNumFeedback').text('For phone numbers starting with 011-, please enter either 7 or 8 digits after the hyphen (e.g., 011-1234567 or 011-12345678).');
+                            isValid = false;
+                        }
+                        else if (!phoneNum.startsWith('011-') && phoneNum.substring(4).length !== 7) {
+                            $('#phoneNum').addClass('is-invalid');
+                            $('#phoneNumError').addClass('is-invalid');
+                            $('#phoneNumFeedback').text('For phone numbers starting with other 01 prefixes, please enter exactly 7 digits after the hyphen (e.g., 012-3456789).');
                             isValid = false;
                         }
                     }
